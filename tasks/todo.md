@@ -46,7 +46,7 @@ Suggested first experiment:
 - [x] Create Python package scaffold.
 - [x] Add replay models and sample data.
 - [x] Add semantic branch matching.
-- [ ] Add branch generation and artifacts.
+- [x] Add branch generation and artifacts.
 - [ ] Add baselines and evaluator.
 - [ ] Add CLI report runner.
 - [ ] Verify tests and sample report.
