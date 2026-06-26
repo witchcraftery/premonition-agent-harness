@@ -15,6 +15,9 @@ foresight-replay = "foresight_harness.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+foresight_harness = ["data/*.jsonl"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

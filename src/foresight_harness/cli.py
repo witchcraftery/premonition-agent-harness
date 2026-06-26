@@ -2,9 +2,16 @@ from __future__ import annotations
 
 import argparse
 import json
+from importlib.resources import files
 from pathlib import Path
 
 from foresight_harness.evaluator import load_replay_turns, run_replay
+
+
+def default_sample_path() -> Path:
+    return Path(
+        files("foresight_harness").joinpath("data", "queueahead_sample.jsonl")
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -14,8 +21,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--input",
         type=Path,
-        default=Path("data/queueahead_sample.jsonl"),
-        help="Path to a JSONL replay file.",
+        default=default_sample_path(),
+        help="Path to a JSONL replay file. Defaults to the bundled QueueAhead sample.",
     )
     parser.add_argument(
         "--top-k",

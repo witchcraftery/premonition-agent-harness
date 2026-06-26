@@ -1,6 +1,8 @@
 import json
+import os
 import subprocess
 import sys
+from pathlib import Path
 
 
 def test_cli_outputs_json_report():
@@ -22,6 +24,24 @@ def test_cli_outputs_json_report():
     report = json.loads(completed.stdout)
 
     assert "harness" in report
+    assert report["harness"]["total_turns"] == 5
+
+
+def test_cli_default_input_works_outside_repo_root(tmp_path):
+    repo_root = Path(__file__).resolve().parents[1]
+    env = {**os.environ, "PYTHONPATH": str(repo_root / "src")}
+
+    completed = subprocess.run(
+        [sys.executable, "-m", "foresight_harness.cli", "--top-k", "3"],
+        check=True,
+        capture_output=True,
+        cwd=tmp_path,
+        env=env,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+
     assert report["harness"]["total_turns"] == 5
 
 
