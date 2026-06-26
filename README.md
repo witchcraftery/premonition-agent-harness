@@ -1,12 +1,20 @@
-# Precognitive Agent Harness
+![Premonition Foresight Probability Tree](assets/premonition-foresight-tree.svg)
 
-An offline replay harness for testing whether an agent can prepare useful next
-moves before the user asks for them.
+# Premonition / Foresight Agent Harness
 
-This first build focuses on the **Foresight / QueueAhead** version of the idea:
-given a conversation turn, generate the top likely next-event branches, prepare
-draft artifacts for those branches, then replay the actual next event and score
-whether the prepared work was useful, safe, and faster than baseline behavior.
+Premonition, in this experiment, does not mean prophecy. It means an agent
+learning to stand ready: sensing the present context, imagining the next few
+likely moves, preparing useful work for each branch, and letting observed truth
+choose the path.
+
+This first build focuses on the **Foresight / QueueAhead** version of the idea.
+Given a conversation turn, it generates the top likely next-event branches,
+prepares draft artifacts for those branches, then replays the actual next event
+and scores whether the prepared work was useful, safe, and faster than baseline
+behavior.
+
+The aspiration is a practical kind of knowing: not certainty, but readiness.
+The benchmark asks whether that readiness can be measured.
 
 ## What It Measures
 

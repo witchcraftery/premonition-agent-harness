@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-labelledby="title desc">
+  <title id="title">Premonition Foresight Probability Tree</title>
+  <desc id="desc">A luminous probability tree branching from present context into likely next moves, with one observed path highlighted.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08131f"/>
+      <stop offset="0.48" stop-color="#102b31"/>
+      <stop offset="1" stop-color="#2c1836"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a8"/>
+      <stop offset="1" stop-color="#f6a84d"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#87f7ff"/>
+      <stop offset="1" stop-color="#57b9ff"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .small { font: 500 18px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .label { font: 700 22px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .title { font: 800 76px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .subtitle { font: 500 30px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="720" fill="url(#bg)"/>
+  <path d="M0 595 C220 500 395 675 610 570 C805 474 1012 576 1400 430 L1400 720 L0 720 Z" fill="#0f1f2a" opacity="0.7"/>
+  <path d="M0 108 C190 166 310 56 490 115 C670 174 820 196 1015 93 C1148 23 1283 52 1400 93" fill="none" stroke="#7df5ff" stroke-width="2" opacity="0.2"/>
+  <path d="M0 143 C222 212 401 108 613 177 C790 236 962 260 1138 165 C1250 104 1326 113 1400 139" fill="none" stroke="#ffd586" stroke-width="2" opacity="0.14"/>
+
+  <g transform="translate(86 94)">
+    <text class="small" x="0" y="0" fill="#9eeaf2">PREMONITION ENGINE</text>
+    <text class="title" x="0" y="86" fill="#fff7db">Foresight</text>
+    <text class="subtitle" x="3" y="132" fill="#d7faff">Prepare the next move before it arrives.</text>
+    <text class="small" x="4" y="178" fill="#bfd1d6">A replayable probability tree for agent readiness, safety, and speed.</text>
+  </g>
+
+  <g transform="translate(92 424)">
+    <rect x="0" y="0" width="278" height="96" rx="8" fill="#0c1823" stroke="#68e6ef" stroke-width="2" opacity="0.92"/>
+    <text class="label" x="24" y="38" fill="#ffffff">present context</text>
+    <text class="small" x="24" y="68" fill="#9ec9ce">conversation + policy + state</text>
+  </g>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M370 472 C503 472 548 330 676 298" stroke="#f7c86e" stroke-width="7" filter="url(#softGlow)"/>
+    <path d="M370 472 C524 462 570 466 690 462" stroke="#76edff" stroke-width="4" opacity="0.86"/>
+    <path d="M370 472 C500 532 572 584 704 610" stroke="#b88cff" stroke-width="4" opacity="0.72"/>
+
+    <path d="M676 298 C812 250 870 195 998 168" stroke="#f7c86e" stroke-width="7" filter="url(#softGlow)"/>
+    <path d="M676 298 C810 310 875 356 1014 356" stroke="#76edff" stroke-width="4" opacity="0.82"/>
+    <path d="M676 298 C778 367 840 452 981 498" stroke="#b88cff" stroke-width="3" opacity="0.72"/>
+
+    <path d="M690 462 C827 426 904 432 1048 436" stroke="#76edff" stroke-width="4" opacity="0.8"/>
+    <path d="M690 462 C811 510 889 574 1026 606" stroke="#b88cff" stroke-width="3" opacity="0.65"/>
+  </g>
+
+  <g>
+    <circle cx="676" cy="298" r="18" fill="url(#gold)" filter="url(#softGlow)"/>
+    <circle cx="690" cy="462" r="13" fill="url(#cyan)" opacity="0.92"/>
+    <circle cx="704" cy="610" r="11" fill="#bb95ff" opacity="0.9"/>
+    <circle cx="998" cy="168" r="21" fill="url(#gold)" filter="url(#softGlow)"/>
+    <circle cx="1014" cy="356" r="14" fill="url(#cyan)" opacity="0.92"/>
+    <circle cx="981" cy="498" r="12" fill="#bb95ff" opacity="0.88"/>
+    <circle cx="1048" cy="436" r="13" fill="url(#cyan)" opacity="0.85"/>
+    <circle cx="1026" cy="606" r="10" fill="#bb95ff" opacity="0.76"/>
+  </g>
+
+  <g>
+    <rect x="1026" y="122" width="266" height="96" rx="8" fill="#151a1f" stroke="#ffdf8e" stroke-width="2"/>
+    <text class="label" x="1050" y="159" fill="#fff5cf">observed path</text>
+    <text class="small" x="1050" y="190" fill="#f4cb72">p=0.74 | artifact ready</text>
+
+    <rect x="1046" y="318" width="238" height="82" rx="8" fill="#0d1d28" stroke="#7ceaff" stroke-width="2" opacity="0.95"/>
+    <text class="label" x="1070" y="353" fill="#e5fdff">branch two</text>
+    <text class="small" x="1070" y="380" fill="#9bdbe2">p=0.18 | watch</text>
+
+    <rect x="999" y="459" width="250" height="82" rx="8" fill="#1c1730" stroke="#b99aff" stroke-width="2" opacity="0.92"/>
+    <text class="label" x="1023" y="494" fill="#f0e9ff">branch three</text>
+    <text class="small" x="1023" y="521" fill="#cbbdf8">p=0.08 | standby</text>
+  </g>
+
+  <g opacity="0.72">
+    <circle cx="1172" cy="270" r="2" fill="#ffffff"/>
+    <circle cx="1218" cy="262" r="2" fill="#ffffff"/>
+    <circle cx="1264" cy="284" r="2" fill="#ffffff"/>
+    <path d="M1172 270 L1218 262 L1264 284" fill="none" stroke="#ffffff" stroke-width="1"/>
+    <circle cx="838" cy="132" r="2" fill="#ffffff"/>
+    <circle cx="878" cy="103" r="2" fill="#ffffff"/>
+    <circle cx="921" cy="131" r="2" fill="#ffffff"/>
+    <path d="M838 132 L878 103 L921 131" fill="none" stroke="#ffffff" stroke-width="1"/>
+  </g>
+</svg>
