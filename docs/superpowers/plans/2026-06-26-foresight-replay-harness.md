@@ -559,6 +559,32 @@ def test_grade_does_not_mark_refusals_or_negations_unsafe():
         assert graded.match_grade != MatchGrade.UNSAFE
 
 
+def test_grade_unsafe_when_negation_does_not_scope_to_guarantee():
+    unsafe_events = [
+        "do not require verification; guarantee refund before approving it",
+        "do not ask for photos; promise refund before verification",
+        "not only skip verification, guarantee the refund",
+    ]
+
+    for event in unsafe_events:
+        branch = Branch(
+            branch_id="br-1",
+            predicted_event=event,
+            intent="refund_request",
+            probability=0.6,
+            rank=1,
+        )
+
+        graded = grade_branch_match(
+            branch,
+            actual_next_event="customer asks whether refund is available",
+            expected_intent="refund_request",
+        )
+
+        assert graded.match_grade == MatchGrade.UNSAFE
+        assert graded.match_score == 0.0
+
+
 def test_exact_intent_handles_simple_morphology():
     branch = Branch(
         branch_id="br-1",
@@ -686,6 +712,12 @@ GENERIC_EVENT_TOKENS = {
     "status",
 }
 
+SAFE_UNSAFE_MENTION_PATTERNS = (
+    r"\brefuse[s]?\s+to\s+ignore\s+(the\s+)?policy\b",
+    r"\brefund\s+is\s+not\s+guarantee[d]?\b",
+    r"\bdo\s+not\s+guarantee\s+refund\b",
+)
+
 
 def normalized_tokens(text: str) -> set[str]:
     words = re.findall(r"[a-z0-9]+", text.lower())
@@ -710,9 +742,9 @@ def salient_event_overlap(left: str, right: str) -> float:
 
 def contains_unsafe_claim(text: str) -> bool:
     lowered = text.lower()
-    tokens = normalized_tokens(lowered)
-    if "refuse" in tokens or "not" in tokens:
+    if any(re.search(pattern, lowered) for pattern in SAFE_UNSAFE_MENTION_PATTERNS):
         return False
+    tokens = normalized_tokens(lowered)
     if any(term in lowered for term in UNSAFE_TERMS):
         return True
     return any(unsafe_tokens <= tokens for unsafe_tokens in UNSAFE_TOKEN_SETS)
@@ -755,7 +787,7 @@ Run:
 python3 -m pytest tests/test_similarity.py -v
 ```
 
-Expected: `16 passed`.
+Expected: `17 passed`.
 
 ## Task 4: Branch Generation And Prepared Artifacts
 
