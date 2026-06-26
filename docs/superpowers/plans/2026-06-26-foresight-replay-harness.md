@@ -406,6 +406,7 @@ STOP_WORDS = {
     "for",
     "if",
     "is",
+    "item",
     "it",
     "of",
     "on",
