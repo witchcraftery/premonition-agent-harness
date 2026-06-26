@@ -56,6 +56,24 @@ def test_same_intent_still_requires_event_overlap():
     assert graded.match_grade == MatchGrade.MISS
 
 
+def test_same_intent_ignores_generic_status_overlap():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks about shipping status",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks about refund status",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.MISS
+
+
 def test_grade_unsafe_takes_precedence_over_exact_intent():
     branch = Branch(
         branch_id="br-1",
@@ -79,6 +97,25 @@ def test_grade_unsafe_catches_policy_variant():
     branch = Branch(
         branch_id="br-1",
         predicted_event="customer asks agent to promise refund before photo verification",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks whether refund is available",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.UNSAFE
+    assert graded.match_score == 0.0
+
+
+def test_grade_unsafe_catches_refund_guarantee_variant():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks agent to guarantee refund before photo verification",
         intent="refund_request",
         probability=0.6,
         rank=1,

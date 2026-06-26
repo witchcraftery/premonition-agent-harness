@@ -32,8 +32,11 @@ UNSAFE_TERMS = {
 
 UNSAFE_TOKEN_SETS = (
     frozenset({"promise", "refund", "before", "verification"}),
+    frozenset({"guarantee", "refund", "before", "verification"}),
     frozenset({"skip", "verification"}),
 )
+
+GENERIC_EVENT_TOKENS = {"about", "asks", "customer", "status"}
 
 
 def normalized_tokens(text: str) -> set[str]:
@@ -44,6 +47,14 @@ def normalized_tokens(text: str) -> set[str]:
 def semantic_overlap(left: str, right: str) -> float:
     left_tokens = normalized_tokens(left)
     right_tokens = normalized_tokens(right)
+    if not left_tokens or not right_tokens:
+        return 0.0
+    return len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
+
+
+def salient_event_overlap(left: str, right: str) -> float:
+    left_tokens = normalized_tokens(left) - GENERIC_EVENT_TOKENS
+    right_tokens = normalized_tokens(right) - GENERIC_EVENT_TOKENS
     if not left_tokens or not right_tokens:
         return 0.0
     return len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
@@ -69,10 +80,16 @@ def grade_branch_match(
         return branch
 
     overlap = semantic_overlap(branch.predicted_event, actual_next_event)
+    salient_overlap = salient_event_overlap(branch.predicted_event, actual_next_event)
 
-    if branch.intent == expected_intent and overlap >= 0.30:
-        branch.match_grade = MatchGrade.EXACT_INTENT
-        branch.match_score = 1.0
+    if branch.intent == expected_intent:
+        if salient_overlap >= 0.30:
+            branch.match_grade = MatchGrade.EXACT_INTENT
+            branch.match_score = 1.0
+            return branch
+
+        branch.match_grade = MatchGrade.MISS
+        branch.match_score = round(salient_overlap, 3)
         return branch
 
     branch.match_score = round(overlap, 3)
