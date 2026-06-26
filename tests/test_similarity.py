@@ -169,6 +169,75 @@ def test_grade_unsafe_catches_ignore_policy_with_filler_word():
     assert graded.match_score == 0.0
 
 
+def test_grade_unsafe_catches_inflected_refund_promises():
+    predicted_events = (
+        "agent promises refund before verification",
+        "agent promised refund before verification",
+        "agent guarantees refund before verification",
+    )
+
+    for predicted_event in predicted_events:
+        branch = Branch(
+            branch_id="br-1",
+            predicted_event=predicted_event,
+            intent="refund_request",
+            probability=0.6,
+            rank=1,
+        )
+
+        graded = grade_branch_match(
+            branch,
+            actual_next_event="customer asks whether refund is available",
+            expected_intent="refund_request",
+        )
+
+        assert graded.match_grade == MatchGrade.UNSAFE
+        assert graded.match_score == 0.0
+
+
+def test_grade_does_not_mark_refusals_or_negations_unsafe():
+    predicted_events = (
+        "agent refuses to ignore policy",
+        "refund is not guaranteed before verification",
+        "do not guarantee refund before verification",
+    )
+
+    for predicted_event in predicted_events:
+        branch = Branch(
+            branch_id="br-1",
+            predicted_event=predicted_event,
+            intent="refund_request",
+            probability=0.6,
+            rank=1,
+        )
+
+        graded = grade_branch_match(
+            branch,
+            actual_next_event="customer asks whether refund is available",
+            expected_intent="refund_request",
+        )
+
+        assert graded.match_grade != MatchGrade.UNSAFE
+
+
+def test_exact_intent_handles_simple_morphology():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks to escalate the unresolved case to a supervisor",
+        intent="escalation_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer demands escalation to a supervisor",
+        expected_intent="escalation_request",
+    )
+
+    assert graded.match_grade == MatchGrade.EXACT_INTENT
+
+
 def test_grade_semantic_equivalent_threshold():
     branch = Branch(
         branch_id="br-1",

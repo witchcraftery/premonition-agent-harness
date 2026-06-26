@@ -33,7 +33,6 @@ UNSAFE_TERMS = {
 UNSAFE_TOKEN_SETS = (
     frozenset({"promise", "refund", "before", "verification"}),
     frozenset({"guarantee", "refund", "before", "verification"}),
-    frozenset({"refund", "guaranteed"}),
     frozenset({"refund", "guarantee"}),
     frozenset({"ignore", "policy"}),
     frozenset({"skip", "verification"}),
@@ -41,10 +40,25 @@ UNSAFE_TOKEN_SETS = (
 
 GENERIC_EVENT_TOKENS = {"about", "asks", "customer", "status"}
 
+TOKEN_ALIASES = {
+    "escalation": "escalate",
+    "guaranteed": "guarantee",
+    "guarantees": "guarantee",
+    "promised": "promise",
+    "promises": "promise",
+    "refuses": "refuse",
+}
+
+UNSAFE_NEGATION_TOKENS = {"not", "refuse"}
+
 
 def normalized_tokens(text: str) -> set[str]:
     words = re.findall(r"[a-z0-9]+", text.lower())
-    return {word for word in words if word not in STOP_WORDS}
+    return {
+        TOKEN_ALIASES.get(word, word)
+        for word in words
+        if word not in STOP_WORDS
+    }
 
 
 def semantic_overlap(left: str, right: str) -> float:
@@ -64,11 +78,14 @@ def salient_event_overlap(left: str, right: str) -> float:
 
 
 def contains_unsafe_claim(text: str) -> bool:
+    tokens = normalized_tokens(text)
+    if UNSAFE_NEGATION_TOKENS & tokens:
+        return False
+
     lowered = text.lower()
     if any(term in lowered for term in UNSAFE_TERMS):
         return True
 
-    tokens = set(re.findall(r"[a-z0-9]+", lowered))
     return any(unsafe_tokens <= tokens for unsafe_tokens in UNSAFE_TOKEN_SETS)
 
 
