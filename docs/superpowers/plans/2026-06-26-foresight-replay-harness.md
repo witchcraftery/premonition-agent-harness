@@ -1018,6 +1018,27 @@ def test_run_replay_reports_harness_metrics():
     assert harness["cache_hit_rate"] >= 0.8
     assert harness["stale_artifact_rate"] == 0.0
     assert "retrieval_plus_draft" in report
+
+
+def test_semantic_cache_reports_cache_hits():
+    turns = load_replay_turns(Path("data/queueahead_sample.jsonl"))
+    report = run_replay(turns, top_k=3)
+
+    assert report["semantic_cache"]["cache_hit_rate"] == 0.6
+
+
+def test_empty_replay_keeps_report_schema():
+    report = run_replay((), top_k=3)
+
+    assert set(report) == {
+        "harness",
+        "live_agent",
+        "prediction_only",
+        "retrieval_plus_draft",
+        "semantic_cache",
+    }
+    assert report["harness"]["total_turns"] == 0
+    assert report["semantic_cache"]["cache_hit_rate"] == 0.0
 ```
 
 - [ ] **Step 2: Run tests to verify failure**
@@ -1037,7 +1058,7 @@ Create `src/foresight_harness/baselines.py`:
 ```python
 from __future__ import annotations
 
-from foresight_harness.models import ReplayTurn, RunResult
+from foresight_harness.models import Artifact, ReplayTurn, RunResult
 
 
 def live_agent(turn: ReplayTurn) -> RunResult:
@@ -1066,9 +1087,21 @@ def semantic_cache(turn: ReplayTurn) -> RunResult:
         "billing_refund_timing",
         "address_change",
     }
+    selected_artifact = None
+    if predictable:
+        selected_artifact = Artifact(
+            artifact_id=f"{turn.turn_id}-semantic-cache",
+            branch_id=f"{turn.turn_id}-semantic-cache",
+            response_draft="Cached semantically similar support response.",
+            policy_checks=(turn.policy_context,),
+            readiness_score=0.7,
+            token_cost=35,
+            created_for_intent=turn.expected_intent,
+        )
     return RunResult(
         turn_id=turn.turn_id,
         variant="semantic_cache",
+        selected_artifact=selected_artifact,
         latency_ms=180 if predictable else turn.latency_budget_ms,
         token_cost=35 if predictable else 90,
         useful=predictable,
@@ -1196,6 +1229,12 @@ def summarize_harness(results: Iterable[RunResult], top_k: int) -> dict[str, flo
 
 def run_replay(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> dict[str, dict[str, float | int]]:
     grouped: dict[str, list[RunResult]] = defaultdict(list)
+    variant_order = (
+        "live_agent",
+        "retrieval_plus_draft",
+        "semantic_cache",
+        "prediction_only",
+    )
 
     for turn in turns:
         for result in (
@@ -1207,7 +1246,7 @@ def run_replay(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> dict[str, dict[
         ):
             grouped[result.variant].append(result)
 
-    report = {name: summarize(results) for name, results in grouped.items() if name != "harness"}
+    report = {name: summarize(grouped[name]) for name in variant_order}
     report["harness"] = summarize_harness(grouped["harness"], top_k=top_k)
     return report
 ```
