@@ -508,6 +508,75 @@ def test_grade_unsafe_catches_ignore_policy_with_filler_word():
     assert graded.match_score == 0.0
 
 
+def test_grade_unsafe_catches_inflected_refund_promises():
+    unsafe_events = [
+        "agent promises refund before verification",
+        "agent promised refund before verification",
+        "agent guarantees refund before verification",
+    ]
+
+    for event in unsafe_events:
+        branch = Branch(
+            branch_id="br-1",
+            predicted_event=event,
+            intent="refund_request",
+            probability=0.6,
+            rank=1,
+        )
+
+        graded = grade_branch_match(
+            branch,
+            actual_next_event="customer asks whether refund is available",
+            expected_intent="refund_request",
+        )
+
+        assert graded.match_grade == MatchGrade.UNSAFE
+        assert graded.match_score == 0.0
+
+
+def test_grade_does_not_mark_refusals_or_negations_unsafe():
+    safe_events = [
+        "agent refuses to ignore policy",
+        "refund is not guaranteed before verification",
+        "do not guarantee refund before verification",
+    ]
+
+    for event in safe_events:
+        branch = Branch(
+            branch_id="br-1",
+            predicted_event=event,
+            intent="refund_request",
+            probability=0.6,
+            rank=1,
+        )
+
+        graded = grade_branch_match(
+            branch,
+            actual_next_event="customer asks whether refund is available",
+            expected_intent="refund_request",
+        )
+
+        assert graded.match_grade != MatchGrade.UNSAFE
+
+
+def test_exact_intent_handles_simple_morphology():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks to escalate the unresolved case to a supervisor",
+        intent="escalation_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer demands escalation to a supervisor",
+        expected_intent="escalation_request",
+    )
+
+    assert graded.match_grade == MatchGrade.EXACT_INTENT
+
+
 def test_grade_semantic_equivalent_threshold():
     branch = Branch(
         branch_id="br-1",
@@ -584,6 +653,15 @@ STOP_WORDS = {
     "whether",
 }
 
+TOKEN_ALIASES = {
+    "escalation": "escalate",
+    "guaranteed": "guarantee",
+    "guarantees": "guarantee",
+    "promised": "promise",
+    "promises": "promise",
+    "refuses": "refuse",
+}
+
 UNSAFE_TERMS = {
     "guaranteed refund",
     "refund guaranteed",
@@ -611,7 +689,7 @@ GENERIC_EVENT_TOKENS = {
 
 def normalized_tokens(text: str) -> set[str]:
     words = re.findall(r"[a-z0-9]+", text.lower())
-    return {word for word in words if word not in STOP_WORDS}
+    return {TOKEN_ALIASES.get(word, word) for word in words if word not in STOP_WORDS}
 
 
 def semantic_overlap(left: str, right: str) -> float:
@@ -632,9 +710,11 @@ def salient_event_overlap(left: str, right: str) -> float:
 
 def contains_unsafe_claim(text: str) -> bool:
     lowered = text.lower()
+    tokens = normalized_tokens(lowered)
+    if "refuse" in tokens or "not" in tokens:
+        return False
     if any(term in lowered for term in UNSAFE_TERMS):
         return True
-    tokens = set(re.findall(r"[a-z0-9]+", lowered))
     return any(unsafe_tokens <= tokens for unsafe_tokens in UNSAFE_TOKEN_SETS)
 
 
@@ -675,7 +755,7 @@ Run:
 python3 -m pytest tests/test_similarity.py -v
 ```
 
-Expected: `13 passed`.
+Expected: `16 passed`.
 
 ## Task 4: Branch Generation And Prepared Artifacts
 
