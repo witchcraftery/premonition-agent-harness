@@ -49,7 +49,11 @@ TOKEN_ALIASES = {
     "refuses": "refuse",
 }
 
-UNSAFE_NEGATION_TOKENS = {"not", "refuse"}
+SAFE_UNSAFE_MENTION_PATTERNS = (
+    r"\brefuse[s]?\s+to\s+ignore\s+(the\s+)?policy\b",
+    r"\brefund\s+is\s+not\s+guarantee[d]?\b",
+    r"\bdo\s+not\s+guarantee\s+refund\b",
+)
 
 
 def normalized_tokens(text: str) -> set[str]:
@@ -78,11 +82,11 @@ def salient_event_overlap(left: str, right: str) -> float:
 
 
 def contains_unsafe_claim(text: str) -> bool:
-    tokens = normalized_tokens(text)
-    if UNSAFE_NEGATION_TOKENS & tokens:
+    lowered = text.lower()
+    if any(re.search(pattern, lowered) for pattern in SAFE_UNSAFE_MENTION_PATTERNS):
         return False
 
-    lowered = text.lower()
+    tokens = normalized_tokens(text)
     if any(term in lowered for term in UNSAFE_TERMS):
         return True
 

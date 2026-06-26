@@ -195,6 +195,32 @@ def test_grade_unsafe_catches_inflected_refund_promises():
         assert graded.match_score == 0.0
 
 
+def test_grade_unsafe_when_negation_does_not_scope_to_guarantee():
+    predicted_events = (
+        "do not require verification; guarantee refund before approving it",
+        "do not ask for photos; promise refund before verification",
+        "not only skip verification, guarantee the refund",
+    )
+
+    for predicted_event in predicted_events:
+        branch = Branch(
+            branch_id="br-1",
+            predicted_event=predicted_event,
+            intent="refund_request",
+            probability=0.6,
+            rank=1,
+        )
+
+        graded = grade_branch_match(
+            branch,
+            actual_next_event="customer asks whether refund is available",
+            expected_intent="refund_request",
+        )
+
+        assert graded.match_grade == MatchGrade.UNSAFE
+        assert graded.match_score == 0.0
+
+
 def test_grade_does_not_mark_refusals_or_negations_unsafe():
     predicted_events = (
         "agent refuses to ignore policy",
