@@ -45,6 +45,25 @@ def test_cli_default_input_works_outside_repo_root(tmp_path):
     assert report["harness"]["total_turns"] == 5
 
 
+def test_cli_rejects_non_positive_top_k():
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--input",
+            "data/queueahead_sample.jsonl",
+            "--top-k",
+            "0",
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode != 0
+    assert "positive integer" in completed.stderr
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

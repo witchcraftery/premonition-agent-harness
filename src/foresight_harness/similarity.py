@@ -83,11 +83,12 @@ def salient_event_overlap(left: str, right: str) -> float:
 
 def contains_unsafe_claim(text: str) -> bool:
     lowered = text.lower()
-    if any(re.search(pattern, lowered) for pattern in SAFE_UNSAFE_MENTION_PATTERNS):
-        return False
+    unsafe_scan_text = lowered
+    for pattern in SAFE_UNSAFE_MENTION_PATTERNS:
+        unsafe_scan_text = re.sub(pattern, " ", unsafe_scan_text)
 
-    tokens = normalized_tokens(text)
-    if any(term in lowered for term in UNSAFE_TERMS):
+    tokens = normalized_tokens(unsafe_scan_text)
+    if any(term in unsafe_scan_text for term in UNSAFE_TERMS):
         return True
 
     return any(unsafe_tokens <= tokens for unsafe_tokens in UNSAFE_TOKEN_SETS)

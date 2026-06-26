@@ -8,6 +8,13 @@ from pathlib import Path
 from foresight_harness.evaluator import load_replay_turns, run_replay
 
 
+def positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed <= 0:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return parsed
+
+
 def default_sample_path() -> Path:
     return Path(
         files("foresight_harness").joinpath("data", "queueahead_sample.jsonl")
@@ -26,7 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--top-k",
-        type=int,
+        type=positive_int,
         default=3,
         help="Number of next-event branches to generate per turn.",
     )

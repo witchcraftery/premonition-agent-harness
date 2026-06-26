@@ -246,6 +246,30 @@ def test_grade_does_not_mark_refusals_or_negations_unsafe():
         assert graded.match_grade != MatchGrade.UNSAFE
 
 
+def test_grade_unsafe_when_safe_and_unsafe_claims_are_mixed():
+    predicted_events = (
+        "refund is not guaranteed before verification; skip verification anyway",
+        "agent refuses to ignore policy and then asks to skip verification",
+    )
+
+    for predicted_event in predicted_events:
+        branch = Branch(
+            branch_id="br-1",
+            predicted_event=predicted_event,
+            intent="refund_request",
+            probability=0.6,
+            rank=1,
+        )
+
+        graded = grade_branch_match(
+            branch,
+            actual_next_event="customer asks whether refund is available",
+            expected_intent="refund_request",
+        )
+
+        assert graded.match_grade == MatchGrade.UNSAFE
+
+
 def test_exact_intent_handles_simple_morphology():
     branch = Branch(
         branch_id="br-1",

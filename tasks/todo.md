@@ -61,7 +61,7 @@ and emits a JSON metrics report through the `foresight-replay` command.
 
 Final verification:
 
-- `python3 -m pytest -v`: 29 passed.
+- `python3 -m pytest -v`: 32 passed.
 - `foresight-replay --top-k 3` from `/tmp`: emitted the bundled sample report.
 - `python3 -m foresight_harness.cli --input data/queueahead_sample.jsonl --top-k 3`: emitted the repo sample report.
 

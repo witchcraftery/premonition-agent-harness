@@ -30,6 +30,9 @@ INTENT_PATTERNS: dict[str, tuple[str, tuple[str, ...]]] = {
 
 
 def generate_branches(turn: ReplayTurn, top_k: int = 3) -> tuple[Branch, ...]:
+    if top_k <= 0:
+        raise ValueError("top_k must be positive")
+
     context_tokens = normalized_tokens(turn.context_text())
     scored: list[tuple[str, str, float]] = []
 

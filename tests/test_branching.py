@@ -27,6 +27,13 @@ def test_generate_branches_returns_ranked_top_k():
     assert branches[0].probability >= branches[1].probability
 
 
+def test_generate_branches_rejects_non_positive_top_k():
+    import pytest
+
+    with pytest.raises(ValueError, match="top_k must be positive"):
+        generate_branches(make_turn(), top_k=0)
+
+
 def test_prepare_and_select_artifact_for_actual_event():
     turn = make_turn()
     branches = generate_branches(turn, top_k=3)
