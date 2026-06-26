@@ -30,6 +30,11 @@ UNSAFE_TERMS = {
     "skip verification",
 }
 
+UNSAFE_TOKEN_SETS = (
+    frozenset({"promise", "refund", "before", "verification"}),
+    frozenset({"skip", "verification"}),
+)
+
 
 def normalized_tokens(text: str) -> set[str]:
     words = re.findall(r"[a-z0-9]+", text.lower())
@@ -46,7 +51,11 @@ def semantic_overlap(left: str, right: str) -> float:
 
 def contains_unsafe_claim(text: str) -> bool:
     lowered = text.lower()
-    return any(term in lowered for term in UNSAFE_TERMS)
+    if any(term in lowered for term in UNSAFE_TERMS):
+        return True
+
+    tokens = set(re.findall(r"[a-z0-9]+", lowered))
+    return any(unsafe_tokens <= tokens for unsafe_tokens in UNSAFE_TOKEN_SETS)
 
 
 def grade_branch_match(
@@ -59,12 +68,13 @@ def grade_branch_match(
         branch.match_score = 0.0
         return branch
 
-    if branch.intent == expected_intent:
+    overlap = semantic_overlap(branch.predicted_event, actual_next_event)
+
+    if branch.intent == expected_intent and overlap >= 0.30:
         branch.match_grade = MatchGrade.EXACT_INTENT
         branch.match_score = 1.0
         return branch
 
-    overlap = semantic_overlap(branch.predicted_event, actual_next_event)
     branch.match_score = round(overlap, 3)
 
     if overlap >= 0.55:
