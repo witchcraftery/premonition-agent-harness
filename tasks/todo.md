@@ -74,6 +74,12 @@ Sample harness result: `p_at_1=1.0`, `top_3_recall=1.0`,
 - [x] Add experiment config structure.
 - [x] Add per-turn replay logs and miss analysis hooks.
 - [x] Add dataset catalog for benchmark candidates.
-- [ ] Commit scaffolding before trial execution.
-- [ ] Run tests and first configured trial.
+- [x] Commit scaffolding before trial execution.
+- [x] Run tests and first configured trial.
 - [ ] Push verified trial scaffolding to GitHub.
+
+Verification:
+
+- `python3 -m pytest -v`: 36 passed.
+- `foresight-replay --config experiments/queueahead_v1.json --turn-log runs/queueahead_v1.turns.jsonl --miss-report runs/queueahead_v1.misses.json`: completed.
+- First configured trial emitted 25 per-turn rows and a miss report with 5 exact harness hits.

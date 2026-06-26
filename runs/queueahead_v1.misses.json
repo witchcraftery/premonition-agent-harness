@@ -1,0 +1,9 @@
+{
+  "harness_turns": 5,
+  "reason_counts": {
+    "exact_hit": 5
+  },
+  "recommendations": [
+    "Use a larger holdout replay set; this run has no obvious harness failure cluster."
+  ]
+}
