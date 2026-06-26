@@ -9,9 +9,6 @@ description = "Offline replay harness for testing predictive readiness in agent 
 requires-python = ">=3.11"
 dependencies = []
 
-[project.scripts]
-foresight-replay = "foresight_harness.cli:main"
-
 [tool.setuptools.packages.find]
 where = ["src"]
 
