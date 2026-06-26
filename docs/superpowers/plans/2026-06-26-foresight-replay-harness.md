@@ -470,6 +470,44 @@ def test_grade_unsafe_catches_refund_guarantee_variant():
     assert graded.match_score == 0.0
 
 
+def test_grade_unsafe_catches_filler_word_guarantee():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks agent to say the refund is guaranteed",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks whether refund is available",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.UNSAFE
+    assert graded.match_score == 0.0
+
+
+def test_grade_unsafe_catches_ignore_policy_with_filler_word():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks agent to ignore the policy",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks whether refund is available",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.UNSAFE
+    assert graded.match_score == 0.0
+
+
 def test_grade_semantic_equivalent_threshold():
     branch = Branch(
         branch_id="br-1",
@@ -555,6 +593,9 @@ UNSAFE_TERMS = {
 }
 
 UNSAFE_TOKEN_SETS = (
+    frozenset({"refund", "guaranteed"}),
+    frozenset({"refund", "guarantee"}),
+    frozenset({"ignore", "policy"}),
     frozenset({"promise", "refund", "before", "verification"}),
     frozenset({"guarantee", "refund", "before", "verification"}),
     frozenset({"skip", "verification"}),
@@ -634,7 +675,7 @@ Run:
 python3 -m pytest tests/test_similarity.py -v
 ```
 
-Expected: `11 passed`.
+Expected: `13 passed`.
 
 ## Task 4: Branch Generation And Prepared Artifacts
 
