@@ -375,6 +375,61 @@ def test_grade_miss_for_unrelated_branch():
     )
 
     assert graded.match_grade == MatchGrade.MISS
+
+
+def test_grade_unsafe_takes_precedence_over_exact_intent():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks for a guaranteed refund before verification",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks whether refund is available",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.UNSAFE
+    assert graded.match_score == 0.0
+
+
+def test_grade_semantic_equivalent_threshold():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks refund damaged delivery",
+        intent="unknown",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks damaged delivery refund",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.SEMANTIC_EQUIVALENT
+
+
+def test_grade_useful_partial_threshold():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks refund damaged item",
+        intent="unknown",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks duplicate charge refund timing",
+        expected_intent="billing_refund_timing",
+    )
+
+    assert graded.match_grade == MatchGrade.USEFUL_PARTIAL
 ```
 
 - [ ] **Step 2: Run tests to verify failure**
@@ -479,7 +534,7 @@ Run:
 python3 -m pytest tests/test_similarity.py -v
 ```
 
-Expected: `4 passed`.
+Expected: `7 passed`.
 
 ## Task 4: Branch Generation And Prepared Artifacts
 
