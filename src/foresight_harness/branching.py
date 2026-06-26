@@ -26,6 +26,10 @@ INTENT_PATTERNS: dict[str, tuple[str, tuple[str, ...]]] = {
         "customer provides a new shipping address and asks if the order can be changed",
         ("address", "order", "shipped", "shipping", "change", "editable"),
     ),
+    "shipment_status_update": (
+        "warehouse status changes to shipment locked",
+        ("warehouse", "status", "fulfillment", "shipment", "locked", "monitoring"),
+    ),
 }
 
 

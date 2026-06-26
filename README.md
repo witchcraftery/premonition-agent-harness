@@ -119,8 +119,8 @@ foresight-replay \
 ```
 
 The current split benchmark learns guidance on the train split and improves the
-held-out test split from `p_at_1=0.5` to `p_at_1=1.0`, with `test_p_at_1_gain=0.5`
-and `overfit_gap=0.25`.
+held-out test split from `p_at_1=0.6` to `p_at_1=1.0`, with `test_p_at_1_gain=0.4`
+and `overfit_gap=0.2`.
 
 The split report also includes analytics by:
 
@@ -130,6 +130,8 @@ The split report also includes analytics by:
 
 Use these sections to see which areas improved, which stayed weak, and whether
 the backend is predicting user/environment events instead of its own next move.
+The challenge split now includes a non-user fulfillment event:
+`shipment_status_update`, classified as actor `environment`.
 
 ## Replay Data Format
 

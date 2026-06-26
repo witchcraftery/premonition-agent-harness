@@ -124,3 +124,17 @@ Verification:
 - `python3 -m pytest -v`: 47 passed.
 - Regenerated `runs/queueahead_split_benchmark.json` with `analytics.test_segments`, `analytics.train_segments`, and `analytics.focus_areas`.
 - Current held-out test analytics show all events are user events; escalation and troubleshooting improved by `+1.0` `p_at_1`, and overall user-event `p_at_1` improved by `+0.5`.
+
+## Environment Event Coverage
+
+- [x] Add non-user fulfillment/status turns to train and test challenge splits.
+- [x] Add `shipment_status_update` branch pattern.
+- [x] Classify fulfillment events as actor `environment`.
+- [x] Regenerate split benchmark with user and environment actor segments.
+
+Verification:
+
+- `python3 -m pytest -v`: 49 passed.
+- Current held-out test analytics include `user` and `environment` actor segments.
+- User-event `p_at_1` improved from `0.5` to `1.0`; environment-event `p_at_1` held at `1.0`.
+- Overall held-out test `p_at_1` improved from `0.6` to `1.0`; overfit gap was `0.2`; guidance remained promotable.

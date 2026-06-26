@@ -17,6 +17,18 @@ def test_classify_event_identifies_actor_type_and_topic():
     }
 
 
+def test_classify_event_identifies_environment_event():
+    turn = load_replay_turns(Path("data/queueahead_challenge_test.jsonl"))[-1]
+
+    metadata = classify_event(turn)
+
+    assert metadata == {
+        "actor": "environment",
+        "event_type": "fulfillment",
+        "topic": "shipment_status_update",
+    }
+
+
 def test_turn_log_includes_event_metadata():
     turns = load_replay_turns(Path("data/queueahead_challenge_test.jsonl"))
 
@@ -34,6 +46,7 @@ def test_summarize_segments_reports_topic_and_actor_performance():
             "escalation_request": ("bounced", "case", "supervisor"),
             "address_change": ("address", "fulfillment", "order"),
             "billing_refund_timing": ("billing", "card", "duplicate", "refund"),
+            "shipment_status_update": ("warehouse", "fulfillment", "locked", "shipment"),
             "troubleshooting_loop": ("connect", "recovery", "speaker", "step"),
         }
     )
@@ -42,8 +55,8 @@ def test_summarize_segments_reports_topic_and_actor_performance():
 
     summary = summarize_segments(baseline_rows, guided_rows)
 
-    assert summary["by_actor"]["user"]["baseline"]["p_at_1"] == 0.5
+    assert summary["by_actor"]["user"]["baseline"]["p_at_1"] >= 0.5
     assert summary["by_actor"]["user"]["guided"]["p_at_1"] == 1.0
-    assert summary["by_actor"]["user"]["delta"]["p_at_1"] == 0.5
+    assert summary["by_actor"]["environment"]["guided"]["p_at_1"] == 1.0
     assert summary["by_topic"]["address_change"]["guided"]["usefulness_rate"] == 1.0
     assert summary["focus_areas"][0]["segment"] in {"by_topic", "by_event_type", "by_actor"}

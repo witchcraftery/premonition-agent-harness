@@ -10,6 +10,7 @@ TOPIC_EVENT_TYPES = {
     "billing_refund_timing": "billing",
     "escalation_request": "escalation",
     "refund_request": "refund",
+    "shipment_status_update": "fulfillment",
     "troubleshooting_loop": "troubleshooting",
 }
 
