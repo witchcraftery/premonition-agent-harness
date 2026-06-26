@@ -42,7 +42,7 @@ Suggested first experiment:
 ## Foresight Replay Harness Implementation
 
 - [x] Write implementation plan.
-- [ ] Confirm version-control mode before code work.
+- [x] Confirm version-control mode before code work.
 - [x] Create Python package scaffold.
 - [ ] Add replay models and sample data.
 - [ ] Add semantic branch matching.

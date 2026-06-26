@@ -20,7 +20,7 @@
 - Create: `src/foresight_harness/artifacts.py` - prepared artifact creation and cache selection.
 - Create: `src/foresight_harness/baselines.py` - live, retrieval-plus-draft, semantic-cache, and prediction-only baselines.
 - Create: `src/foresight_harness/evaluator.py` - replay runner and metrics.
-- Create: `src/foresight_harness/cli.py` - command-line report runner.
+- Create: `src/foresight_harness/cli.py` - command-line report runner and package script entrypoint.
 - Create: `data/queueahead_sample.jsonl` - small deterministic sample replay fixture.
 - Create: `tests/test_similarity.py` - unit tests for matching.
 - Create: `tests/test_branching.py` - unit tests for branch generation.
@@ -99,9 +99,6 @@ version = "0.1.0"
 description = "Offline replay harness for testing predictive readiness in agent workflows."
 requires-python = ">=3.11"
 dependencies = []
-
-[project.scripts]
-foresight-replay = "foresight_harness.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -920,6 +917,7 @@ Expected: `2 passed`.
 
 **Files:**
 - Create: `src/foresight_harness/cli.py`
+- Modify: `pyproject.toml`
 - Create: `tests/test_cli.py`
 
 - [ ] **Step 1: Write failing CLI test**
@@ -952,6 +950,15 @@ def test_cli_outputs_json_report():
 
     assert "harness" in report
     assert report["harness"]["total_turns"] == 5
+
+
+def test_console_entrypoint_is_declared():
+    from pathlib import Path
+
+    pyproject = Path("pyproject.toml").read_text(encoding="utf-8")
+
+    assert "[project.scripts]" in pyproject
+    assert 'foresight-replay = "foresight_harness.cli:main"' in pyproject
 ```
 
 - [ ] **Step 2: Run test to verify failure**
@@ -962,7 +969,7 @@ Run:
 python3 -m pytest tests/test_cli.py -v
 ```
 
-Expected: fail because `foresight_harness.cli` does not exist.
+Expected: fail because `foresight_harness.cli` does not exist and the console entrypoint is not declared yet.
 
 - [ ] **Step 3: Implement CLI**
 
@@ -1008,6 +1015,13 @@ if __name__ == "__main__":
     main()
 ```
 
+Modify `pyproject.toml` to add the console script after the `[project]` dependencies block:
+
+```toml
+[project.scripts]
+foresight-replay = "foresight_harness.cli:main"
+```
+
 - [ ] **Step 4: Run CLI test**
 
 Run:
@@ -1016,7 +1030,7 @@ Run:
 python3 -m pytest tests/test_cli.py -v
 ```
 
-Expected: `1 passed`.
+Expected: `2 passed`.
 
 - [ ] **Step 5: Run sample report**
 
