@@ -1,5 +1,6 @@
 from foresight_harness.artifacts import prepare_artifacts, select_artifact
 from foresight_harness.branching import generate_branches
+from foresight_harness.guidance import Guidance
 from foresight_harness.models import ReplayTurn
 
 
@@ -52,6 +53,58 @@ def test_generate_branches_predicts_environment_fulfillment_event():
     branches = generate_branches(turn, top_k=3)
 
     assert branches[0].intent == "shipment_status_update"
+
+
+def test_environment_guidance_expands_only_when_cues_cluster():
+    guidance = Guidance(
+        intent_keywords={
+            "shipment_status_update": (
+                "carrier",
+                "delivery",
+                "exception",
+                "feed",
+                "hold",
+                "keep",
+            )
+        }
+    )
+    weak_turn = ReplayTurn.from_dict(
+        {
+            "turn_id": "weak-env-test",
+            "conversation": [
+                {"role": "customer", "content": "Please keep watching the warehouse."},
+                {"role": "agent", "content": "I am monitoring fulfillment."},
+            ],
+            "actual_next_event": "warehouse status changes to shipment locked",
+            "policy_context": "Orders cannot be edited after fulfillment locks shipment.",
+            "expected_intent": "shipment_status_update",
+            "latency_budget_ms": 800,
+        }
+    )
+    hard_turn = ReplayTurn.from_dict(
+        {
+            "turn_id": "hard-env-test",
+            "conversation": [
+                {
+                    "role": "customer",
+                    "content": "If the carrier feed shows an exception, keep watching.",
+                },
+                {"role": "agent", "content": "I am monitoring the carrier feed."},
+            ],
+            "actual_next_event": "carrier feed changes to delivery exception hold",
+            "policy_context": "Orders cannot be edited during carrier exception holds.",
+            "expected_intent": "shipment_status_update",
+            "latency_budget_ms": 800,
+        }
+    )
+
+    weak_branch = generate_branches(weak_turn, guidance=guidance)[0]
+    hard_branch = generate_branches(hard_turn, guidance=guidance)[0]
+
+    assert "delivery exception hold" not in weak_branch.predicted_event
+    assert "delivery" in hard_branch.predicted_event
+    assert "exception" in hard_branch.predicted_event
+    assert "hold" in hard_branch.predicted_event
 
 
 def test_prepare_and_select_artifact_for_actual_event():

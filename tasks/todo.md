@@ -123,7 +123,7 @@ Verification:
 
 - `python3 -m pytest -v`: 47 passed.
 - Regenerated `runs/queueahead_split_benchmark.json` with `analytics.test_segments`, `analytics.train_segments`, and `analytics.focus_areas`.
-- Current held-out test analytics show all events are user events; escalation and troubleshooting improved by `+1.0` `p_at_1`, and overall user-event `p_at_1` improved by `+0.5`.
+- Initial held-out analytics showed only user events; escalation and troubleshooting improved by `+1.0` `p_at_1`, motivating explicit environment-event coverage next.
 
 ## Environment Event Coverage
 
@@ -136,5 +136,20 @@ Verification:
 
 - `python3 -m pytest -v`: 49 passed.
 - Current held-out test analytics include `user` and `environment` actor segments.
-- User-event `p_at_1` improved from `0.5` to `1.0`; environment-event `p_at_1` held at `1.0`.
-- Overall held-out test `p_at_1` improved from `0.6` to `1.0`; overfit gap was `0.2`; guidance remained promotable.
+- Initial environment coverage added a warehouse-lock external event and confirmed both `user` and `environment` actor segments were reported.
+- The following hard-environment pass added carrier exception hold events and required the environment segment to improve on held-out data.
+
+## Hard Environment Event Coverage
+
+- [x] Add carrier exception hold turns to train and test challenge splits.
+- [x] Require the held-out environment segment to improve, not merely stay high.
+- [x] Make shipment-status branch text use clustered learned cues for hard external events.
+- [x] Regenerate challenge loop and split benchmark reports.
+
+Verification:
+
+- `python3 -m pytest -v`: 49 passed.
+- `foresight-replay --config experiments/queueahead_challenge_loop.json --iterations 3 --loop-report runs/queueahead_challenge_loop.json --guidance-markdown runs/queueahead_challenge_guidance.md`: completed.
+- `foresight-replay --train-config experiments/queueahead_challenge_train.json --test-config experiments/queueahead_challenge_test.json --iterations 3 --benchmark-report runs/queueahead_split_benchmark.json`: completed.
+- Challenge loop improved from `p_at_1=0.333` and `usefulness_rate=0.167` on iteration 1 to `p_at_1=1.0` and `usefulness_rate=1.0` on iteration 2.
+- Held-out test `p_at_1` improved from `0.5` to `1.0`; environment-event `p_at_1` improved from `0.5` to `1.0`; overfit gap was `0.167`; guidance remained promotable.

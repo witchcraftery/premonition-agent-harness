@@ -35,6 +35,18 @@
         "supervisor",
         "unresolved"
       ],
+      "shipment_status_update": [
+        "carrier",
+        "delivery",
+        "exception",
+        "feed",
+        "hold",
+        "keep",
+        "logistics",
+        "promising",
+        "throws",
+        "watching"
+      ],
       "troubleshooting_loop": [
         "connect",
         "factory",
@@ -49,26 +61,31 @@
       ]
     }
   },
-  "guidance_markdown": "# Premonition Guidance\n\nLearned intent cues from replay misses.\n\n## address_change\n\naddress, changed, check, fulfillment, going, left, locked, new, old, order\n\n## billing_refund_timing\n\nbilling, card, charge, duplicate, identical, records, refund, there, two, when\n\n## escalation_request\n\nbetween, bounced, case, escalate, owns, reviewing, supervisor, unresolved\n\n## troubleshooting_loop\n\nconnect, factory, next, path, recovery, reports, result, speaker, step, steps\n",
+  "guidance_markdown": "# Premonition Guidance\n\nLearned intent cues from replay misses.\n\n## address_change\n\naddress, changed, check, fulfillment, going, left, locked, new, old, order\n\n## billing_refund_timing\n\nbilling, card, charge, duplicate, identical, records, refund, there, two, when\n\n## escalation_request\n\nbetween, bounced, case, escalate, owns, reviewing, supervisor, unresolved\n\n## shipment_status_update\n\ncarrier, delivery, exception, feed, hold, keep, logistics, promising, throws, watching\n\n## troubleshooting_loop\n\nconnect, factory, next, path, recovery, reports, result, speaker, step, steps\n",
   "iterations": [
     {
       "assessment": {
         "exact_top_1_turns": [
-          "qc-003"
+          "qc-003",
+          "qc-005"
         ],
         "missed_turns": [
           "qc-001",
           "qc-002",
-          "qc-004"
+          "qc-004",
+          "qc-006"
         ],
         "p_at_1_delta": 0.0,
-        "prepared_turns": [],
+        "prepared_turns": [
+          "qc-005"
+        ],
         "preparedness_delta": 0.0,
         "unprepared_turns": [
           "qc-001",
           "qc-002",
           "qc-003",
-          "qc-004"
+          "qc-004",
+          "qc-006"
         ]
       },
       "guidance": {
@@ -78,47 +95,47 @@
       "report": {
         "harness": {
           "branch_hit_rate": 0.167,
-          "cache_hit_rate": 0.0,
+          "cache_hit_rate": 0.167,
           "median_latency_ms": 775,
-          "median_token_cost": 149,
-          "p_at_1": 0.25,
+          "median_token_cost": 144,
+          "p_at_1": 0.333,
           "stale_artifact_rate": 0.0,
           "top_3_recall": 0.5,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
-          "usefulness_rate": 0.0
+          "usefulness_rate": 0.167
         },
         "live_agent": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 775,
+          "median_latency_ms": 800,
           "median_token_cost": 90,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "prediction_only": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 775,
+          "median_latency_ms": 800,
           "median_token_cost": 45,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 0.0
         },
         "retrieval_plus_draft": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 581,
+          "median_latency_ms": 600,
           "median_token_cost": 120,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "semantic_cache": {
-          "cache_hit_rate": 0.5,
-          "median_latency_ms": 440,
-          "median_token_cost": 62,
-          "total_turns": 4,
+          "cache_hit_rate": 0.333,
+          "median_latency_ms": 750,
+          "median_token_cost": 90,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
-          "usefulness_rate": 0.5
+          "usefulness_rate": 0.333
         }
       }
     },
@@ -128,17 +145,21 @@
           "qc-001",
           "qc-002",
           "qc-003",
-          "qc-004"
+          "qc-004",
+          "qc-005",
+          "qc-006"
         ],
         "missed_turns": [],
-        "p_at_1_delta": 0.75,
+        "p_at_1_delta": 0.667,
         "prepared_turns": [
           "qc-001",
           "qc-002",
           "qc-003",
-          "qc-004"
+          "qc-004",
+          "qc-005",
+          "qc-006"
         ],
-        "preparedness_delta": 1.0,
+        "preparedness_delta": 0.833,
         "unprepared_turns": []
       },
       "guidance": {
@@ -176,6 +197,18 @@
             "reviewing",
             "supervisor",
             "unresolved"
+          ],
+          "shipment_status_update": [
+            "carrier",
+            "delivery",
+            "exception",
+            "feed",
+            "hold",
+            "keep",
+            "logistics",
+            "promising",
+            "throws",
+            "watching"
           ],
           "troubleshooting_loop": [
             "connect",
@@ -197,45 +230,45 @@
           "branch_hit_rate": 0.333,
           "cache_hit_rate": 1.0,
           "median_latency_ms": 120,
-          "median_token_cost": 149,
+          "median_token_cost": 146,
           "p_at_1": 1.0,
           "stale_artifact_rate": 0.0,
           "top_3_recall": 1.0,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "live_agent": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 775,
+          "median_latency_ms": 800,
           "median_token_cost": 90,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "prediction_only": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 775,
+          "median_latency_ms": 800,
           "median_token_cost": 45,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 0.0
         },
         "retrieval_plus_draft": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 581,
+          "median_latency_ms": 600,
           "median_token_cost": 120,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "semantic_cache": {
-          "cache_hit_rate": 0.5,
-          "median_latency_ms": 440,
-          "median_token_cost": 62,
-          "total_turns": 4,
+          "cache_hit_rate": 0.333,
+          "median_latency_ms": 750,
+          "median_token_cost": 90,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
-          "usefulness_rate": 0.5
+          "usefulness_rate": 0.333
         }
       }
     },
@@ -245,7 +278,9 @@
           "qc-001",
           "qc-002",
           "qc-003",
-          "qc-004"
+          "qc-004",
+          "qc-005",
+          "qc-006"
         ],
         "missed_turns": [],
         "p_at_1_delta": 0.0,
@@ -253,7 +288,9 @@
           "qc-001",
           "qc-002",
           "qc-003",
-          "qc-004"
+          "qc-004",
+          "qc-005",
+          "qc-006"
         ],
         "preparedness_delta": 0.0,
         "unprepared_turns": []
@@ -294,6 +331,18 @@
             "supervisor",
             "unresolved"
           ],
+          "shipment_status_update": [
+            "carrier",
+            "delivery",
+            "exception",
+            "feed",
+            "hold",
+            "keep",
+            "logistics",
+            "promising",
+            "throws",
+            "watching"
+          ],
           "troubleshooting_loop": [
             "connect",
             "factory",
@@ -314,45 +363,45 @@
           "branch_hit_rate": 0.333,
           "cache_hit_rate": 1.0,
           "median_latency_ms": 120,
-          "median_token_cost": 149,
+          "median_token_cost": 146,
           "p_at_1": 1.0,
           "stale_artifact_rate": 0.0,
           "top_3_recall": 1.0,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "live_agent": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 775,
+          "median_latency_ms": 800,
           "median_token_cost": 90,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "prediction_only": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 775,
+          "median_latency_ms": 800,
           "median_token_cost": 45,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 0.0
         },
         "retrieval_plus_draft": {
           "cache_hit_rate": 0.0,
-          "median_latency_ms": 581,
+          "median_latency_ms": 600,
           "median_token_cost": 120,
-          "total_turns": 4,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 1.0
         },
         "semantic_cache": {
-          "cache_hit_rate": 0.5,
-          "median_latency_ms": 440,
-          "median_token_cost": 62,
-          "total_turns": 4,
+          "cache_hit_rate": 0.333,
+          "median_latency_ms": 750,
+          "median_token_cost": 90,
+          "total_turns": 6,
           "unsafe_leak_rate": 0.0,
-          "usefulness_rate": 0.5
+          "usefulness_rate": 0.333
         }
       }
     }

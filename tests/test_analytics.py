@@ -46,7 +46,15 @@ def test_summarize_segments_reports_topic_and_actor_performance():
             "escalation_request": ("bounced", "case", "supervisor"),
             "address_change": ("address", "fulfillment", "order"),
             "billing_refund_timing": ("billing", "card", "duplicate", "refund"),
-            "shipment_status_update": ("warehouse", "fulfillment", "locked", "shipment"),
+            "shipment_status_update": (
+                "carrier",
+                "exception",
+                "fulfillment",
+                "hold",
+                "locked",
+                "shipment",
+                "warehouse",
+            ),
             "troubleshooting_loop": ("connect", "recovery", "speaker", "step"),
         }
     )
@@ -58,5 +66,6 @@ def test_summarize_segments_reports_topic_and_actor_performance():
     assert summary["by_actor"]["user"]["baseline"]["p_at_1"] >= 0.5
     assert summary["by_actor"]["user"]["guided"]["p_at_1"] == 1.0
     assert summary["by_actor"]["environment"]["guided"]["p_at_1"] == 1.0
+    assert summary["by_actor"]["environment"]["delta"]["p_at_1"] > 0
     assert summary["by_topic"]["address_change"]["guided"]["usefulness_rate"] == 1.0
     assert summary["focus_areas"][0]["segment"] in {"by_topic", "by_event_type", "by_actor"}

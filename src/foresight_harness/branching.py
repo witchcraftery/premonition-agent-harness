@@ -5,6 +5,8 @@ from collections import Counter
 from foresight_harness.models import Branch, ReplayTurn
 from foresight_harness.similarity import normalized_tokens
 
+MIN_CLUSTERED_GUIDANCE_CUES = 3
+
 INTENT_PATTERNS: dict[str, tuple[str, tuple[str, ...]]] = {
     "refund_request": (
         "customer asks whether a refund or replacement is available",
@@ -49,7 +51,18 @@ def generate_branches(turn: ReplayTurn, top_k: int = 3, guidance=None) -> tuple[
         keyword_score = sum(keyword_counts.values()) / max(len(keywords), 1)
         prior = 0.18
         probability = min(0.85, prior + keyword_score)
-        scored.append((intent, event, round(probability, 3)))
+        matched_guidance = tuple(
+            keyword for keyword in guidance_keywords if keyword in context_tokens
+        )
+        predicted_event = event
+        if matched_guidance and intent == "shipment_status_update":
+            cue_words = (
+                guidance_keywords
+                if len(matched_guidance) >= MIN_CLUSTERED_GUIDANCE_CUES
+                else matched_guidance
+            )
+            predicted_event = f"{event} {' '.join(cue_words)}"
+        scored.append((intent, predicted_event, round(probability, 3)))
 
     ranked = sorted(scored, key=lambda item: item[2], reverse=True)[:top_k]
     return tuple(
