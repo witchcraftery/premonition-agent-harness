@@ -18,6 +18,15 @@ from foresight_harness.models import MatchGrade, ReplayTurn, RunResult
 from foresight_harness.similarity import grade_branch_match
 
 
+VARIANT_ORDER = (
+    "live_agent",
+    "retrieval_plus_draft",
+    "semantic_cache",
+    "prediction_only",
+    "harness",
+)
+
+
 def load_replay_turns(path: Path) -> tuple[ReplayTurn, ...]:
     turns: list[ReplayTurn] = []
     with path.open("r", encoding="utf-8") as handle:
@@ -115,6 +124,12 @@ def run_replay(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> dict[str, dict[
         ):
             grouped[result.variant].append(result)
 
-    report = {name: summarize(results) for name, results in grouped.items() if name != "harness"}
-    report["harness"] = summarize_harness(grouped["harness"], top_k=top_k)
+    report = {
+        name: (
+            summarize_harness(grouped[name], top_k=top_k)
+            if name == "harness"
+            else summarize(grouped[name])
+        )
+        for name in VARIANT_ORDER
+    }
     return report
