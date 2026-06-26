@@ -1,0 +1,8 @@
+{
+  "name": "queueahead_challenge_loop",
+  "dataset": "queueahead_challenge",
+  "split": "dev",
+  "input_path": "../data/queueahead_challenge.jsonl",
+  "top_k": 3,
+  "notes": "Challenge split for testing whether iterative guidance can improve p_at_1 and exact preparedness."
+}

@@ -288,6 +288,24 @@ def test_exact_intent_handles_simple_morphology():
     assert graded.match_grade == MatchGrade.EXACT_INTENT
 
 
+def test_exact_intent_handles_payment_refund_synonyms():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks how long a duplicate charge refund will take",
+        intent="billing_refund_timing",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks when the duplicate payment will be refunded",
+        expected_intent="billing_refund_timing",
+    )
+
+    assert graded.match_grade == MatchGrade.EXACT_INTENT
+
+
 def test_grade_semantic_equivalent_threshold():
     branch = Branch(
         branch_id="br-1",

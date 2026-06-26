@@ -83,3 +83,17 @@ Verification:
 - `python3 -m pytest -v`: 36 passed.
 - `foresight-replay --config experiments/queueahead_v1.json --turn-log runs/queueahead_v1.turns.jsonl --miss-report runs/queueahead_v1.misses.json`: completed.
 - First configured trial emitted 25 per-turn rows and a miss report with 5 exact harness hits.
+
+## Guided Premonition Loop
+
+- [x] Add challenge replay split for harder QueueAhead turns.
+- [x] Add learned guidance loop with configurable iteration count.
+- [x] Assess exact top-1 hits, misses, prepared turns, and unprepared turns per iteration.
+- [x] Filter low-signal guidance tokens.
+- [x] Regenerate challenge loop report and guidance markdown.
+
+Verification:
+
+- `python3 -m pytest -v`: 41 passed.
+- `foresight-replay --config experiments/queueahead_challenge_loop.json --iterations 3 --loop-report runs/queueahead_challenge_loop.json --guidance-markdown runs/queueahead_challenge_guidance.md`: completed.
+- Challenge loop improved `p_at_1` from `0.25` to `1.0` and `usefulness_rate` from `0.0` to `1.0` by iteration 2, then held steady on iteration 3.

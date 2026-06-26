@@ -29,7 +29,7 @@ INTENT_PATTERNS: dict[str, tuple[str, tuple[str, ...]]] = {
 }
 
 
-def generate_branches(turn: ReplayTurn, top_k: int = 3) -> tuple[Branch, ...]:
+def generate_branches(turn: ReplayTurn, top_k: int = 3, guidance=None) -> tuple[Branch, ...]:
     if top_k <= 0:
         raise ValueError("top_k must be positive")
 
@@ -37,7 +37,11 @@ def generate_branches(turn: ReplayTurn, top_k: int = 3) -> tuple[Branch, ...]:
     scored: list[tuple[str, str, float]] = []
 
     for intent, (event, keywords) in INTENT_PATTERNS.items():
-        keyword_counts = Counter(keyword for keyword in keywords if keyword in context_tokens)
+        guidance_keywords = guidance.keywords_for(intent) if guidance else tuple()
+        effective_keywords = tuple(dict.fromkeys((*keywords, *guidance_keywords)))
+        keyword_counts = Counter(
+            keyword for keyword in effective_keywords if keyword in context_tokens
+        )
         keyword_score = sum(keyword_counts.values()) / max(len(keywords), 1)
         prior = 0.18
         probability = min(0.85, prior + keyword_score)

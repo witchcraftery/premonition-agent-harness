@@ -44,8 +44,12 @@ TOKEN_ALIASES = {
     "escalation": "escalate",
     "guaranteed": "guarantee",
     "guarantees": "guarantee",
+    "payment": "charge",
+    "payments": "charge",
     "promised": "promise",
     "promises": "promise",
+    "refunded": "refund",
+    "refunding": "refund",
     "refuses": "refuse",
 }
 

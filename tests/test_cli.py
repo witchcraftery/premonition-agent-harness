@@ -93,6 +93,37 @@ def test_cli_writes_turn_log_and_miss_report(tmp_path):
     assert miss_summary["harness_turns"] == 5
 
 
+def test_cli_runs_guidance_loop(tmp_path):
+    loop_report = tmp_path / "loop-report.json"
+    guidance_markdown = tmp_path / "guidance.md"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--config",
+            "experiments/queueahead_challenge_loop.json",
+            "--iterations",
+            "3",
+            "--loop-report",
+            str(loop_report),
+            "--guidance-markdown",
+            str(guidance_markdown),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    loop_summary = json.loads(loop_report.read_text(encoding="utf-8"))
+
+    assert report["iterations"][-1]["report"]["harness"]["p_at_1"] >= 0.5
+    assert loop_summary == report
+    assert guidance_markdown.read_text(encoding="utf-8").startswith("# Premonition Guidance")
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

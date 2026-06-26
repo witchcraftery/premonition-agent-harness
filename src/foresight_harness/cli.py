@@ -7,6 +7,7 @@ from pathlib import Path
 
 from foresight_harness.evaluator import load_replay_turns, run_replay, run_replay_turn_log
 from foresight_harness.experiments import load_trial_config
+from foresight_harness.guidance import run_guidance_loop
 from foresight_harness.learning import analyze_harness_misses
 
 
@@ -54,6 +55,22 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="Optional JSON path for harness miss analysis.",
     )
+    parser.add_argument(
+        "--iterations",
+        type=positive_int,
+        default=1,
+        help="Number of guidance loop iterations to run.",
+    )
+    parser.add_argument(
+        "--loop-report",
+        type=Path,
+        help="Optional JSON path for the full guidance loop report.",
+    )
+    parser.add_argument(
+        "--guidance-markdown",
+        type=Path,
+        help="Optional Markdown path for learned guidance notes.",
+    )
     return parser
 
 
@@ -67,6 +84,20 @@ def main() -> None:
         top_k = config.top_k
 
     turns = load_replay_turns(input_path)
+    if args.iterations > 1:
+        loop_report = run_guidance_loop(turns, iterations=args.iterations, top_k=top_k)
+        if args.loop_report:
+            with args.loop_report.open("w", encoding="utf-8") as handle:
+                json.dump(loop_report, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+        if args.guidance_markdown:
+            args.guidance_markdown.write_text(
+                str(loop_report["guidance_markdown"]),
+                encoding="utf-8",
+            )
+        print(json.dumps(loop_report, indent=2, sort_keys=True))
+        return
+
     report = run_replay(turns, top_k=top_k)
     turn_log = run_replay_turn_log(turns, top_k=top_k)
 

@@ -36,8 +36,8 @@ def load_replay_turns(path: Path) -> tuple[ReplayTurn, ...]:
     return tuple(turns)
 
 
-def run_harness(turn: ReplayTurn, top_k: int = 3) -> RunResult:
-    branches = generate_branches(turn, top_k=top_k)
+def run_harness(turn: ReplayTurn, top_k: int = 3, guidance=None) -> RunResult:
+    branches = generate_branches(turn, top_k=top_k, guidance=guidance)
     graded = tuple(
         grade_branch_match(branch, turn.actual_next_event, turn.expected_intent)
         for branch in branches
@@ -57,13 +57,13 @@ def run_harness(turn: ReplayTurn, top_k: int = 3) -> RunResult:
     )
 
 
-def run_turn_results(turn: ReplayTurn, top_k: int = 3) -> tuple[RunResult, ...]:
+def run_turn_results(turn: ReplayTurn, top_k: int = 3, guidance=None) -> tuple[RunResult, ...]:
     return (
         live_agent(turn),
         retrieval_plus_draft(turn),
         semantic_cache(turn),
         prediction_only(turn),
-        run_harness(turn, top_k=top_k),
+        run_harness(turn, top_k=top_k, guidance=guidance),
     )
 
 
@@ -121,11 +121,15 @@ def summarize_harness(results: Iterable[RunResult], top_k: int) -> dict[str, flo
     return summary
 
 
-def run_replay(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> dict[str, dict[str, float | int]]:
+def run_replay(
+    turns: tuple[ReplayTurn, ...],
+    top_k: int = 3,
+    guidance=None,
+) -> dict[str, dict[str, float | int]]:
     grouped: dict[str, list[RunResult]] = defaultdict(list)
 
     for turn in turns:
-        for result in run_turn_results(turn, top_k=top_k):
+        for result in run_turn_results(turn, top_k=top_k, guidance=guidance):
             grouped[result.variant].append(result)
 
     report = {
@@ -139,10 +143,14 @@ def run_replay(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> dict[str, dict[
     return report
 
 
-def run_replay_turn_log(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> tuple[dict[str, object], ...]:
+def run_replay_turn_log(
+    turns: tuple[ReplayTurn, ...],
+    top_k: int = 3,
+    guidance=None,
+) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
     for turn in turns:
-        for result in run_turn_results(turn, top_k=top_k):
+        for result in run_turn_results(turn, top_k=top_k, guidance=guidance):
             rows.append(
                 {
                     "turn_id": turn.turn_id,

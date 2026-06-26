@@ -94,6 +94,20 @@ foresight-replay \
   --miss-report runs/queueahead_v1.misses.json
 ```
 
+Run an iterative guidance loop on the challenge split:
+
+```bash
+foresight-replay \
+  --config experiments/queueahead_challenge_loop.json \
+  --iterations 3 \
+  --loop-report runs/queueahead_challenge_loop.json \
+  --guidance-markdown runs/queueahead_challenge_guidance.md
+```
+
+The current challenge loop improves the harness from `p_at_1=0.25` and
+`usefulness_rate=0.0` on iteration 1 to `p_at_1=1.0` and
+`usefulness_rate=1.0` on iteration 2, then holds those scores on iteration 3.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -137,5 +151,9 @@ The experimental loop is:
 6. Analyze misses.
 7. Change one backend lever.
 8. Rerun the same split and compare.
+
+The first guided loop changes one lever: learned intent cues. The loop records
+which turns were exact top-1 hits, which remained missed, which prepared useful
+artifacts, and which were still unprepared.
 
 Candidate benchmark families are tracked in `docs/dataset-catalog.md`.
