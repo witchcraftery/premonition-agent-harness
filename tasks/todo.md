@@ -45,7 +45,7 @@ Suggested first experiment:
 - [x] Confirm version-control mode before code work.
 - [x] Create Python package scaffold.
 - [x] Add replay models and sample data.
-- [ ] Add semantic branch matching.
+- [x] Add semantic branch matching.
 - [ ] Add branch generation and artifacts.
 - [ ] Add baselines and evaluator.
 - [ ] Add CLI report runner.
