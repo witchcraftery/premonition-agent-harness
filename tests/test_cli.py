@@ -124,6 +124,36 @@ def test_cli_runs_guidance_loop(tmp_path):
     assert guidance_markdown.read_text(encoding="utf-8").startswith("# Premonition Guidance")
 
 
+def test_cli_runs_split_benchmark(tmp_path):
+    output = tmp_path / "split-benchmark.json"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--train-config",
+            "experiments/queueahead_challenge_train.json",
+            "--test-config",
+            "experiments/queueahead_challenge_test.json",
+            "--iterations",
+            "3",
+            "--benchmark-report",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    saved = json.loads(output.read_text(encoding="utf-8"))
+
+    assert saved == report
+    assert report["generalization"]["test_p_at_1_gain"] > 0
+    assert report["promote_guidance"] is True
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

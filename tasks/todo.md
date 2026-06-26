@@ -97,3 +97,17 @@ Verification:
 - `python3 -m pytest -v`: 41 passed.
 - `foresight-replay --config experiments/queueahead_challenge_loop.json --iterations 3 --loop-report runs/queueahead_challenge_loop.json --guidance-markdown runs/queueahead_challenge_guidance.md`: completed.
 - Challenge loop improved `p_at_1` from `0.25` to `1.0` and `usefulness_rate` from `0.0` to `1.0` by iteration 2, then held steady on iteration 3.
+
+## Train/Test Split Benchmark
+
+- [x] Add held-out QueueAhead challenge test split.
+- [x] Add train/test experiment configs.
+- [x] Add split benchmark runner.
+- [x] Add CLI split benchmark mode.
+- [x] Record split benchmark report.
+
+Verification:
+
+- `python3 -m pytest -v`: 44 passed.
+- `foresight-replay --train-config experiments/queueahead_challenge_train.json --test-config experiments/queueahead_challenge_test.json --iterations 3 --benchmark-report runs/queueahead_split_benchmark.json`: completed.
+- Train `p_at_1` improved from `0.25` to `1.0`; test `p_at_1` improved from `0.5` to `1.0`; overfit gap was `0.25`; guidance was promotable.

@@ -108,6 +108,20 @@ The current challenge loop improves the harness from `p_at_1=0.25` and
 `usefulness_rate=0.0` on iteration 1 to `p_at_1=1.0` and
 `usefulness_rate=1.0` on iteration 2, then holds those scores on iteration 3.
 
+Run a train/test split benchmark:
+
+```bash
+foresight-replay \
+  --train-config experiments/queueahead_challenge_train.json \
+  --test-config experiments/queueahead_challenge_test.json \
+  --iterations 3 \
+  --benchmark-report runs/queueahead_split_benchmark.json
+```
+
+The current split benchmark learns guidance on the train split and improves the
+held-out test split from `p_at_1=0.5` to `p_at_1=1.0`, with `test_p_at_1_gain=0.5`
+and `overfit_gap=0.25`.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -155,5 +169,9 @@ The experimental loop is:
 The first guided loop changes one lever: learned intent cues. The loop records
 which turns were exact top-1 hits, which remained missed, which prepared useful
 artifacts, and which were still unprepared.
+
+The split benchmark adds a generalization gate: guidance is learned on a train
+split, evaluated on a separate test split, and promoted only when held-out
+accuracy improves without unsafe leakage.
 
 Candidate benchmark families are tracked in `docs/dataset-catalog.md`.

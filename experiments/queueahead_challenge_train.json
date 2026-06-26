@@ -1,0 +1,8 @@
+{
+  "name": "queueahead_challenge_train",
+  "dataset": "queueahead_challenge",
+  "split": "train",
+  "input_path": "../data/queueahead_challenge.jsonl",
+  "top_k": 3,
+  "notes": "Training split for guided premonition split benchmark."
+}
