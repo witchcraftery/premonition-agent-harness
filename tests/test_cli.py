@@ -64,6 +64,35 @@ def test_cli_rejects_non_positive_top_k():
     assert "positive integer" in completed.stderr
 
 
+def test_cli_writes_turn_log_and_miss_report(tmp_path):
+    turn_log = tmp_path / "turn-log.jsonl"
+    miss_report = tmp_path / "miss-report.json"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--config",
+            "experiments/queueahead_v1.json",
+            "--turn-log",
+            str(turn_log),
+            "--miss-report",
+            str(miss_report),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    miss_summary = json.loads(miss_report.read_text(encoding="utf-8"))
+
+    assert report["harness"]["total_turns"] == 5
+    assert turn_log.read_text(encoding="utf-8").count("\n") == 25
+    assert miss_summary["harness_turns"] == 5
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

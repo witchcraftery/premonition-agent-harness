@@ -37,6 +37,35 @@ The report includes:
 - `unsafe_leak_rate`: how often a branch violates a safety or policy constraint.
 - `stale_artifact_rate`: placeholder for future freshness checks.
 
+## Backend Architecture
+
+The frontend LLM performs the conversation. The Premonition Backend performs the
+rehearsal.
+
+The backend is organized around five pieces:
+
+- **Branch generator**: predicts likely next events.
+- **Artifact builder**: prepares one draft, policy check, or tool plan per useful branch.
+- **Safety filter**: blocks unsafe or speculative claims from becoming frontend context.
+- **Premonition packet**: hands the frontend compact readiness context only after a branch matches.
+- **Replay evaluator**: compares predictions, preparedness, latency, cost, and safety across runs.
+
+The packet format is intentionally small:
+
+```json
+{
+  "turn_id": "qa-001",
+  "matched_intent": "refund_request",
+  "confidence": 0.85,
+  "prepared_artifact": "I can help with a refund or replacement after photo verification.",
+  "policy_checks": ["Damaged deliveries qualify after photo verification."],
+  "freshness": "valid",
+  "unsafe": false
+}
+```
+
+See `PREMONITION.md` for the backend playbook.
+
 ## Quick Start
 
 ```bash
@@ -54,6 +83,15 @@ Run the test suite:
 
 ```bash
 python3 -m pytest -v
+```
+
+Run the first trial loop and write per-turn evidence:
+
+```bash
+foresight-replay \
+  --config experiments/queueahead_v1.json \
+  --turn-log runs/queueahead_v1.turns.jsonl \
+  --miss-report runs/queueahead_v1.misses.json
 ```
 
 ## Replay Data Format
@@ -86,3 +124,18 @@ Useful expansion points:
 - Add human labels for `exact_intent`, `semantic_equivalent`, `useful_partial`, `miss`, and `unsafe`.
 - Track stale artifact rates when policies, user state, or account context changes.
 - Add a real semantic scorer after the deterministic benchmark is stable.
+
+## Benchmark Loop
+
+The experimental loop is:
+
+1. Freeze a replay split.
+2. Generate top-k premonition branches.
+3. Prepare artifacts for useful branches.
+4. Reveal the actual next event.
+5. Grade branch match and packet usefulness.
+6. Analyze misses.
+7. Change one backend lever.
+8. Rerun the same split and compare.
+
+Candidate benchmark families are tracked in `docs/dataset-catalog.md`.

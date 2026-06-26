@@ -57,6 +57,16 @@ def run_harness(turn: ReplayTurn, top_k: int = 3) -> RunResult:
     )
 
 
+def run_turn_results(turn: ReplayTurn, top_k: int = 3) -> tuple[RunResult, ...]:
+    return (
+        live_agent(turn),
+        retrieval_plus_draft(turn),
+        semantic_cache(turn),
+        prediction_only(turn),
+        run_harness(turn, top_k=top_k),
+    )
+
+
 def summarize(results: Iterable[RunResult]) -> dict[str, float | int]:
     rows = tuple(results)
     total = len(rows)
@@ -115,13 +125,7 @@ def run_replay(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> dict[str, dict[
     grouped: dict[str, list[RunResult]] = defaultdict(list)
 
     for turn in turns:
-        for result in (
-            live_agent(turn),
-            retrieval_plus_draft(turn),
-            semantic_cache(turn),
-            prediction_only(turn),
-            run_harness(turn, top_k=top_k),
-        ):
+        for result in run_turn_results(turn, top_k=top_k):
             grouped[result.variant].append(result)
 
     report = {
@@ -133,3 +137,38 @@ def run_replay(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> dict[str, dict[
         for name in VARIANT_ORDER
     }
     return report
+
+
+def run_replay_turn_log(turns: tuple[ReplayTurn, ...], top_k: int = 3) -> tuple[dict[str, object], ...]:
+    rows: list[dict[str, object]] = []
+    for turn in turns:
+        for result in run_turn_results(turn, top_k=top_k):
+            rows.append(
+                {
+                    "turn_id": turn.turn_id,
+                    "variant": result.variant,
+                    "expected_intent": turn.expected_intent,
+                    "actual_next_event": turn.actual_next_event,
+                    "selected_artifact_id": (
+                        result.selected_artifact.artifact_id
+                        if result.selected_artifact
+                        else None
+                    ),
+                    "useful": result.useful,
+                    "unsafe_leak": result.unsafe_leak,
+                    "latency_ms": result.latency_ms,
+                    "token_cost": result.token_cost,
+                    "branches": [
+                        {
+                            "branch_id": branch.branch_id,
+                            "rank": branch.rank,
+                            "intent": branch.intent,
+                            "probability": branch.probability,
+                            "match_grade": branch.match_grade.value,
+                            "match_score": branch.match_score,
+                        }
+                        for branch in result.branches
+                    ],
+                }
+            )
+    return tuple(rows)

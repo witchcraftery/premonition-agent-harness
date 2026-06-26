@@ -71,6 +71,34 @@ class Artifact:
 
 
 @dataclass(frozen=True)
+class PremonitionPacket:
+    packet_id: str
+    turn_id: str
+    observed_context: str
+    matched_branch_id: str | None
+    matched_intent: str | None
+    confidence: float
+    prepared_artifact: str | None
+    policy_checks: tuple[str, ...]
+    freshness: str
+    unsafe: bool
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "packet_id": self.packet_id,
+            "turn_id": self.turn_id,
+            "observed_context": self.observed_context,
+            "matched_branch_id": self.matched_branch_id,
+            "matched_intent": self.matched_intent,
+            "confidence": self.confidence,
+            "prepared_artifact": self.prepared_artifact,
+            "policy_checks": list(self.policy_checks),
+            "freshness": self.freshness,
+            "unsafe": self.unsafe,
+        }
+
+
+@dataclass(frozen=True)
 class RunResult:
     turn_id: str
     variant: str

@@ -67,3 +67,13 @@ Final verification:
 
 Sample harness result: `p_at_1=1.0`, `top_3_recall=1.0`,
 `cache_hit_rate=1.0`, `median_latency_ms=120`, `unsafe_leak_rate=0.0`.
+
+## Premonition Backend Trial Scaffolding
+
+- [x] Define backend packet/playbook shape.
+- [x] Add experiment config structure.
+- [x] Add per-turn replay logs and miss analysis hooks.
+- [x] Add dataset catalog for benchmark candidates.
+- [ ] Commit scaffolding before trial execution.
+- [ ] Run tests and first configured trial.
+- [ ] Push verified trial scaffolding to GitHub.
