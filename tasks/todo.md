@@ -48,7 +48,7 @@ Suggested first experiment:
 - [x] Add semantic branch matching.
 - [x] Add branch generation and artifacts.
 - [x] Add baselines and evaluator.
-- [ ] Add CLI report runner.
+- [x] Add CLI report runner.
 - [ ] Verify tests and sample report.
 
 ## Implementation Review
