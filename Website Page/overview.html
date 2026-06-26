@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predictive Agent Harness, System Overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAFAF8;
+      --panel: rgba(255,255,255,0.72);
+      --panel-strong: rgba(255,255,255,0.92);
+      --line: rgba(74,85,104,0.14);
+      --text: #1F2937;
+      --muted: #5B6472;
+      --primary: #4A5568;
+      --accent: #D97706;
+      --accent-soft: rgba(217,119,6,0.12);
+      --shadow: 0 20px 60px rgba(74,85,104,0.10);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(217,119,6,0.10), transparent 28%),
+        radial-gradient(circle at 85% 15%, rgba(74,85,104,0.10), transparent 28%),
+        linear-gradient(180deg, #FEFEFC 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 28px 20px 96px; }
+
+    .hero {
+      padding: 36px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.7);
+      backdrop-filter: blur(18px);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -20% auto;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(217,119,6,0.16), transparent 62%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(74,85,104,0.08);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.1; }
+    h1 { font-size: clamp(2.6rem, 6vw, 4.8rem); max-width: 11ch; margin-top: 18px; }
+    h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+    h3 { font-size: 1.05rem; }
+    p { margin: 0; color: var(--muted); font-size: 1rem; }
+
+    .lead {
+      max-width: 760px;
+      font-size: 1.12rem;
+      margin-top: 18px;
+      color: #3F4957;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.95fr;
+      gap: 24px;
+      margin-top: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .signal, .panel, .metric, .stage, .risk, .flow-box {
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      box-shadow: 0 12px 32px rgba(31,41,55,0.05);
+    }
+
+    .signal-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #273142;
+      background: rgba(74,85,104,0.06);
+      border-radius: 12px;
+      padding: 12px 14px;
+      overflow: auto;
+    }
+
+    .section {
+      margin-top: 22px;
+      padding: 28px;
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(74,85,104,0.10);
+      border-radius: 28px;
+      backdrop-filter: blur(10px);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    ul.clean {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    ul.clean li {
+      padding-left: 18px;
+      position: relative;
+      color: var(--muted);
+    }
+
+    ul.clean li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.7em;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(217,119,6,0.12);
+    }
+
+    .flow {
+      display: grid;
+      gap: 14px;
+    }
+
+    .arrow {
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      font-size: 0.9rem;
+    }
+
+    .flow-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #A85C07;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .big-quote {
+      padding: 24px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(74,85,104,0.08), rgba(217,119,6,0.08));
+      color: var(--text);
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .stage {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--accent), rgba(74,85,104,0.55));
+    }
+
+    .metric strong, .panel strong, .risk strong, .stage strong, .flow-box strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .legend span {
+      font-size: 0.82rem;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(74,85,104,0.08);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .wrap { padding: 16px 16px 72px; }
+      .hero, .section { padding: 22px; }
+      h1 { max-width: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">System concept · one-page architecture overview</div>
+      <h1>Predictive Agent Harness</h1>
+      <p class="lead">
+        A two-layer agent system that responds in the present while quietly preparing for the most likely near-future events.
+        Instead of forcing one LLM to both talk and foresee, the ecosystem separates <strong>present-time delivery</strong> from <strong>background possibility projection</strong>.
+      </p>
+
+      <div class="hero-grid">
+        <div class="signal-stack">
+          <div class="signal">
+            <div class="mini-label">Core premise</div>
+            <strong>Do not make the speaking model predict everything.</strong>
+            <p>Let the front agent stay grounded, coherent, and fast. Let a background swarm model the next one to three likely events, precompute support, and hand only useful preparation forward.</p>
+          </div>
+          <div class="signal">
+            <div class="mini-label">Working name</div>
+            <strong>Predictive receding-horizon agent loop</strong>
+            <p>Not full “precognition,” but a disciplined system for shallow lookahead, branch scoring, and continuous replanning as reality updates.</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="mini-label">Operating thesis</div>
+          <div class="code">observe → hypothesize next events → simulate shallow branches → score utility of preparation → front agent acts → replan on new evidence</div>
+          <div class="legend">
+            <span>Fast front agent</span>
+            <span>Background branch engine</span>
+            <span>Optional swarm simulation</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">Why this architecture exists</div>
+          <h2>Reasoning is not the same thing as planning, and planning is not the same thing as forecasting</h2>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <strong>The pressure on a single LLM</strong>
+          <ul class="clean">
+            <li>Answer correctly in the moment</li>
+            <li>Stay conversational and on-brand</li>
+            <li>Track tasks, context, and constraints</li>
+            <li>Anticipate blockers and user shifts</li>
+            <li>Prepare for what happens next</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <strong>The proposed release valve</strong>
+          <ul class="clean">
+            <li>Front agent handles what is true now</li>
+            <li>Prediction layer handles what may happen next</li>
+            <li>Simulation layer explores second-order effects only when useful</li>
+            <li>Preparation is kept internal until reality confirms the branch</li>
+            <li>System replans after each real event instead of overcommitting</li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer-note">The result is a calmer public-facing intelligence and a more proactive private cognition layer.</p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">System architecture</div>
+          <h2>Five-layer ecosystem</h2>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="stage">
+          <strong>1. State encoder</strong>
+          <p>Transforms current reality into structured context: user intent, recent events, tool outputs, goals, commitments, uncertainty markers, and environment state.</p>
+        </div>
+        <div class="stage">
+          <strong>2. Branch generator</strong>
+          <p>Produces candidate next events, not answers. Each branch includes a hypothesis, probability, trigger signals, and why it matters.</p>
+        </div>
+        <div class="stage">
+          <strong>3. Branch simulator</strong>
+          <p>Explores 1 to 3 steps forward. For simple cases this is lightweight lookahead. For richer systems, a MiroFish-like swarm can simulate social or multi-actor dynamics.</p>
+        </div>
+        <div class="stage">
+          <strong>4. Value propagator</strong>
+          <p>Scores branches by downstream usefulness, not just plausibility. High-value branches are the ones worth preparing for before they arrive.</p>
+        </div>
+        <div class="stage">
+          <strong>5. Presenter agent</strong>
+          <p>The visible face. It speaks only from observed reality, while consuming prepared research, drafts, fallbacks, and next-step options from the branch engine.</p>
+        </div>
+        <div class="stage">
+          <strong>6. Memory and telemetry</strong>
+          <p>Stores branches, outcomes, misses, recoveries, and readiness wins so the whole loop can be tuned against reality over time.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">Execution loop</div>
+          <h2>How the system thinks in motion</h2>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="flow-box">
+          <div class="flow-title"><strong>Observe current state</strong><span class="pill">Ground truth only</span></div>
+          <p>Conversation state, live tasks, tool outputs, known constraints, unresolved uncertainties, and external signals are captured as the momentary state.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="flow-box">
+          <div class="flow-title"><strong>Generate event candidates</strong><span class="pill">Next-event prediction</span></div>
+          <p>Examples: user asks a follow-up, rejects the plan, accepts and wants execution, system throws an error, missing credential appears, or a stakeholder asks for status.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="flow-box">
+          <div class="flow-title"><strong>Simulate shallow branches</strong><span class="pill">1–3 steps ahead</span></div>
+          <p>Each branch explores what follows, what evidence would confirm it, and what preparation would become valuable if it turns out to be real.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="flow-box">
+          <div class="flow-title"><strong>Score preparation value</strong><span class="pill">Expected readiness</span></div>
+          <p>Readiness is estimated by probability × impact × usefulness of prep, minus cost of false preparation.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="flow-box">
+          <div class="flow-title"><strong>Prepare quietly</strong><span class="pill">Internal support only</span></div>
+          <p>The system drafts fallback replies, command sequences, research notes, decision trees, and tool plans, but does not present them as truth yet.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="flow-box">
+          <div class="flow-title"><strong>Front agent responds</strong><span class="pill">Fast and grounded</span></div>
+          <p>The visible model handles the present moment with less pressure, using the background work only when reality confirms a branch or when prep is safely reusable.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">Optional simulation substrate</div>
+          <h2>Where a MiroFish-style engine fits</h2>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <strong>Best fit</strong>
+          <ul class="clean">
+            <li>Complex multi-actor situations</li>
+            <li>Social response and public-reaction scenarios</li>
+            <li>Second-order consequence testing</li>
+            <li>Policy, messaging, or rollout rehearsals</li>
+            <li>Offline scenario labs for agent evaluation</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <strong>Not the best fit</strong>
+          <ul class="clean">
+            <li>Every single chat turn</li>
+            <li>Low-latency assistant responses</li>
+            <li>Simple deterministic next-step tasks</li>
+            <li>Cases where a lightweight branch predictor is enough</li>
+            <li>Any situation where simulated narrative starts replacing observed facts</li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer-note">The simulation engine is best treated as a high-cost, high-richness forecasting module, not the default brain for every turn.</p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">What this is meant to gain</div>
+          <h2>Expected advantages</h2>
+        </div>
+      </div>
+      <div class="grid-4">
+        <div class="metric">
+          <strong>Less surprise</strong>
+          <p>Fewer situations where the agent is caught flat-footed by common next events or predictable blockers.</p>
+        </div>
+        <div class="metric">
+          <strong>Better responsiveness</strong>
+          <p>Prepared research and fallback paths reduce time-to-useful-action when the next branch becomes real.</p>
+        </div>
+        <div class="metric">
+          <strong>Cleaner front-agent behavior</strong>
+          <p>The speaking model can stay focused on delivery, clarity, and action instead of carrying the whole future in working memory.</p>
+        </div>
+        <div class="metric">
+          <strong>More graceful recovery</strong>
+          <p>Because branches are shallow and continuously replanned, early mistakes do less damage than in a fully committed chain of reasoning.</p>
+        </div>
+      </div>
+      <div class="big-quote" style="margin-top:18px;">The goal is not perfect prediction. The goal is higher readiness when reality arrives.</div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">Measurement</div>
+          <h2>How success could be evaluated</h2>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="panel">
+          <strong>Prediction quality</strong>
+          <ul class="clean">
+            <li>Top-1 next-event accuracy</li>
+            <li>Top-3 branch recall</li>
+            <li>Calibration of branch confidence</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <strong>Readiness quality</strong>
+          <ul class="clean">
+            <li>Time-to-useful-response reduction</li>
+            <li>Prepared artifact reuse rate</li>
+            <li>Recovery speed after branch change</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <strong>User value</strong>
+          <ul class="clean">
+            <li>Higher helpfulness ratings</li>
+            <li>Lower repeated-context burden</li>
+            <li>More proactive resolution of blockers</li>
+          </ul>
+        </div>
+      </div>
+      <div class="code" style="margin-top:18px;">readiness_score = P(branch) × impact(branch) × usefulness_of_preparation(branch) − cost_of_false_prep</div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">Risks and guardrails</div>
+          <h2>What can go wrong, and how to contain it</h2>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="risk">
+          <strong>Risk: hallucinated futures</strong>
+          <p>Branches can feel coherent without being grounded. Guardrail: keep simulation outputs internal until evidence confirms them.</p>
+        </div>
+        <div class="risk">
+          <strong>Risk: simulation theater</strong>
+          <p>A rich swarm can look impressive while adding little value. Guardrail: benchmark against simple baselines first.</p>
+        </div>
+        <div class="risk">
+          <strong>Risk: cost explosion</strong>
+          <p>Too many branches and too much simulation burn tokens and time. Guardrail: strict branch budgets and staged escalation.</p>
+        </div>
+        <div class="risk">
+          <strong>Risk: premature commitment</strong>
+          <p>The front agent may trust the branch engine too much. Guardrail: the presenter only speaks from observed reality and verified prep.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="mini-label">Recommended build path</div>
+          <h2>Phased next steps</h2>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <strong>Phase 1 · Lightweight branch predictor</strong>
+          <p>Predict the top three likely next events in a narrow domain, such as coding help, support chat, or task execution, and log outcomes.</p>
+        </div>
+        <div class="panel">
+          <strong>Phase 2 · Quiet prep memory</strong>
+          <p>Attach reusable artifacts to branches: drafts, commands, dependency checks, citations, fallback plans, and recovery scripts.</p>
+        </div>
+        <div class="panel">
+          <strong>Phase 3 · Receding-horizon replanning</strong>
+          <p>After every real event, collapse dead branches, rescore survivors, and cheaply regenerate the next horizon.</p>
+        </div>
+        <div class="panel">
+          <strong>Phase 4 · Selective swarm simulation</strong>
+          <p>Introduce MiroFish-style or multi-agent simulation only for high-uncertainty, multi-actor, or high-impact contexts.</p>
+        </div>
+      </div>
+      <p class="footer-note">Best first proving ground: a narrow assistant workflow where next-event accuracy, readiness gains, and recovery can be clearly measured.</p>
+    </section>
+  </main>
+</body>
+</html>

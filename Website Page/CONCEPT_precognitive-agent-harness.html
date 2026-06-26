@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precognitive Agent Thought Harness — Architecture Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --color-bg:#0a0c0f;--color-surface:#0f1217;--color-surface-2:#141820;
+  --color-surface-offset:#1a1f2a;--color-border:#1e2535;--color-divider:#1c2130;
+  --color-text:#d4d8e0;--color-text-muted:#7a8296;--color-text-faint:#3d4558;
+  --color-primary:#4fc3f7;--color-primary-hover:#29b6f6;--color-accent:#7c4dff;
+  --color-accent-2:#00e5a0;--color-warn:#ff9100;--color-error:#ff5370;
+  --color-node-face:#4fc3f7;--color-node-swarm:#7c4dff;--color-node-prob:#00e5a0;
+  --font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+  --space-6:1.5rem;--space-8:2rem;--space-12:3rem;--space-16:4rem;
+  --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
+  --text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+  --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
+  --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --text-2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;
+  --shadow-md:0 4px 20px oklch(0 0 0/.5);--shadow-lg:0 12px 40px oklch(0 0 0/.6);
+  --transition:180ms cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);
+  color:var(--color-text);background:var(--color-bg);line-height:1.7;}
+img,svg{display:block;max-width:100%;}
+h1,h2,h3,h4{text-wrap:balance;line-height:1.2;}
+p,li{text-wrap:pretty;max-width:72ch;}
+code{font-family:var(--font-mono);font-size:.9em;color:var(--color-primary);
+  background:oklch(from var(--color-primary) l c h/.08);
+  padding:.1em .4em;border-radius:var(--radius-sm);}
+pre{font-family:var(--font-mono);font-size:var(--text-sm);
+  background:var(--color-surface-offset);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-6);overflow-x:auto;
+  line-height:1.8;color:var(--color-text);}
+pre .c{color:var(--color-text-muted);}
+pre .k{color:var(--color-primary);}
+pre .s{color:var(--color-accent-2);}
+pre .n{color:var(--color-warn);}
+
+/* Layout */
+.container{max-width:900px;margin-inline:auto;padding-inline:var(--space-6);}
+.page-header{padding:var(--space-16) 0 var(--space-12);border-bottom:1px solid var(--color-divider);}
+.label{font-size:var(--text-xs);font-family:var(--font-mono);text-transform:uppercase;
+  letter-spacing:.12em;color:var(--color-primary);margin-bottom:var(--space-4);}
+.page-title{font-size:var(--text-2xl);font-weight:700;color:var(--color-text);
+  line-height:1.15;margin-bottom:var(--space-4);}
+.page-subtitle{font-size:var(--text-lg);color:var(--color-text-muted);max-width:60ch;
+  font-weight:300;line-height:1.6;}
+.nav-pills{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-8);}
+.pill{font-size:var(--text-xs);font-family:var(--font-mono);padding:.3em .9em;
+  border-radius:var(--radius-full);border:1px solid var(--color-border);
+  color:var(--color-text-muted);background:var(--color-surface);}
+.pill-primary{border-color:var(--color-primary);color:var(--color-primary);
+  background:oklch(from var(--color-primary) l c h/.07);}
+.pill-accent{border-color:var(--color-accent);color:var(--color-accent);
+  background:oklch(from var(--color-accent) l c h/.07);}
+.pill-green{border-color:var(--color-accent-2);color:var(--color-accent-2);
+  background:oklch(from var(--color-accent-2) l c h/.07);}
+
+/* Sections */
+.section{padding:var(--space-12) 0;border-bottom:1px solid var(--color-divider);}
+.section:last-of-type{border-bottom:none;}
+.section-header{margin-bottom:var(--space-8);}
+.section-num{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);
+  margin-bottom:var(--space-2);}
+.section-title{font-size:var(--text-xl);font-weight:600;margin-bottom:var(--space-3);
+  color:var(--color-text);}
+.section-desc{color:var(--color-text-muted);font-size:var(--text-base);max-width:62ch;}
+
+/* Insight callout */
+.callout{border-left:2px solid var(--color-primary);
+  background:oklch(from var(--color-primary) l c h/.05);
+  padding:var(--space-4) var(--space-6);border-radius:0 var(--radius-md) var(--radius-md) 0;
+  margin:var(--space-6) 0;}
+.callout-warn{border-color:var(--color-warn);background:oklch(from var(--color-warn) l c h/.05);}
+.callout-green{border-color:var(--color-accent-2);background:oklch(from var(--color-accent-2) l c h/.05);}
+.callout-label{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:var(--space-2);}
+.callout-label-primary{color:var(--color-primary);}
+.callout-label-warn{color:var(--color-warn);}
+.callout-label-green{color:var(--color-accent-2);}
+
+/* Architecture diagram */
+.arch-diagram{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-xl);padding:var(--space-8);margin:var(--space-8) 0;
+  overflow-x:auto;}
+.arch-title{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--space-6);}
+.arch-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-4);min-width:580px;}
+.node{border-radius:var(--radius-lg);padding:var(--space-4) var(--space-4);
+  border:1px solid;position:relative;}
+.node-face{border-color:var(--color-node-face);
+  background:oklch(from var(--color-node-face) l c h/.06);}
+.node-swarm{border-color:var(--color-node-swarm);
+  background:oklch(from var(--color-node-swarm) l c h/.06);}
+.node-prob{border-color:var(--color-node-prob);
+  background:oklch(from var(--color-node-prob) l c h/.06);}
+.node-label{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:var(--space-2);}
+.node-face .node-label{color:var(--color-node-face);}
+.node-swarm .node-label{color:var(--color-node-swarm);}
+.node-prob .node-label{color:var(--color-node-prob);}
+.node-name{font-weight:600;font-size:var(--text-base);color:var(--color-text);
+  margin-bottom:var(--space-2);}
+.node-desc{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.6;}
+.node-items{list-style:none;margin-top:var(--space-3);}
+.node-items li{font-size:var(--text-xs);color:var(--color-text-muted);padding:.2em 0;
+  display:flex;align-items:flex-start;gap:var(--space-2);}
+.node-items li::before{content:"→";opacity:.4;flex-shrink:0;margin-top:.05em;}
+.arch-arrow{display:flex;align-items:center;justify-content:center;
+  font-size:var(--text-xl);color:var(--color-text-faint);padding:var(--space-4) 0;}
+.arch-flow{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-6);
+  padding-top:var(--space-6);border-top:1px solid var(--color-divider);}
+.flow-row{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;}
+.flow-badge{font-family:var(--font-mono);font-size:var(--text-xs);padding:.25em .75em;
+  border-radius:var(--radius-full);white-space:nowrap;}
+.flow-face{background:oklch(from var(--color-node-face) l c h/.1);color:var(--color-node-face);
+  border:1px solid oklch(from var(--color-node-face) l c h/.3);}
+.flow-swarm{background:oklch(from var(--color-node-swarm) l c h/.1);color:var(--color-node-swarm);
+  border:1px solid oklch(from var(--color-node-swarm) l c h/.3);}
+.flow-prob{background:oklch(from var(--color-node-prob) l c h/.1);color:var(--color-node-prob);
+  border:1px solid oklch(from var(--color-node-prob) l c h/.3);}
+.flow-arrow{color:var(--color-text-faint);font-size:var(--text-sm);}
+.flow-label{font-size:var(--text-xs);color:var(--color-text-muted);}
+
+/* Phase table */
+.phase-table{width:100%;border-collapse:collapse;margin:var(--space-6) 0;}
+.phase-table th{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;
+  letter-spacing:.08em;color:var(--color-text-muted);text-align:left;
+  padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border);}
+.phase-table td{padding:var(--space-4);border-bottom:1px solid var(--color-divider);
+  font-size:var(--text-sm);vertical-align:top;}
+.phase-table tr:last-child td{border-bottom:none;}
+.phase-badge{display:inline-block;font-family:var(--font-mono);font-size:var(--text-xs);
+  padding:.2em .7em;border-radius:var(--radius-sm);}
+.phase-1{background:oklch(from var(--color-node-face) l c h/.12);color:var(--color-node-face);}
+.phase-2{background:oklch(from var(--color-node-swarm) l c h/.12);color:var(--color-node-swarm);}
+.phase-3{background:oklch(from var(--color-node-prob) l c h/.12);color:var(--color-node-prob);}
+.phase-4{background:oklch(from var(--color-warn) l c h/.12);color:var(--color-warn);}
+
+/* Stack list */
+.stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:var(--space-4);margin:var(--space-6) 0;}
+.stack-card{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-4);}
+.stack-card-label{font-family:var(--font-mono);font-size:var(--text-xs);
+  color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:var(--space-2);}
+.stack-card-value{font-size:var(--text-sm);font-weight:500;color:var(--color-text);}
+
+/* Numbered list */
+.numbered-list{list-style:none;counter-reset:nl;margin:var(--space-6) 0;}
+.numbered-list li{counter-increment:nl;display:flex;gap:var(--space-4);
+  padding:var(--space-4) 0;border-bottom:1px solid var(--color-divider);}
+.numbered-list li:last-child{border-bottom:none;}
+.nl-num{font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-primary);
+  min-width:2rem;flex-shrink:0;padding-top:.15em;}
+.nl-content{flex:1;}
+.nl-title{font-weight:600;color:var(--color-text);margin-bottom:var(--space-2);
+  font-size:var(--text-base);}
+.nl-desc{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6;}
+
+/* Footer */
+.page-footer{padding:var(--space-12) 0;text-align:center;color:var(--color-text-faint);
+  font-size:var(--text-xs);font-family:var(--font-mono);}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header class="page-header">
+    <p class="label">Agent Architecture Blueprint · April 2026</p>
+    <h1 class="page-title">Precognitive Agent<br>Thought Harness</h1>
+    <p class="page-subtitle">A speculative architecture for pre-simulating reality so the face of an AI never has to guess — only deliver.</p>
+    <div class="nav-pills">
+      <span class="pill pill-primary">FLARE-Grounded</span>
+      <span class="pill pill-accent">Swarm Planning</span>
+      <span class="pill pill-green">MiroFish Integration</span>
+      <span class="pill">Real-Time Prediction</span>
+      <span class="pill">Receding-Horizon</span>
+    </div>
+  </header>
+
+  <!-- Section 1: The Core Problem -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-num">01 / ROOT DIAGNOSIS</p>
+      <h2 class="section-title">Why LLMs Live Only in the Present</h2>
+      <p class="section-desc">What the FLARE paper reveals, and why it validates the concept you've intuited.</p>
+    </div>
+
+    <p style="margin-bottom:var(--space-4);color:var(--color-text-muted);">
+      The paper establishes a crisp, formal distinction: <strong style="color:var(--color-text)">reasoning ≠ planning.</strong> 
+      Every standard LLM reasoning technique — chain-of-thought, beam search, ReAct, Reflexion — operates as a 
+      <em>step-wise greedy policy</em>. At each moment, it selects the locally highest-scoring next action. It has no 
+      mechanism to propagate backward from future consequences. The result is what they call <strong style="color:var(--color-text)">myopic commitment</strong>: 
+      early decisions that look correct moment-by-moment, but lock in trajectories that collapse over longer horizons.
+    </p>
+
+    <div class="callout">
+      <p class="callout-label callout-label-primary">Your intuition, formally proven</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        Proposition 3.1 (FLARE paper): A step-wise greedy policy can be forced into <strong style="color:var(--color-text)">zero return</strong> while 
+        an optimal trajectory with <em>unbounded return</em> exists — just by placing the reward beyond the current moment. 
+        The suboptimality gap is <em>arbitrarily large</em>. The LLM can't know what it doesn't simulate forward.
+      </p>
+    </div>
+
+    <p style="color:var(--color-text-muted);">
+      Their solution, FLARE, uses Monte Carlo Tree Search (MCTS) with three minimal requirements: 
+      <strong style="color:var(--color-text)">(1) explicit lookahead</strong> — simulate future trajectories before committing; 
+      <strong style="color:var(--color-text)">(2) backward value propagation</strong> — let downstream outcomes revise early decisions; 
+      <strong style="color:var(--color-text)">(3) receding-horizon commitment</strong> — only commit to the next action, then replan. 
+      This is the theoretical backbone your architecture needs to formalize.
+    </p>
+
+    <div class="callout callout-warn" style="margin-top:var(--space-6);">
+      <p class="callout-label callout-label-warn">Key distinction for your architecture</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        FLARE is still a <em>single model</em> doing sequential lookahead. What you're proposing goes further: 
+        a <strong style="color:var(--color-text)">parallel swarm</strong> that isn't answering the current question at all — it's 
+        pre-simulating the <em>next environment states</em> while the face model handles now. 
+        This is the leap from FLARE to a precognitive architecture.
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 2: The Architecture -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-num">02 / CORE ARCHITECTURE</p>
+      <h2 class="section-title">The Three-Layer Brain</h2>
+      <p class="section-desc">Face Model · Swarm Brain · Probability Engine — each with a distinct temporal focus.</p>
+    </div>
+
+    <div class="arch-diagram">
+      <p class="arch-title">// Temporal layers of cognition</p>
+      <div class="arch-grid">
+        <div class="node node-face">
+          <p class="node-label">Layer 1 · NOW</p>
+          <p class="node-name">Face Model</p>
+          <p class="node-desc">The user-facing agent. Speaks, responds, acts. Optimized for fluency and delivery.</p>
+          <ul class="node-items">
+            <li>Receives present-state context</li>
+            <li>Pulls pre-solved answers from Swarm cache</li>
+            <li>Delivers output without internal debate</li>
+            <li>Streams responses while Swarm runs ahead</li>
+            <li>Lightweight — fast inference, smaller model</li>
+          </ul>
+        </div>
+        <div class="node node-swarm">
+          <p class="node-label">Layer 2 · NEAR FUTURE (+1/2/3 steps)</p>
+          <p class="node-name">Swarm Brain</p>
+          <p class="node-desc">Parallel agent cluster. Not answering questions — predicting what questions come next.</p>
+          <ul class="node-items">
+            <li>Spawns N simulation branches per tick</li>
+            <li>Each agent tests a probability hypothesis</li>
+            <li>Runs MCTS-style forward rollouts</li>
+            <li>Scores branches via trajectory-level value</li>
+            <li>Feeds winning paths to Face cache</li>
+          </ul>
+        </div>
+        <div class="node node-prob">
+          <p class="node-label">Layer 3 · POSSIBILITY SPACE</p>
+          <p class="node-name">MiroFish Engine</p>
+          <p class="node-desc">Probability simulation universe. Generates, tests, and ranks the tree of possible next realities.</p>
+          <ul class="node-items">
+            <li>Maintains a live probability tree of env states</li>
+            <li>Samples agent behaviors from distribution</li>
+            <li>Scores paths by likelihood × utility</li>
+            <li>Prunes dead branches automatically</li>
+            <li>Provides swarm with pre-ranked hypotheses</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="arch-flow">
+        <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);
+          text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--space-2);">// data flow · real-time loop</p>
+        <div class="flow-row">
+          <span class="flow-badge flow-prob">MiroFish</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-label">ranked probability tree of next N states</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-badge flow-swarm">Swarm</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-label">pre-solved responses per branch</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-badge flow-face">Face</span>
+        </div>
+        <div class="flow-row" style="margin-top:var(--space-3);">
+          <span class="flow-badge flow-face">Face</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-label">actual event happens, state captured</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-badge flow-prob">MiroFish</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-label">prune tree, advance horizon, recompute</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-green">
+      <p class="callout-label callout-label-green">The Core Insight</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        The face model is <strong style="color:var(--color-text)">never deliberating</strong> — it's executing from a 
+        pre-computed cache. The deliberation happened in the background, asynchronously, 
+        while the last response was being delivered. The latency budget is spent on 
+        prediction, not reaction. This is the opposite of how every current agent works.
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 3: MiroFish Fit -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-num">03 / MIROFISH INTEGRATION</p>
+      <h2 class="section-title">Why MiroFish Fits This Role</h2>
+      <p class="section-desc">What the <a href="https://github.com/666ghj/MiroFish" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);">MiroFish repository</a> offers as a probability engine substrate.</p>
+    </div>
+
+    <p style="color:var(--color-text-muted);margin-bottom:var(--space-6);">
+      MiroFish is an agent swarm "universe" — a simulation sandbox where agents run, interact, and generate 
+      probability distributions over outcomes. Its architecture (Node.js backend, containerized via Docker) 
+      is designed for running parallel agent scenarios. This maps almost directly to what you need, 
+      with some intentional re-framing of what the agents are <em>optimizing for</em>.
+    </p>
+
+    <table class="phase-table">
+      <thead>
+        <tr>
+          <th>MiroFish Native Capability</th>
+          <th>Role in Thought Harness</th>
+          <th>Required Extension</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--color-text);">Parallel agent spawning</td>
+          <td><span class="phase-badge phase-2">Swarm branch generation</span></td>
+          <td style="color:var(--color-text-muted);font-size:var(--text-xs);">Add scoring/ranking layer per branch</td>
+        </tr>
+        <tr>
+          <td style="color:var(--color-text);">Probability tracking per scenario</td>
+          <td><span class="phase-badge phase-3">Next-state distribution</span></td>
+          <td style="color:var(--color-text-muted);font-size:var(--text-xs);">Connect to real environment event stream</td>
+        </tr>
+        <tr>
+          <td style="color:var(--color-text);">Universe state management</td>
+          <td><span class="phase-badge phase-3">Possibility tree persistence</span></td>
+          <td style="color:var(--color-text-muted);font-size:var(--text-xs);">Add TTL pruning + horizon advancement</td>
+        </tr>
+        <tr>
+          <td style="color:var(--color-text);">Agent communication bus</td>
+          <td><span class="phase-badge phase-2">Swarm → Face cache push</span></td>
+          <td style="color:var(--color-text-muted);font-size:var(--text-xs);">API endpoint for Face model to query cache</td>
+        </tr>
+        <tr>
+          <td style="color:var(--color-text);">Simulation replay</td>
+          <td><span class="phase-badge phase-1">Post-hoc accuracy analysis</span></td>
+          <td style="color:var(--color-text-muted);font-size:var(--text-xs);">Minimal — already built in</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-warn">
+      <p class="callout-label callout-label-warn">Key reframe needed</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        MiroFish agents currently simulate <em>what other agents do</em>. Your use case asks them to simulate 
+        <em>what the external user/world does</em>. This is a different target distribution — you're modeling 
+        the environment's next move, not just the agent's. The agents need to become <strong style="color:var(--color-text)">world-simulators</strong>, 
+        not just agent-simulators. This is achievable with prompt-level framing and a context feed from the Face layer.
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 4: The Loop -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-num">04 / RUNTIME LOOP</p>
+      <h2 class="section-title">The Receding-Horizon Thought Loop</h2>
+      <p class="section-desc">How the system runs in continuous, overlapping asynchronous cycles.</p>
+    </div>
+
+<pre><span class="c">// Pseudocode: Precognitive Agent Loop</span>
+<span class="c">// Three concurrent processes, loosely synchronized</span>
+
+<span class="k">async</span> <span class="n">FACE_LOOP</span>(env_stream, swarm_cache):
+  <span class="k">while</span> active:
+    event = <span class="k">await</span> env_stream.next()           <span class="c">// user says something / action occurs</span>
+
+    <span class="c">// Check if swarm already solved this</span>
+    match = swarm_cache.lookup(event)
+
+    <span class="k">if</span> match.confidence > THRESHOLD:
+      response = match.pre_solved_response      <span class="c">// deliver without thinking</span>
+    <span class="k">else</span>:
+      response = face_model.generate(event)     <span class="c">// fallback: think now</span>
+
+    <span class="k">yield</span> response
+    swarm.update_ground_truth(event)            <span class="c">// tell swarm what actually happened</span>
+
+<span class="k">async</span> <span class="n">SWARM_LOOP</span>(prob_engine, face_cache):
+  <span class="k">while</span> active:
+    top_branches = prob_engine.get_top_k(k=<span class="s">5</span>)  <span class="c">// get 5 most likely next realities</span>
+
+    <span class="k">for</span> branch <span class="k">in</span> top_branches:
+      agent = spawn_agent(branch.hypothesis)
+      response = agent.pre_solve(branch.context)
+      face_cache.store(branch.event_signature, response, branch.probability)
+
+    <span class="k">await</span> sleep(<span class="s">100ms</span>)                         <span class="c">// continuous background cycle</span>
+
+<span class="k">async</span> <span class="n">PROB_ENGINE_LOOP</span>(env_history, mirofish):
+  <span class="k">while</span> active:
+    new_event = <span class="k">await</span> swarm.get_ground_truth()
+
+    mirofish.prune_tree(new_event)              <span class="c">// eliminate paths that didn't happen</span>
+    mirofish.advance_horizon(new_event)         <span class="c">// shift lookahead window forward</span>
+    mirofish.expand_branches(depth=<span class="s">3</span>)         <span class="c">// grow new possibility branches</span>
+
+    <span class="c">// Score all branches: P(next_event) * utility(response)</span>
+    mirofish.score_and_rank()
+</pre>
+
+    <p style="color:var(--color-text-muted);margin-top:var(--space-6);">
+      The key insight from FLARE's receding-horizon design applies here directly: never commit long-term. 
+      The prob engine advances one step at a time, using actual events to prune impossible futures. 
+      This prevents the "brittle long-term commitment" failure mode the paper identifies in offline planners.
+    </p>
+  </section>
+
+  <!-- Section 5: Build Phases -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-num">05 / BUILD PLAN</p>
+      <h2 class="section-title">Four-Phase Implementation</h2>
+      <p class="section-desc">From minimal proof-of-concept to full precognitive harness.</p>
+    </div>
+
+    <ul class="numbered-list">
+      <li>
+        <span class="nl-num">01</span>
+        <div class="nl-content">
+          <p class="nl-title">The Skeleton: Face + Cache Interface</p>
+          <p class="nl-desc">Build the Face model as a thin wrapper that checks a cache before generating. The cache is initially empty. Instrument every response with: what event triggered it, what was returned, and latency. This creates the ground-truth data pipeline for training the prob engine. <strong style="color:var(--color-text)">Stack:</strong> Python/FastAPI, async Redis for cache, any small-but-sharp LLM (Qwen2.5-7B or similar locally on MLX).</p>
+        </div>
+      </li>
+      <li>
+        <span class="nl-num">02</span>
+        <div class="nl-content">
+          <p class="nl-title">The Swarm: Parallel Branch Agents</p>
+          <p class="nl-desc">Deploy a small swarm (3–5 agents) using MiroFish as the parallel execution substrate. Each agent takes a hypothesis about the next likely user action and pre-generates a response. Use prompt-level world-modeling: <em>"Given the conversation so far, the user is likely to next ask about X. Pre-generate the ideal response to X."</em> Measure cache hit rate vs. baseline. <strong style="color:var(--color-text)">Target:</strong> 40%+ cache hit within first 50 interactions.</p>
+        </div>
+      </li>
+      <li>
+        <span class="nl-num">03</span>
+        <div class="nl-content">
+          <p class="nl-title">The Probability Engine: MiroFish + Scoring</p>
+          <p class="nl-desc">Extend MiroFish's agent universe with a scoring layer: each simulated branch gets a probability score (based on pattern matching against historical event sequences) and a utility score (how complete/useful is the pre-solved response). Implement MCTS-style backward value propagation — when a branch's prediction was correct, increase the weight of the pattern that generated it. This is the learning loop. <strong style="color:var(--color-text)">Key metric:</strong> prediction accuracy over 1, 2, and 3 steps ahead.</p>
+        </div>
+      </li>
+      <li>
+        <span class="nl-num">04</span>
+        <div class="nl-content">
+          <p class="nl-title">The Harness: Full Integration + Latency Orchestration</p>
+          <p class="nl-desc">Wire all three layers with proper async orchestration. The Face streams output while the Swarm is already 1-3 steps ahead. Tune the confidence threshold for cache use vs. live generation. Add a "moment capture" layer that records the exact state of the environment at each tick — conversation context, tool states, external data signals — so the prob engine has rich features to model. <strong style="color:var(--color-text)">Evaluate:</strong> perceived latency, response quality, and prediction accuracy as a compound metric.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Section 6: Stack -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-num">06 / RECOMMENDED STACK</p>
+      <h2 class="section-title">Technical Components</h2>
+      <p class="section-desc">Tooling that maps to your existing environment and this architecture.</p>
+    </div>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <p class="stack-card-label">Face Model</p>
+        <p class="stack-card-value">Qwen2.5-7B or Llama-3.2-3B via MLX — fast inference, Apple Silicon optimized</p>
+      </div>
+      <div class="stack-card">
+        <p class="stack-card-label">Swarm Agents</p>
+        <p class="stack-card-value">MiroFish as execution container + larger model (Qwen-14B) for pre-solving</p>
+      </div>
+      <div class="stack-card">
+        <p class="stack-card-label">Prob Engine</p>
+        <p class="stack-card-value">MiroFish universe layer + custom MCTS scorer in Python</p>
+      </div>
+      <div class="stack-card">
+        <p class="stack-card-label">Cache / Bus</p>
+        <p class="stack-card-value">Redis (async) for branch cache, keyed by event signature embeddings</p>
+      </div>
+      <div class="stack-card">
+        <p class="stack-card-label">Orchestration</p>
+        <p class="stack-card-value">Python asyncio + FastAPI — three async coroutines as described above</p>
+      </div>
+      <div class="stack-card">
+        <p class="stack-card-label">Embeddings</p>
+        <p class="stack-card-value">nomic-embed-text or mxbai-embed-large via Ollama for event matching</p>
+      </div>
+      <div class="stack-card">
+        <p class="stack-card-label">Infra</p>
+        <p class="stack-card-value">Docker Compose (MiroFish native) + Tailscale for multi-device testing</p>
+      </div>
+      <div class="stack-card">
+        <p class="stack-card-label">Monitoring</p>
+        <p class="stack-card-value">Custom dashboard: hit rate, prediction accuracy, latency delta, branch depth</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Open Questions -->
+  <section class="section">
+    <div class="section-header">
+      <p class="section-num">07 / OPEN QUESTIONS</p>
+      <h2 class="section-title">Where This Gets Hard</h2>
+      <p class="section-desc">The genuine challenges that will shape how you build and iterate.</p>
+    </div>
+
+    <div class="callout" style="margin-bottom:var(--space-4);">
+      <p class="callout-label callout-label-primary">Event Signature Design</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        How do you represent "what just happened" in a way that's both specific enough to look up 
+        and fuzzy enough to match approximate situations? Embedding-based lookup is the answer, 
+        but tuning the similarity threshold is an empirical problem. Too strict: low hit rate. 
+        Too loose: wrong pre-solved responses get delivered.
+      </p>
+    </div>
+
+    <div class="callout" style="margin-bottom:var(--space-4);">
+      <p class="callout-label callout-label-primary">Prediction vs. Creativity</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        For novel, creative, or deeply context-dependent queries, the probability engine 
+        may not generate useful branches. The face model's live fallback needs to be strong. 
+        The system should <em>gracefully degrade</em> — cache miss isn't a failure, it's just slower.
+      </p>
+    </div>
+
+    <div class="callout" style="margin-bottom:var(--space-4);">
+      <p class="callout-label callout-label-primary">Compute Budget on Local Hardware</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        Running 3 Face + 5 Swarm agents + prob engine concurrently on a Mac Studio is feasible 
+        with quantized models, but you'll need to profile memory bandwidth carefully. 
+        Recommend: Face at 4-bit quant, Swarm agents at 4–8 bit, prob engine as a pure Python 
+        statistical module (no LLM needed for the scoring/ranking).
+      </p>
+    </div>
+
+    <div class="callout callout-warn">
+      <p class="callout-label callout-label-warn">The FLARE Warning</p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);">
+        FLARE's paper notes that as it reduces myopic commitment, residual failures shift to 
+        <strong style="color:var(--color-text)">looping and premature termination</strong> — not wrong early choices, 
+        but inadequate exploration coverage. Your swarm will face the same: the branches it 
+        <em>doesn't</em> generate are the dangerous ones. Build diversity metrics into 
+        your branch generation — reward the swarm for exploring low-probability but high-impact paths, 
+        not just the most likely next move.
+      </p>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    <p>PRECOGNITIVE AGENT THOUGHT HARNESS · BLUEPRINT v0.1 · BUILT ON FLARE + MIROFISH · 2026</p>
+  </footer>
+</div>
+
+</body>
+</html>
