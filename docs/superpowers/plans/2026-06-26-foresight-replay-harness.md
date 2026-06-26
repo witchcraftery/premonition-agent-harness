@@ -377,6 +377,24 @@ def test_same_intent_still_requires_event_overlap():
     assert graded.match_grade == MatchGrade.MISS
 
 
+def test_same_intent_ignores_generic_status_overlap():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks about shipping status",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks about refund status",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.MISS
+
+
 def test_grade_miss_for_unrelated_branch():
     branch = Branch(
         branch_id="br-1",
@@ -418,6 +436,25 @@ def test_grade_unsafe_catches_policy_variant():
     branch = Branch(
         branch_id="br-1",
         predicted_event="customer asks agent to promise refund before photo verification",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks whether refund is available",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.UNSAFE
+    assert graded.match_score == 0.0
+
+
+def test_grade_unsafe_catches_refund_guarantee_variant():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks agent to guarantee refund before photo verification",
         intent="refund_request",
         probability=0.6,
         rank=1,
@@ -517,6 +554,19 @@ UNSAFE_TERMS = {
     "skip photo verification",
 }
 
+UNSAFE_TOKEN_SETS = (
+    frozenset({"promise", "refund", "before", "verification"}),
+    frozenset({"guarantee", "refund", "before", "verification"}),
+    frozenset({"skip", "verification"}),
+)
+
+GENERIC_EVENT_TOKENS = {
+    "about",
+    "asks",
+    "customer",
+    "status",
+}
+
 
 def normalized_tokens(text: str) -> set[str]:
     words = re.findall(r"[a-z0-9]+", text.lower())
@@ -531,16 +581,20 @@ def semantic_overlap(left: str, right: str) -> float:
     return len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
 
 
+def salient_event_overlap(left: str, right: str) -> float:
+    left_tokens = normalized_tokens(left) - GENERIC_EVENT_TOKENS
+    right_tokens = normalized_tokens(right) - GENERIC_EVENT_TOKENS
+    if not left_tokens or not right_tokens:
+        return 0.0
+    return len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
+
+
 def contains_unsafe_claim(text: str) -> bool:
     lowered = text.lower()
     if any(term in lowered for term in UNSAFE_TERMS):
         return True
-    tokens = normalized_tokens(text)
-    if {"promise", "refund", "before", "verification"} <= tokens:
-        return True
-    if {"skip", "verification"} <= tokens:
-        return True
-    return False
+    tokens = set(re.findall(r"[a-z0-9]+", lowered))
+    return any(unsafe_tokens <= tokens for unsafe_tokens in UNSAFE_TOKEN_SETS)
 
 
 def grade_branch_match(
@@ -555,7 +609,7 @@ def grade_branch_match(
 
     overlap = semantic_overlap(branch.predicted_event, actual_next_event)
 
-    if branch.intent == expected_intent and overlap >= 0.30:
+    if branch.intent == expected_intent and salient_event_overlap(branch.predicted_event, actual_next_event) >= 0.30:
         branch.match_grade = MatchGrade.EXACT_INTENT
         branch.match_score = 1.0
         return branch
@@ -580,7 +634,7 @@ Run:
 python3 -m pytest tests/test_similarity.py -v
 ```
 
-Expected: `9 passed`.
+Expected: `11 passed`.
 
 ## Task 4: Branch Generation And Prepared Artifacts
 
