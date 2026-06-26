@@ -12,6 +12,15 @@ repeatable benchmark.
 - Purpose: deterministic smoke test for the replay loop, packet schema, turn logs, and miss analysis.
 - Limitation: too small to make performance claims.
 
+### QueueAhead Enriched
+
+- Status: included in this repository.
+- File: `data/queueahead_enriched.jsonl`.
+- Config: `experiments/queueahead_enriched_folds.json`.
+- Purpose: synthetic 5-fold train/dev/test benchmark with user events, hard environment events, and decoy cues.
+- Current use: measures whether learned Premonition guidance improves held-out performance across actors and topics while surfacing weak segments.
+- Limitation: still synthetic; use it to harden the loop before importing larger external datasets.
+
 ## Primary External Candidates
 
 ### tau-bench / tau2

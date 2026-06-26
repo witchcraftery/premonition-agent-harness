@@ -154,6 +154,37 @@ def test_cli_runs_split_benchmark(tmp_path):
     assert report["promote_guidance"] is True
 
 
+def test_cli_runs_cross_fold_benchmark(tmp_path):
+    output = tmp_path / "cross-benchmark.json"
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--fold-config",
+            "experiments/queueahead_enriched_folds.json",
+            "--folds",
+            "5",
+            "--iterations",
+            "3",
+            "--benchmark-report",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    saved = json.loads(output.read_text(encoding="utf-8"))
+
+    assert saved == report
+    assert report["summary"]["fold_count"] == 5
+    assert report["aggregates"]["test"]["harness"]["p_at_1"]["guided_mean"] > 0
+    assert report["weak_segments"]
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

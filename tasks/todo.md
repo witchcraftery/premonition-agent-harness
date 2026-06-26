@@ -153,3 +153,20 @@ Verification:
 - `foresight-replay --train-config experiments/queueahead_challenge_train.json --test-config experiments/queueahead_challenge_test.json --iterations 3 --benchmark-report runs/queueahead_split_benchmark.json`: completed.
 - Challenge loop improved from `p_at_1=0.333` and `usefulness_rate=0.167` on iteration 1 to `p_at_1=1.0` and `usefulness_rate=1.0` on iteration 2.
 - Held-out test `p_at_1` improved from `0.5` to `1.0`; environment-event `p_at_1` improved from `0.5` to `1.0`; overfit gap was `0.167`; guidance remained promotable.
+
+## Enriched Benchmark Loop
+
+- [x] Add a richer hard-event pack with environment events, user events, and decoy/near-miss cues.
+- [x] Add dev/test promotion so guidance can be selected before the final held-out test.
+- [x] Add a cross-fold benchmark runner for repeated train/dev/test trials.
+- [x] Report aggregate mean/min/max metrics and weakest segments across folds.
+- [x] Add CLI support for running the enriched benchmark loop.
+- [x] Regenerate benchmark artifacts and document the new loop.
+
+Verification:
+
+- `python3 -m pytest -v`: 53 passed.
+- `foresight-replay --fold-config experiments/queueahead_enriched_folds.json --folds 5 --iterations 3 --benchmark-report runs/queueahead_enriched_cross_benchmark.json`: completed.
+- Enriched 5-fold held-out `p_at_1` improved from `0.567` to `0.667`; usefulness improved from `0.567` to `0.667`.
+- Environment-event `p_at_1` improved from `0.067` to `0.317`; user-event `p_at_1` improved from `0.91` to `0.95`.
+- Promotion rate was `1.0`; weakest segments were environment events, refund, billing, and fulfillment/shipment status.

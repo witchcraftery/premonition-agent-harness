@@ -5,6 +5,7 @@ import json
 from importlib.resources import files
 from pathlib import Path
 
+from foresight_harness.cross_benchmark import run_cross_fold_benchmark
 from foresight_harness.evaluator import load_replay_turns, run_replay, run_replay_turn_log
 from foresight_harness.experiments import load_trial_config
 from foresight_harness.guidance import run_guidance_loop
@@ -57,6 +58,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to a JSON test trial config for split benchmark mode.",
     )
     parser.add_argument(
+        "--fold-config",
+        type=Path,
+        help="Path to a JSON trial config for cross-fold benchmark mode.",
+    )
+    parser.add_argument(
+        "--folds",
+        type=positive_int,
+        default=5,
+        help="Number of folds to run in cross-fold benchmark mode.",
+    )
+    parser.add_argument(
         "--turn-log",
         type=Path,
         help="Optional JSONL path for per-turn variant and branch outcomes.",
@@ -92,6 +104,22 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+
+    if args.fold_config:
+        config = load_trial_config(args.fold_config)
+        turns = load_replay_turns(config.input_path)
+        report = run_cross_fold_benchmark(
+            turns=turns,
+            fold_count=args.folds,
+            iterations=args.iterations,
+            top_k=config.top_k,
+        )
+        if args.benchmark_report:
+            with args.benchmark_report.open("w", encoding="utf-8") as handle:
+                json.dump(report, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return
 
     if args.train_config or args.test_config:
         if not (args.train_config and args.test_config):
