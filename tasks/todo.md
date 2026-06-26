@@ -76,7 +76,7 @@ Sample harness result: `p_at_1=1.0`, `top_3_recall=1.0`,
 - [x] Add dataset catalog for benchmark candidates.
 - [x] Commit scaffolding before trial execution.
 - [x] Run tests and first configured trial.
-- [ ] Push verified trial scaffolding to GitHub.
+- [x] Push verified trial scaffolding to GitHub.
 
 Verification:
 
