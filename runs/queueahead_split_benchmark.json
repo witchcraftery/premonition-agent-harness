@@ -1,4 +1,532 @@
 {
+  "analytics": {
+    "focus_areas": [
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "escalation_request",
+        "p_at_1_delta": 1.0,
+        "segment": "by_topic",
+        "usefulness_delta": 1.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "troubleshooting_loop",
+        "p_at_1_delta": 1.0,
+        "segment": "by_topic",
+        "usefulness_delta": 1.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "escalation",
+        "p_at_1_delta": 1.0,
+        "segment": "by_event_type",
+        "usefulness_delta": 1.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "troubleshooting",
+        "p_at_1_delta": 1.0,
+        "segment": "by_event_type",
+        "usefulness_delta": 1.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "user",
+        "p_at_1_delta": 0.5,
+        "segment": "by_actor",
+        "usefulness_delta": 0.75
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "address_change",
+        "p_at_1_delta": 0.0,
+        "segment": "by_topic",
+        "usefulness_delta": 0.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "billing_refund_timing",
+        "p_at_1_delta": 0.0,
+        "segment": "by_topic",
+        "usefulness_delta": 1.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "account_update",
+        "p_at_1_delta": 0.0,
+        "segment": "by_event_type",
+        "usefulness_delta": 0.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "billing",
+        "p_at_1_delta": 0.0,
+        "segment": "by_event_type",
+        "usefulness_delta": 1.0
+      }
+    ],
+    "test_segments": {
+      "by_actor": {
+        "user": {
+          "baseline": {
+            "p_at_1": 0.5,
+            "total_turns": 4,
+            "usefulness_rate": 0.25
+          },
+          "delta": {
+            "p_at_1": 0.5,
+            "usefulness_rate": 0.75
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 4,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "by_event_type": {
+        "account_update": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "billing": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "escalation": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "troubleshooting": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "by_topic": {
+        "address_change": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "billing_refund_timing": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "escalation_request": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "troubleshooting_loop": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "focus_areas": [
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "escalation_request",
+          "p_at_1_delta": 1.0,
+          "segment": "by_topic",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "troubleshooting_loop",
+          "p_at_1_delta": 1.0,
+          "segment": "by_topic",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "escalation",
+          "p_at_1_delta": 1.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "troubleshooting",
+          "p_at_1_delta": 1.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "user",
+          "p_at_1_delta": 0.5,
+          "segment": "by_actor",
+          "usefulness_delta": 0.75
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "address_change",
+          "p_at_1_delta": 0.0,
+          "segment": "by_topic",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "billing_refund_timing",
+          "p_at_1_delta": 0.0,
+          "segment": "by_topic",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "account_update",
+          "p_at_1_delta": 0.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "billing",
+          "p_at_1_delta": 0.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
+        }
+      ]
+    },
+    "train_segments": {
+      "by_actor": {
+        "user": {
+          "baseline": {
+            "p_at_1": 0.25,
+            "total_turns": 4,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 0.75,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 4,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "by_event_type": {
+        "account_update": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "billing": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "escalation": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "troubleshooting": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "by_topic": {
+        "address_change": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "billing_refund_timing": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "escalation_request": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "troubleshooting_loop": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "focus_areas": [
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "address_change",
+          "p_at_1_delta": 1.0,
+          "segment": "by_topic",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "escalation_request",
+          "p_at_1_delta": 1.0,
+          "segment": "by_topic",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "troubleshooting_loop",
+          "p_at_1_delta": 1.0,
+          "segment": "by_topic",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "account_update",
+          "p_at_1_delta": 1.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "escalation",
+          "p_at_1_delta": 1.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "troubleshooting",
+          "p_at_1_delta": 1.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "user",
+          "p_at_1_delta": 0.75,
+          "segment": "by_actor",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "billing_refund_timing",
+          "p_at_1_delta": 0.0,
+          "segment": "by_topic",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "billing",
+          "p_at_1_delta": 0.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
+        }
+      ]
+    }
+  },
   "final_guidance": {
     "intent_keywords": {
       "address_change": [

@@ -22,6 +22,9 @@ def test_split_benchmark_learns_on_train_and_improves_test():
     assert result["generalization"]["test_p_at_1_gain"] > 0
     assert result["generalization"]["overfit_gap"] >= 0
     assert result["promote_guidance"] is True
+    assert result["analytics"]["test_segments"]["by_topic"]["address_change"]["guided"]["p_at_1"] == 1.0
+    assert result["analytics"]["test_segments"]["by_actor"]["user"]["delta"]["p_at_1"] > 0
+    assert result["analytics"]["focus_areas"]
     assert "guidance_markdown" in result
 
 

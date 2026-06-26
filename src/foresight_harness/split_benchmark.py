@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from foresight_harness.evaluator import run_replay
+from foresight_harness.analytics import summarize_segments
+from foresight_harness.evaluator import run_replay, run_replay_turn_log
 from foresight_harness.guidance import Guidance, render_guidance_markdown, run_guidance_loop
 from foresight_harness.models import ReplayTurn
 
@@ -21,6 +22,18 @@ def run_split_benchmark(
     train_guided = run_replay(train_turns, top_k=top_k, guidance=final_guidance)
     test_baseline = run_replay(test_turns, top_k=top_k, guidance=Guidance())
     test_guided = run_replay(test_turns, top_k=top_k, guidance=final_guidance)
+    train_baseline_rows = run_replay_turn_log(train_turns, top_k=top_k, guidance=Guidance())
+    train_guided_rows = run_replay_turn_log(
+        train_turns,
+        top_k=top_k,
+        guidance=final_guidance,
+    )
+    test_baseline_rows = run_replay_turn_log(test_turns, top_k=top_k, guidance=Guidance())
+    test_guided_rows = run_replay_turn_log(
+        test_turns,
+        top_k=top_k,
+        guidance=final_guidance,
+    )
 
     generalization = compare_generalization(
         train_baseline=train_baseline,
@@ -39,6 +52,11 @@ def run_split_benchmark(
             "guided": test_guided,
         },
         "generalization": generalization,
+        "analytics": {
+            "train_segments": summarize_segments(train_baseline_rows, train_guided_rows),
+            "test_segments": summarize_segments(test_baseline_rows, test_guided_rows),
+            "focus_areas": summarize_segments(test_baseline_rows, test_guided_rows)["focus_areas"],
+        },
         "promote_guidance": should_promote(test_guided, generalization),
         "final_guidance": final_guidance.to_dict(),
         "guidance_markdown": render_guidance_markdown(final_guidance),

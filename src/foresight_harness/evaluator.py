@@ -6,6 +6,7 @@ from pathlib import Path
 from statistics import median
 from typing import Iterable
 
+from foresight_harness.analytics import classify_event
 from foresight_harness.artifacts import prepare_artifacts, select_artifact
 from foresight_harness.baselines import (
     live_agent,
@@ -150,11 +151,13 @@ def run_replay_turn_log(
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
     for turn in turns:
+        event_metadata = classify_event(turn)
         for result in run_turn_results(turn, top_k=top_k, guidance=guidance):
             rows.append(
                 {
                     "turn_id": turn.turn_id,
                     "variant": result.variant,
+                    **event_metadata,
                     "expected_intent": turn.expected_intent,
                     "actual_next_event": turn.actual_next_event,
                     "selected_artifact_id": (

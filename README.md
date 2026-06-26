@@ -122,6 +122,15 @@ The current split benchmark learns guidance on the train split and improves the
 held-out test split from `p_at_1=0.5` to `p_at_1=1.0`, with `test_p_at_1_gain=0.5`
 and `overfit_gap=0.25`.
 
+The split report also includes analytics by:
+
+- `actor`: user, agent, or environment event source.
+- `event_type`: escalation, billing, troubleshooting, account update, refund, or unknown.
+- `topic`: the expected intent/topic label.
+
+Use these sections to see which areas improved, which stayed weak, and whether
+the backend is predicting user/environment events instead of its own next move.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -173,5 +182,9 @@ artifacts, and which were still unprepared.
 The split benchmark adds a generalization gate: guidance is learned on a train
 split, evaluated on a separate test split, and promoted only when held-out
 accuracy improves without unsafe leakage.
+
+Each split report also includes segment analytics and focus areas. These make it
+possible to track whether improvements are broad or concentrated in a few topics,
+and to identify the next areas that deserve new data or better guidance.
 
 Candidate benchmark families are tracked in `docs/dataset-catalog.md`.

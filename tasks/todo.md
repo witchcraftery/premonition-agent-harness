@@ -111,3 +111,16 @@ Verification:
 - `python3 -m pytest -v`: 44 passed.
 - `foresight-replay --train-config experiments/queueahead_challenge_train.json --test-config experiments/queueahead_challenge_test.json --iterations 3 --benchmark-report runs/queueahead_split_benchmark.json`: completed.
 - Train `p_at_1` improved from `0.25` to `1.0`; test `p_at_1` improved from `0.5` to `1.0`; overfit gap was `0.25`; guidance was promotable.
+
+## Segment Analytics
+
+- [x] Classify replay turns by actor, event type, and topic.
+- [x] Include event metadata in turn logs.
+- [x] Summarize split benchmark performance by actor, event type, and topic.
+- [x] Add focus-area reporting for strongest/weakest segments.
+
+Verification:
+
+- `python3 -m pytest -v`: 47 passed.
+- Regenerated `runs/queueahead_split_benchmark.json` with `analytics.test_segments`, `analytics.train_segments`, and `analytics.focus_areas`.
+- Current held-out test analytics show all events are user events; escalation and troubleshooting improved by `+1.0` `p_at_1`, and overall user-event `p_at_1` improved by `+0.5`.
