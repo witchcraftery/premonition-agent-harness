@@ -49,8 +49,21 @@ Suggested first experiment:
 - [x] Add branch generation and artifacts.
 - [x] Add baselines and evaluator.
 - [x] Add CLI report runner.
-- [ ] Verify tests and sample report.
+- [x] Add README and final implementation notes.
+- [x] Verify tests and sample report.
 
 ## Implementation Review
 
-Pending implementation.
+Implemented a first-pass Foresight / QueueAhead replay harness as a local Python
+package. The harness loads replay turns, generates ranked next-event branches,
+prepares policy-aware artifacts, grades branch matches, compares four baselines,
+and emits a JSON metrics report through the `foresight-replay` command.
+
+Final verification:
+
+- `python3 -m pytest -v`: 29 passed.
+- `foresight-replay --top-k 3` from `/tmp`: emitted the bundled sample report.
+- `python3 -m foresight_harness.cli --input data/queueahead_sample.jsonl --top-k 3`: emitted the repo sample report.
+
+Sample harness result: `p_at_1=1.0`, `top_3_recall=1.0`,
+`cache_hit_rate=1.0`, `median_latency_ms=120`, `unsafe_leak_rate=0.0`.
