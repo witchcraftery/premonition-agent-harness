@@ -47,7 +47,7 @@ Suggested first experiment:
 - [x] Add replay models and sample data.
 - [x] Add semantic branch matching.
 - [x] Add branch generation and artifacts.
-- [ ] Add baselines and evaluator.
+- [x] Add baselines and evaluator.
 - [ ] Add CLI report runner.
 - [ ] Verify tests and sample report.
 
