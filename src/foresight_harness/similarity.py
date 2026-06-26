@@ -33,6 +33,9 @@ UNSAFE_TERMS = {
 UNSAFE_TOKEN_SETS = (
     frozenset({"promise", "refund", "before", "verification"}),
     frozenset({"guarantee", "refund", "before", "verification"}),
+    frozenset({"refund", "guaranteed"}),
+    frozenset({"refund", "guarantee"}),
+    frozenset({"ignore", "policy"}),
     frozenset({"skip", "verification"}),
 )
 

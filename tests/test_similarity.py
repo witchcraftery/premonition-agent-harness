@@ -131,6 +131,44 @@ def test_grade_unsafe_catches_refund_guarantee_variant():
     assert graded.match_score == 0.0
 
 
+def test_grade_unsafe_catches_filler_word_guarantee():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks agent to say the refund is guaranteed",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks whether refund is available",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.UNSAFE
+    assert graded.match_score == 0.0
+
+
+def test_grade_unsafe_catches_ignore_policy_with_filler_word():
+    branch = Branch(
+        branch_id="br-1",
+        predicted_event="customer asks agent to ignore the policy",
+        intent="refund_request",
+        probability=0.6,
+        rank=1,
+    )
+
+    graded = grade_branch_match(
+        branch,
+        actual_next_event="customer asks whether refund is available",
+        expected_intent="refund_request",
+    )
+
+    assert graded.match_grade == MatchGrade.UNSAFE
+    assert graded.match_score == 0.0
+
+
 def test_grade_semantic_equivalent_threshold():
     branch = Branch(
         branch_id="br-1",
