@@ -7,8 +7,10 @@ from pathlib import Path
 
 from foresight_harness.cross_benchmark import run_cross_fold_benchmark
 from foresight_harness.conversation_probability import (
+    load_dailydialog_split,
     load_conversation_turns,
     run_conversation_probability_loop,
+    write_conversation_turns,
 )
 from foresight_harness.evaluator import load_replay_turns, run_replay, run_replay_turn_log
 from foresight_harness.experiments import load_trial_config
@@ -119,11 +121,52 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="Optional JSON path for human conversation probability loop output.",
     )
+    parser.add_argument(
+        "--dailydialog-dir",
+        type=Path,
+        help="Path to one DailyDialog split directory containing dialogues.txt and label files.",
+    )
+    parser.add_argument(
+        "--conversation-output",
+        type=Path,
+        help="Optional JSONL path for exported human conversation probability turns.",
+    )
+    parser.add_argument(
+        "--conversation-limit",
+        type=positive_int,
+        help="Optional maximum number of exported conversation turns.",
+    )
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+
+    if args.dailydialog_dir:
+        if not args.conversation_output:
+            raise SystemExit("--conversation-output is required with --dailydialog-dir")
+        turns = load_dailydialog_split(args.dailydialog_dir)
+        write_conversation_turns(
+            turns,
+            args.conversation_output,
+            limit=args.conversation_limit,
+        )
+        print(
+            json.dumps(
+                {
+                    "source": str(args.dailydialog_dir),
+                    "output": str(args.conversation_output),
+                    "exported_turns": min(
+                        len(turns),
+                        args.conversation_limit if args.conversation_limit else len(turns),
+                    ),
+                    "available_turns": len(turns),
+                },
+                indent=2,
+                sort_keys=True,
+            )
+        )
+        return
 
     if args.conversation_input:
         turns = load_conversation_turns(args.conversation_input)

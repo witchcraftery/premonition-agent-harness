@@ -170,6 +170,54 @@ def load_dailydialog_export(
     return tuple(turns)
 
 
+def load_dailydialog_split(split_dir: Path) -> tuple[ConversationTurn, ...]:
+    split_name = split_dir.name
+    turns = load_dailydialog_export(
+        split_dir / "dialogues.txt",
+        split_dir / "dialogues_act.txt",
+        split_dir / "dialogues_emotion.txt",
+    )
+    return tuple(
+        ConversationTurn(
+            turn_id=turn.turn_id.replace("dailydialog-", f"dailydialog-{split_name}-"),
+            conversation=turn.conversation,
+            next_speaker=turn.next_speaker,
+            actual_next_utterance=turn.actual_next_utterance,
+            expected_act=turn.expected_act,
+            expected_emotion=turn.expected_emotion,
+            latency_budget_ms=turn.latency_budget_ms,
+        )
+        for turn in turns
+    )
+
+
+def write_conversation_turns(
+    turns: tuple[ConversationTurn, ...],
+    output_path: Path,
+    limit: int | None = None,
+) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    selected = turns[:limit] if limit is not None else turns
+    with output_path.open("w", encoding="utf-8") as handle:
+        for turn in selected:
+            handle.write(json.dumps(conversation_turn_to_dict(turn), sort_keys=True) + "\n")
+
+
+def conversation_turn_to_dict(turn: ConversationTurn) -> dict[str, object]:
+    return {
+        "turn_id": turn.turn_id,
+        "conversation": [
+            {"role": message.role, "content": message.content}
+            for message in turn.conversation
+        ],
+        "next_speaker": turn.next_speaker,
+        "actual_next_utterance": turn.actual_next_utterance,
+        "expected_act": turn.expected_act,
+        "expected_emotion": turn.expected_emotion,
+        "latency_budget_ms": turn.latency_budget_ms,
+    }
+
+
 def speaker_role(index: int) -> str:
     return "speaker_a" if index % 2 == 0 else "speaker_b"
 
@@ -278,10 +326,23 @@ def run_conversation_probability_loop(
     for iteration in range(1, iterations + 1):
         rows = score_conversation_turns(turns, top_k=top_k, guidance=guidance)
         metrics = summarize_conversation_rows(rows, turns)
+        candidate_guidance = learn_conversation_guidance(turns, rows, guidance)
+        candidate_rows = score_conversation_turns(
+            turns,
+            top_k=top_k,
+            guidance=candidate_guidance,
+        )
+        candidate_metrics = summarize_conversation_rows(candidate_rows, turns)
+        guidance_promoted = (
+            float(candidate_metrics["p_at_1"]) >= float(metrics["p_at_1"])
+            and float(candidate_metrics["tts_readiness_rate"]) >= float(metrics["tts_readiness_rate"])
+        )
         iteration_reports.append(
             {
                 "iteration": iteration,
                 "metrics": metrics,
+                "candidate_metrics": candidate_metrics,
+                "guidance_promoted": guidance_promoted,
                 "guidance": guidance.to_dict(),
                 "missed_turns": [
                     row["turn_id"]
@@ -290,7 +351,8 @@ def run_conversation_probability_loop(
                 ],
             }
         )
-        guidance = learn_conversation_guidance(turns, rows, guidance)
+        if guidance_promoted:
+            guidance = candidate_guidance
 
     return {
         "summary": {

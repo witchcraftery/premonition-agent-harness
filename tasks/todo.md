@@ -221,3 +221,21 @@ Verification:
 - `python3 -m pytest tests/test_conversation_probability.py -v`: 4 passed.
 - `foresight-replay --conversation-input data/human_conversation_sample.jsonl --iterations 3 --conversation-report runs/human_conversation_probability_loop.json`: completed.
 - First tiny human-conversation loop improved `p_at_1` from `0.75` to `1.0` by iteration 2, held `top_3_recall=1.0`, held `tts_readiness_rate=1.0`, and learned filtered act guidance without transcript boilerplate tokens.
+
+## Real DailyDialog Import
+
+- [x] Add a DailyDialog split importer for `dialogues.txt`, `dialogues_act.txt`, and `dialogues_emotion.txt`.
+- [x] Add CLI export support for bounded DailyDialog-derived JSONL samples.
+- [x] Download the real DailyDialog train split into ignored external data storage.
+- [x] Export and commit a 500-turn DailyDialog train sample.
+- [x] Run the human-conversation probability loop on the real sample.
+- [x] Add a no-regression promotion gate for conversational guidance.
+- [x] Document the result and next training-loop improvement.
+
+Verification:
+
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 7 passed.
+- `foresight-replay --dailydialog-dir data/external/dailydialog/train --conversation-output data/dailydialog_train_sample.jsonl --conversation-limit 500`: exported 500 of 76052 available train turns.
+- `foresight-replay --conversation-input data/dailydialog_train_sample.jsonl --iterations 3 --conversation-report runs/dailydialog_train_probability_loop.json`: completed.
+- Real DailyDialog 500-turn sample: `p_at_1=0.472`, `top_3_recall=0.920`, `tts_readiness_rate=1.0`.
+- Candidate guidance was rejected in every iteration because it would reduce `p_at_1` to `0.412`; the no-regression gate correctly preserved the stronger baseline.

@@ -179,6 +179,27 @@ The current Probability Pack includes:
 - `confirmation_mode`: `wait_for_observed_next_move`.
 - `expires_after_ms`: a short freshness window for live voice use.
 
+Run the first real DailyDialog sample:
+
+```bash
+foresight-replay \
+  --dailydialog-dir data/external/dailydialog/train \
+  --conversation-output data/dailydialog_train_sample.jsonl \
+  --conversation-limit 500
+
+foresight-replay \
+  --conversation-input data/dailydialog_train_sample.jsonl \
+  --iterations 3 \
+  --conversation-report runs/dailydialog_train_probability_loop.json
+```
+
+The external DailyDialog files are not committed; keep them under
+`data/external/`. The committed 500-turn sample reports `p_at_1=0.472`,
+`top_3_recall=0.920`, and `tts_readiness_rate=1.0`. Candidate guidance was
+rejected because it would have reduced `p_at_1` to `0.412`, which is the right
+behavior for a looped backend: do not promote learned probability rules that
+make held replay worse.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -205,9 +226,10 @@ label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
 For conversational voice-agent foresight, the next meaningful step is to import
-DailyDialog, then run the same loop over ordinary dialogue acts and emotions.
-After that, add EmpatheticDialogues for emotional readiness and Taskmaster or
-SpokenWOZ for practical spoken-assistant flows.
+more DailyDialog splits, then improve act-specific learning until candidate
+guidance beats the frozen baseline instead of merely preserving it. After that,
+add EmpatheticDialogues for emotional readiness and Taskmaster or SpokenWOZ for
+practical spoken-assistant flows.
 
 Useful expansion points:
 
@@ -216,6 +238,7 @@ Useful expansion points:
 - Track stale artifact rates when policies, user state, or account context changes.
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
+- Split conversational guidance into train/dev/test promotion instead of same-split replay.
 
 ## Benchmark Loop
 

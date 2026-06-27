@@ -31,6 +31,17 @@ repeatable benchmark.
 - Current use: proves the Probability Pack path before importing external human-dialogue datasets.
 - Limitation: synthetic and tiny; useful only as a mechanics check.
 
+### DailyDialog Train Sample
+
+- Status: derived sample included in this repository; raw source files are excluded under `data/external/`.
+- File: `data/dailydialog_train_sample.jsonl`.
+- Report: `runs/dailydialog_train_probability_loop.json`.
+- Source mirror used for import: `https://github.com/snakeztc/NeuralDialog-LAED/tree/master/data/daily_dialog/train`.
+- Purpose: first real human-dialogue sample for ordinary dialogue-act probability and TTS-ready draft readiness.
+- Current use: baseline check for DailyDialog import mechanics and no-regression guidance promotion.
+- Current result: `p_at_1=0.472`, `top_3_recall=0.920`, `tts_readiness_rate=1.0`; candidate guidance was rejected because it would reduce `p_at_1` to `0.412`.
+- Limitation: first 500 exported train turns only; not yet a held-out train/dev/test benchmark.
+
 ## Human Conversation Candidates
 
 ### DailyDialog
@@ -38,7 +49,7 @@ repeatable benchmark.
 - Fit: everyday multi-turn human dialogue with dialogue-act and emotion labels.
 - Why it matters: best first external dataset for ordinary conversational next-move prediction.
 - Link: https://arxiv.org/abs/1710.03957
-- Trial question: can the backend predict the next conversational act and prewarm speakable draft branches?
+- Trial question: can the backend predict the next conversational act and prewarm speakable draft branches, then promote only guidance that improves held-out dialogue-act readiness?
 
 ### EmpatheticDialogues
 
