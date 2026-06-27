@@ -14,10 +14,6 @@ billing, card, charge, duplicate, identical, records, refund, there, two, when
 
 between, bounced, case, escalate, owns, reviewing, supervisor, unresolved
 
-## shipment_status_update
-
-carrier, delivery, exception, feed, hold, keep, logistics, promising, throws, watching
-
 ## troubleshooting_loop
 
 connect, factory, next, path, recovery, reports, result, speaker, step, steps

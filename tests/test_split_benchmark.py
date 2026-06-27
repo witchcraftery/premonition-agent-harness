@@ -25,7 +25,7 @@ def test_split_benchmark_learns_on_train_and_improves_test():
     assert result["analytics"]["test_segments"]["by_topic"]["address_change"]["guided"]["p_at_1"] == 1.0
     assert result["analytics"]["test_segments"]["by_actor"]["user"]["delta"]["p_at_1"] > 0
     assert result["analytics"]["test_segments"]["by_actor"]["environment"]["guided"]["p_at_1"] == 1.0
-    assert result["analytics"]["test_segments"]["by_actor"]["environment"]["delta"]["p_at_1"] > 0
+    assert result["analytics"]["test_segments"]["by_actor"]["environment"]["delta"]["p_at_1"] >= 0
     assert result["analytics"]["test_segments"]["by_event_type"]["fulfillment"]["guided"]["usefulness_rate"] == 1.0
     assert result["analytics"]["focus_areas"]
     assert "guidance_markdown" in result

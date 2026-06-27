@@ -36,26 +36,18 @@
       {
         "guided_p_at_1": 1.0,
         "guided_usefulness_rate": 1.0,
-        "name": "shipment_status_update",
-        "p_at_1_delta": 0.5,
-        "segment": "by_topic",
-        "usefulness_delta": 0.5
+        "name": "escalation_request",
+        "p_at_1_delta": 1.0,
+        "segment": "by_profile",
+        "usefulness_delta": 1.0
       },
       {
         "guided_p_at_1": 1.0,
         "guided_usefulness_rate": 1.0,
-        "name": "fulfillment",
-        "p_at_1_delta": 0.5,
-        "segment": "by_event_type",
-        "usefulness_delta": 0.5
-      },
-      {
-        "guided_p_at_1": 1.0,
-        "guided_usefulness_rate": 1.0,
-        "name": "environment",
-        "p_at_1_delta": 0.5,
-        "segment": "by_actor",
-        "usefulness_delta": 0.5
+        "name": "troubleshooting_loop",
+        "p_at_1_delta": 1.0,
+        "segment": "by_profile",
+        "usefulness_delta": 1.0
       },
       {
         "guided_p_at_1": 1.0,
@@ -84,6 +76,14 @@
       {
         "guided_p_at_1": 1.0,
         "guided_usefulness_rate": 1.0,
+        "name": "shipment_status_update",
+        "p_at_1_delta": 0.0,
+        "segment": "by_topic",
+        "usefulness_delta": 0.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
         "name": "account_update",
         "p_at_1_delta": 0.0,
         "segment": "by_event_type",
@@ -96,19 +96,67 @@
         "p_at_1_delta": 0.0,
         "segment": "by_event_type",
         "usefulness_delta": 1.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "fulfillment",
+        "p_at_1_delta": 0.0,
+        "segment": "by_event_type",
+        "usefulness_delta": 0.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "environment",
+        "p_at_1_delta": 0.0,
+        "segment": "by_actor",
+        "usefulness_delta": 0.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "address_change",
+        "p_at_1_delta": 0.0,
+        "segment": "by_profile",
+        "usefulness_delta": 0.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "billing_refund_timing",
+        "p_at_1_delta": 0.0,
+        "segment": "by_profile",
+        "usefulness_delta": 1.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "carrier_exception_hold",
+        "p_at_1_delta": 0.0,
+        "segment": "by_profile",
+        "usefulness_delta": 0.0
+      },
+      {
+        "guided_p_at_1": 1.0,
+        "guided_usefulness_rate": 1.0,
+        "name": "warehouse_lock",
+        "p_at_1_delta": 0.0,
+        "segment": "by_profile",
+        "usefulness_delta": 0.0
       }
     ],
     "test_segments": {
       "by_actor": {
         "environment": {
           "baseline": {
-            "p_at_1": 0.5,
+            "p_at_1": 1.0,
             "total_turns": 2,
-            "usefulness_rate": 0.5
+            "usefulness_rate": 1.0
           },
           "delta": {
-            "p_at_1": 0.5,
-            "usefulness_rate": 0.5
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -184,13 +232,13 @@
         },
         "fulfillment": {
           "baseline": {
-            "p_at_1": 0.5,
+            "p_at_1": 1.0,
             "total_turns": 2,
-            "usefulness_rate": 0.5
+            "usefulness_rate": 1.0
           },
           "delta": {
-            "p_at_1": 0.5,
-            "usefulness_rate": 0.5
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -207,6 +255,104 @@
           "delta": {
             "p_at_1": 1.0,
             "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "by_profile": {
+        "address_change": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "billing_refund_timing": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "carrier_exception_hold": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "escalation_request": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "troubleshooting_loop": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "warehouse_lock": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -266,13 +412,13 @@
         },
         "shipment_status_update": {
           "baseline": {
-            "p_at_1": 0.5,
+            "p_at_1": 1.0,
             "total_turns": 2,
-            "usefulness_rate": 0.5
+            "usefulness_rate": 1.0
           },
           "delta": {
-            "p_at_1": 0.5,
-            "usefulness_rate": 0.5
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -333,26 +479,18 @@
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "shipment_status_update",
-          "p_at_1_delta": 0.5,
-          "segment": "by_topic",
-          "usefulness_delta": 0.5
+          "name": "escalation_request",
+          "p_at_1_delta": 1.0,
+          "segment": "by_profile",
+          "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "fulfillment",
-          "p_at_1_delta": 0.5,
-          "segment": "by_event_type",
-          "usefulness_delta": 0.5
-        },
-        {
-          "guided_p_at_1": 1.0,
-          "guided_usefulness_rate": 1.0,
-          "name": "environment",
-          "p_at_1_delta": 0.5,
-          "segment": "by_actor",
-          "usefulness_delta": 0.5
+          "name": "troubleshooting_loop",
+          "p_at_1_delta": 1.0,
+          "segment": "by_profile",
+          "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
@@ -381,6 +519,14 @@
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
+          "name": "shipment_status_update",
+          "p_at_1_delta": 0.0,
+          "segment": "by_topic",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
           "name": "account_update",
           "p_at_1_delta": 0.0,
           "segment": "by_event_type",
@@ -393,6 +539,54 @@
           "p_at_1_delta": 0.0,
           "segment": "by_event_type",
           "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "fulfillment",
+          "p_at_1_delta": 0.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "environment",
+          "p_at_1_delta": 0.0,
+          "segment": "by_actor",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "address_change",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "billing_refund_timing",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "carrier_exception_hold",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "warehouse_lock",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 0.0
         }
       ]
     },
@@ -400,13 +594,13 @@
       "by_actor": {
         "environment": {
           "baseline": {
-            "p_at_1": 0.5,
+            "p_at_1": 1.0,
             "total_turns": 2,
-            "usefulness_rate": 0.5
+            "usefulness_rate": 1.0
           },
           "delta": {
-            "p_at_1": 0.5,
-            "usefulness_rate": 0.5
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -482,13 +676,13 @@
         },
         "fulfillment": {
           "baseline": {
-            "p_at_1": 0.5,
+            "p_at_1": 1.0,
             "total_turns": 2,
-            "usefulness_rate": 0.5
+            "usefulness_rate": 1.0
           },
           "delta": {
-            "p_at_1": 0.5,
-            "usefulness_rate": 0.5
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -505,6 +699,104 @@
           "delta": {
             "p_at_1": 1.0,
             "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        }
+      },
+      "by_profile": {
+        "address_change": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "billing_refund_timing": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "carrier_exception_hold": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "escalation_request": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "troubleshooting_loop": {
+          "baseline": {
+            "p_at_1": 0.0,
+            "total_turns": 1,
+            "usefulness_rate": 0.0
+          },
+          "delta": {
+            "p_at_1": 1.0,
+            "usefulness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          }
+        },
+        "warehouse_lock": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "total_turns": 1,
+            "usefulness_rate": 1.0
+          },
+          "delta": {
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -564,13 +856,13 @@
         },
         "shipment_status_update": {
           "baseline": {
-            "p_at_1": 0.5,
+            "p_at_1": 1.0,
             "total_turns": 2,
-            "usefulness_rate": 0.5
+            "usefulness_rate": 1.0
           },
           "delta": {
-            "p_at_1": 0.5,
-            "usefulness_rate": 0.5
+            "p_at_1": 0.0,
+            "usefulness_rate": 0.0
           },
           "guided": {
             "p_at_1": 1.0,
@@ -647,34 +939,34 @@
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "user",
-          "p_at_1_delta": 0.75,
-          "segment": "by_actor",
+          "name": "address_change",
+          "p_at_1_delta": 1.0,
+          "segment": "by_profile",
           "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "shipment_status_update",
-          "p_at_1_delta": 0.5,
-          "segment": "by_topic",
-          "usefulness_delta": 0.5
+          "name": "escalation_request",
+          "p_at_1_delta": 1.0,
+          "segment": "by_profile",
+          "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "fulfillment",
-          "p_at_1_delta": 0.5,
-          "segment": "by_event_type",
-          "usefulness_delta": 0.5
+          "name": "troubleshooting_loop",
+          "p_at_1_delta": 1.0,
+          "segment": "by_profile",
+          "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "environment",
-          "p_at_1_delta": 0.5,
+          "name": "user",
+          "p_at_1_delta": 0.75,
           "segment": "by_actor",
-          "usefulness_delta": 0.5
+          "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
@@ -687,10 +979,58 @@
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
+          "name": "shipment_status_update",
+          "p_at_1_delta": 0.0,
+          "segment": "by_topic",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
           "name": "billing",
           "p_at_1_delta": 0.0,
           "segment": "by_event_type",
           "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "fulfillment",
+          "p_at_1_delta": 0.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "environment",
+          "p_at_1_delta": 0.0,
+          "segment": "by_actor",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "billing_refund_timing",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "carrier_exception_hold",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "warehouse_lock",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 0.0
         }
       ]
     }
@@ -731,18 +1071,6 @@
         "supervisor",
         "unresolved"
       ],
-      "shipment_status_update": [
-        "carrier",
-        "delivery",
-        "exception",
-        "feed",
-        "hold",
-        "keep",
-        "logistics",
-        "promising",
-        "throws",
-        "watching"
-      ],
       "troubleshooting_loop": [
         "connect",
         "factory",
@@ -759,20 +1087,114 @@
   },
   "generalization": {
     "overfit_gap": 0.167,
-    "test_p_at_1_gain": 0.5,
-    "test_usefulness_gain": 0.667,
-    "train_p_at_1_gain": 0.667,
-    "train_usefulness_gain": 0.833
+    "test_p_at_1_gain": 0.333,
+    "test_usefulness_gain": 0.5,
+    "train_p_at_1_gain": 0.5,
+    "train_usefulness_gain": 0.667
   },
-  "guidance_markdown": "# Premonition Guidance\n\nLearned intent cues from replay misses.\n\n## address_change\n\naddress, changed, check, fulfillment, going, left, locked, new, old, order\n\n## billing_refund_timing\n\nbilling, card, charge, duplicate, identical, records, refund, there, two, when\n\n## escalation_request\n\nbetween, bounced, case, escalate, owns, reviewing, supervisor, unresolved\n\n## shipment_status_update\n\ncarrier, delivery, exception, feed, hold, keep, logistics, promising, throws, watching\n\n## troubleshooting_loop\n\nconnect, factory, next, path, recovery, reports, result, speaker, step, steps\n",
+  "guidance_markdown": "# Premonition Guidance\n\nLearned intent cues from replay misses.\n\n## address_change\n\naddress, changed, check, fulfillment, going, left, locked, new, old, order\n\n## billing_refund_timing\n\nbilling, card, charge, duplicate, identical, records, refund, there, two, when\n\n## escalation_request\n\nbetween, bounced, case, escalate, owns, reviewing, supervisor, unresolved\n\n## troubleshooting_loop\n\nconnect, factory, next, path, recovery, reports, result, speaker, step, steps\n",
   "promote_guidance": true,
   "test": {
+    "baseline": {
+      "harness": {
+        "branch_hit_rate": 0.278,
+        "cache_hit_rate": 0.5,
+        "median_latency_ms": 410,
+        "median_token_cost": 143,
+        "p_at_1": 0.667,
+        "stale_artifact_rate": 0.0,
+        "top_3_recall": 0.833,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 0.5
+      },
+      "live_agent": {
+        "cache_hit_rate": 0.0,
+        "median_latency_ms": 800,
+        "median_token_cost": 90,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 1.0
+      },
+      "prediction_only": {
+        "cache_hit_rate": 0.0,
+        "median_latency_ms": 800,
+        "median_token_cost": 45,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 0.0
+      },
+      "retrieval_plus_draft": {
+        "cache_hit_rate": 0.0,
+        "median_latency_ms": 600,
+        "median_token_cost": 120,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 1.0
+      },
+      "semantic_cache": {
+        "cache_hit_rate": 0.333,
+        "median_latency_ms": 750,
+        "median_token_cost": 90,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 0.333
+      }
+    },
+    "guided": {
+      "harness": {
+        "branch_hit_rate": 0.333,
+        "cache_hit_rate": 1.0,
+        "median_latency_ms": 120,
+        "median_token_cost": 144,
+        "p_at_1": 1.0,
+        "stale_artifact_rate": 0.0,
+        "top_3_recall": 1.0,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 1.0
+      },
+      "live_agent": {
+        "cache_hit_rate": 0.0,
+        "median_latency_ms": 800,
+        "median_token_cost": 90,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 1.0
+      },
+      "prediction_only": {
+        "cache_hit_rate": 0.0,
+        "median_latency_ms": 800,
+        "median_token_cost": 45,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 0.0
+      },
+      "retrieval_plus_draft": {
+        "cache_hit_rate": 0.0,
+        "median_latency_ms": 600,
+        "median_token_cost": 120,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 1.0
+      },
+      "semantic_cache": {
+        "cache_hit_rate": 0.333,
+        "median_latency_ms": 750,
+        "median_token_cost": 90,
+        "total_turns": 6,
+        "unsafe_leak_rate": 0.0,
+        "usefulness_rate": 0.333
+      }
+    }
+  },
+  "train": {
     "baseline": {
       "harness": {
         "branch_hit_rate": 0.222,
         "cache_hit_rate": 0.333,
         "median_latency_ms": 725,
-        "median_token_cost": 143,
+        "median_token_cost": 144,
         "p_at_1": 0.5,
         "stale_artifact_rate": 0.0,
         "top_3_recall": 0.667,
@@ -818,101 +1240,7 @@
         "branch_hit_rate": 0.333,
         "cache_hit_rate": 1.0,
         "median_latency_ms": 120,
-        "median_token_cost": 147,
-        "p_at_1": 1.0,
-        "stale_artifact_rate": 0.0,
-        "top_3_recall": 1.0,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 1.0
-      },
-      "live_agent": {
-        "cache_hit_rate": 0.0,
-        "median_latency_ms": 800,
-        "median_token_cost": 90,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 1.0
-      },
-      "prediction_only": {
-        "cache_hit_rate": 0.0,
-        "median_latency_ms": 800,
-        "median_token_cost": 45,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 0.0
-      },
-      "retrieval_plus_draft": {
-        "cache_hit_rate": 0.0,
-        "median_latency_ms": 600,
-        "median_token_cost": 120,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 1.0
-      },
-      "semantic_cache": {
-        "cache_hit_rate": 0.333,
-        "median_latency_ms": 750,
-        "median_token_cost": 90,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 0.333
-      }
-    }
-  },
-  "train": {
-    "baseline": {
-      "harness": {
-        "branch_hit_rate": 0.167,
-        "cache_hit_rate": 0.167,
-        "median_latency_ms": 775,
         "median_token_cost": 144,
-        "p_at_1": 0.333,
-        "stale_artifact_rate": 0.0,
-        "top_3_recall": 0.5,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 0.167
-      },
-      "live_agent": {
-        "cache_hit_rate": 0.0,
-        "median_latency_ms": 800,
-        "median_token_cost": 90,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 1.0
-      },
-      "prediction_only": {
-        "cache_hit_rate": 0.0,
-        "median_latency_ms": 800,
-        "median_token_cost": 45,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 0.0
-      },
-      "retrieval_plus_draft": {
-        "cache_hit_rate": 0.0,
-        "median_latency_ms": 600,
-        "median_token_cost": 120,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 1.0
-      },
-      "semantic_cache": {
-        "cache_hit_rate": 0.333,
-        "median_latency_ms": 750,
-        "median_token_cost": 90,
-        "total_turns": 6,
-        "unsafe_leak_rate": 0.0,
-        "usefulness_rate": 0.333
-      }
-    },
-    "guided": {
-      "harness": {
-        "branch_hit_rate": 0.333,
-        "cache_hit_rate": 1.0,
-        "median_latency_ms": 120,
-        "median_token_cost": 146,
         "p_at_1": 1.0,
         "stale_artifact_rate": 0.0,
         "top_3_recall": 1.0,
@@ -991,18 +1319,6 @@
           "supervisor",
           "unresolved"
         ],
-        "shipment_status_update": [
-          "carrier",
-          "delivery",
-          "exception",
-          "feed",
-          "hold",
-          "keep",
-          "logistics",
-          "promising",
-          "throws",
-          "watching"
-        ],
         "troubleshooting_loop": [
           "connect",
           "factory",
@@ -1017,31 +1333,31 @@
         ]
       }
     },
-    "guidance_markdown": "# Premonition Guidance\n\nLearned intent cues from replay misses.\n\n## address_change\n\naddress, changed, check, fulfillment, going, left, locked, new, old, order\n\n## billing_refund_timing\n\nbilling, card, charge, duplicate, identical, records, refund, there, two, when\n\n## escalation_request\n\nbetween, bounced, case, escalate, owns, reviewing, supervisor, unresolved\n\n## shipment_status_update\n\ncarrier, delivery, exception, feed, hold, keep, logistics, promising, throws, watching\n\n## troubleshooting_loop\n\nconnect, factory, next, path, recovery, reports, result, speaker, step, steps\n",
+    "guidance_markdown": "# Premonition Guidance\n\nLearned intent cues from replay misses.\n\n## address_change\n\naddress, changed, check, fulfillment, going, left, locked, new, old, order\n\n## billing_refund_timing\n\nbilling, card, charge, duplicate, identical, records, refund, there, two, when\n\n## escalation_request\n\nbetween, bounced, case, escalate, owns, reviewing, supervisor, unresolved\n\n## troubleshooting_loop\n\nconnect, factory, next, path, recovery, reports, result, speaker, step, steps\n",
     "iterations": [
       {
         "assessment": {
           "exact_top_1_turns": [
             "qc-003",
-            "qc-005"
+            "qc-005",
+            "qc-006"
           ],
           "missed_turns": [
             "qc-001",
             "qc-002",
-            "qc-004",
-            "qc-006"
+            "qc-004"
           ],
           "p_at_1_delta": 0.0,
           "prepared_turns": [
-            "qc-005"
+            "qc-005",
+            "qc-006"
           ],
           "preparedness_delta": 0.0,
           "unprepared_turns": [
             "qc-001",
             "qc-002",
             "qc-003",
-            "qc-004",
-            "qc-006"
+            "qc-004"
           ]
         },
         "guidance": {
@@ -1050,16 +1366,16 @@
         "iteration": 1,
         "report": {
           "harness": {
-            "branch_hit_rate": 0.167,
-            "cache_hit_rate": 0.167,
-            "median_latency_ms": 775,
+            "branch_hit_rate": 0.222,
+            "cache_hit_rate": 0.333,
+            "median_latency_ms": 725,
             "median_token_cost": 144,
-            "p_at_1": 0.333,
+            "p_at_1": 0.5,
             "stale_artifact_rate": 0.0,
-            "top_3_recall": 0.5,
+            "top_3_recall": 0.667,
             "total_turns": 6,
             "unsafe_leak_rate": 0.0,
-            "usefulness_rate": 0.167
+            "usefulness_rate": 0.333
           },
           "live_agent": {
             "cache_hit_rate": 0.0,
@@ -1106,7 +1422,7 @@
             "qc-006"
           ],
           "missed_turns": [],
-          "p_at_1_delta": 0.667,
+          "p_at_1_delta": 0.5,
           "prepared_turns": [
             "qc-001",
             "qc-002",
@@ -1115,7 +1431,7 @@
             "qc-005",
             "qc-006"
           ],
-          "preparedness_delta": 0.833,
+          "preparedness_delta": 0.667,
           "unprepared_turns": []
         },
         "guidance": {
@@ -1154,18 +1470,6 @@
               "supervisor",
               "unresolved"
             ],
-            "shipment_status_update": [
-              "carrier",
-              "delivery",
-              "exception",
-              "feed",
-              "hold",
-              "keep",
-              "logistics",
-              "promising",
-              "throws",
-              "watching"
-            ],
             "troubleshooting_loop": [
               "connect",
               "factory",
@@ -1186,7 +1490,7 @@
             "branch_hit_rate": 0.333,
             "cache_hit_rate": 1.0,
             "median_latency_ms": 120,
-            "median_token_cost": 146,
+            "median_token_cost": 144,
             "p_at_1": 1.0,
             "stale_artifact_rate": 0.0,
             "top_3_recall": 1.0,
@@ -1287,18 +1591,6 @@
               "supervisor",
               "unresolved"
             ],
-            "shipment_status_update": [
-              "carrier",
-              "delivery",
-              "exception",
-              "feed",
-              "hold",
-              "keep",
-              "logistics",
-              "promising",
-              "throws",
-              "watching"
-            ],
             "troubleshooting_loop": [
               "connect",
               "factory",
@@ -1319,7 +1611,7 @@
             "branch_hit_rate": 0.333,
             "cache_hit_rate": 1.0,
             "median_latency_ms": 120,
-            "median_token_cost": 146,
+            "median_token_cost": 144,
             "p_at_1": 1.0,
             "stale_artifact_rate": 0.0,
             "top_3_recall": 1.0,

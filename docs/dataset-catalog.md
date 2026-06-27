@@ -17,8 +17,9 @@ repeatable benchmark.
 - Status: included in this repository.
 - File: `data/queueahead_enriched.jsonl`.
 - Config: `experiments/queueahead_enriched_folds.json`.
+- Reports: `runs/queueahead_enriched_cross_benchmark.json` and `runs/queueahead_enriched_dashboard.html`.
 - Purpose: synthetic 5-fold train/dev/test benchmark with user events, hard environment events, and decoy cues.
-- Current use: measures whether learned Premonition guidance improves held-out performance across actors and topics while surfacing weak segments.
+- Current use: measures whether the Premonition Backend improves held-out performance across actors, topics, and event profiles while surfacing weak segments for the next data or brancher pass.
 - Limitation: still synthetic; use it to harden the loop before importing larger external datasets.
 
 ## Primary External Candidates

@@ -6,6 +6,28 @@ from foresight_harness.models import Branch, ReplayTurn
 from foresight_harness.similarity import normalized_tokens
 
 MIN_CLUSTERED_GUIDANCE_CUES = 3
+ENVIRONMENT_PROFILE_PATTERNS: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (
+    (
+        "carrier feed changes to delivery exception hold",
+        ("carrier", "exception", "hold", "feed", "logistics"),
+        ("clear", "cleared"),
+    ),
+    (
+        "inventory service changes order to backorder hold",
+        ("inventory", "backorder", "stock", "allocated"),
+        ("available", "clear", "cleared"),
+    ),
+    (
+        "fraud review changes order address edit to locked",
+        ("fraud", "review", "locked", "lock", "address"),
+        ("cleared", "approved"),
+    ),
+    (
+        "warehouse status changes to shipment locked",
+        ("warehouse", "fulfillment", "shipment", "locked", "locks"),
+        ("open", "editable"),
+    ),
+)
 
 INTENT_PATTERNS: dict[str, tuple[str, tuple[str, ...]]] = {
     "refund_request": (
@@ -55,13 +77,17 @@ def generate_branches(turn: ReplayTurn, top_k: int = 3, guidance=None) -> tuple[
             keyword for keyword in guidance_keywords if keyword in context_tokens
         )
         predicted_event = event
+        profile_event = profile_event_for_intent(intent, context_tokens)
+        if profile_event:
+            predicted_event = profile_event
+            probability = max(probability, 0.85)
         if matched_guidance and intent == "shipment_status_update":
             cue_words = (
                 guidance_keywords
                 if len(matched_guidance) >= MIN_CLUSTERED_GUIDANCE_CUES
                 else matched_guidance
             )
-            predicted_event = f"{event} {' '.join(cue_words)}"
+            predicted_event = f"{predicted_event} {' '.join(cue_words)}"
         scored.append((intent, predicted_event, round(probability, 3)))
 
     ranked = sorted(scored, key=lambda item: item[2], reverse=True)[:top_k]
@@ -75,3 +101,16 @@ def generate_branches(turn: ReplayTurn, top_k: int = 3, guidance=None) -> tuple[
         )
         for index, (intent, event, probability) in enumerate(ranked, start=1)
     )
+
+
+def profile_event_for_intent(intent: str, context_tokens: set[str]) -> str | None:
+    if intent != "shipment_status_update":
+        return None
+
+    for event, positive_tokens, negative_tokens in ENVIRONMENT_PROFILE_PATTERNS:
+        if any(token in context_tokens for token in negative_tokens):
+            continue
+        if len(set(positive_tokens) & context_tokens) >= 2:
+            return event
+
+    return None

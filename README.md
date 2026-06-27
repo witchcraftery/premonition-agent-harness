@@ -128,10 +128,26 @@ foresight-replay \
   --fold-config experiments/queueahead_enriched_folds.json \
   --folds 5 \
   --iterations 3 \
-  --benchmark-report runs/queueahead_enriched_cross_benchmark.json
+  --benchmark-report runs/queueahead_enriched_cross_benchmark.json \
+  --dashboard-report runs/queueahead_enriched_dashboard.html
 ```
 
-The enriched loop uses 30 synthetic replay turns with hard environment events, user events, and decoy cues. Each fold trains on three-fifths of the data, uses one-fifth as a dev promotion gate, then scores the final held-out fifth. The current 5-fold report improves held-out `p_at_1` from `0.567` to `0.667`; environment-event `p_at_1` from `0.067` to `0.317`; and user-event `p_at_1` from `0.91` to `0.95`. Weakest segments are now explicit in the report: environment events remain the hardest group, followed by refund and billing events.
+The enriched loop uses 30 synthetic replay turns with hard environment events,
+user events, and decoy cues. Each fold trains on three-fifths of the data, uses
+one-fifth as a dev promotion gate, then scores the final held-out fifth.
+
+The current profile-aware 5-fold report shows held-out `p_at_1` at
+`0.633 -> 0.633`, environment-event `p_at_1` at `0.483 -> 0.483`, and
+user-event `p_at_1` at `0.810 -> 0.810`. The flat guided gain is useful signal:
+the profile-aware brancher has moved the known hard-environment wins into the
+unguided backend behavior, and the guidance delta reports `0` improved and `0`
+regressed held-out turns. `carrier_exception_hold` is now solved at `1.0`
+`p_at_1`; the next weak profiles are `payment_gateway_update`, `policy_update`,
+and `fraud_review_lock`.
+
+Open `runs/queueahead_enriched_dashboard.html` in a browser for a quick visual
+reference of overall accuracy, actor performance, weakest segments, profile
+performance, guidance deltas, and fold-by-fold results.
 
 ## Replay Data Format
 
@@ -180,6 +196,10 @@ The first guided loop changes one lever: learned intent cues. The loop records w
 The split benchmark adds a generalization gate: guidance is learned on a train split, evaluated on a separate test split, and promoted only when held-out accuracy improves without unsafe leakage.
 
 The enriched cross-fold benchmark adds a dev gate before the final held-out test: guidance is learned on train, checked on dev for no-regression promotion, then scored on test. It reports aggregate mean/min/max values and weakest segments across folds so we can see whether gains are broad or concentrated.
+
+The dashboard report turns that same JSON into a static HTML page for quick
+review. It is intentionally built from the benchmark artifact, not a separate
+data path, so visual peeks and JSON analysis stay aligned.
 
 Each split report also includes segment analytics and focus areas. These make it possible to track whether improvements are broad or concentrated in a few topics, and to identify the next areas that deserve new data or better guidance.
 

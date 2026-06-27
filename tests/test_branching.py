@@ -107,6 +107,50 @@ def test_environment_guidance_expands_only_when_cues_cluster():
     assert "hold" in hard_branch.predicted_event
 
 
+def test_environment_profile_branching_uses_positive_and_negative_cues():
+    carrier_hold = ReplayTurn.from_dict(
+        {
+            "turn_id": "carrier-hold-test",
+            "conversation": [
+                {
+                    "role": "customer",
+                    "content": "The carrier feed shows an exception hold before reroute.",
+                },
+                {"role": "agent", "content": "I am watching the logistics stream."},
+            ],
+            "actual_next_event": "carrier feed changes to delivery exception hold",
+            "policy_context": "Orders on carrier exception hold cannot be edited.",
+            "expected_intent": "shipment_status_update",
+            "latency_budget_ms": 800,
+        }
+    )
+    carrier_clear = ReplayTurn.from_dict(
+        {
+            "turn_id": "carrier-clear-test",
+            "conversation": [
+                {
+                    "role": "customer",
+                    "content": "The carrier feed is clear, so I want to change the destination.",
+                },
+                {"role": "agent", "content": "I am checking address eligibility."},
+            ],
+            "actual_next_event": "customer provides a new address and asks if the order can be changed today",
+            "policy_context": "Address changes are allowed before shipment if fraud check has passed.",
+            "expected_intent": "address_change",
+            "latency_budget_ms": 800,
+        }
+    )
+
+    hold_branch = generate_branches(carrier_hold)[0]
+    clear_branches = generate_branches(carrier_clear)
+
+    assert hold_branch.predicted_event == "carrier feed changes to delivery exception hold"
+    assert all(
+        "delivery exception hold" not in branch.predicted_event
+        for branch in clear_branches
+    )
+
+
 def test_prepare_and_select_artifact_for_actual_event():
     turn = make_turn()
     branches = generate_branches(turn, top_k=3)

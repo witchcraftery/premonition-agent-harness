@@ -156,6 +156,7 @@ def test_cli_runs_split_benchmark(tmp_path):
 
 def test_cli_runs_cross_fold_benchmark(tmp_path):
     output = tmp_path / "cross-benchmark.json"
+    dashboard = tmp_path / "dashboard.html"
 
     completed = subprocess.run(
         [
@@ -170,6 +171,8 @@ def test_cli_runs_cross_fold_benchmark(tmp_path):
             "3",
             "--benchmark-report",
             str(output),
+            "--dashboard-report",
+            str(dashboard),
         ],
         check=True,
         capture_output=True,
@@ -183,6 +186,7 @@ def test_cli_runs_cross_fold_benchmark(tmp_path):
     assert report["summary"]["fold_count"] == 5
     assert report["aggregates"]["test"]["harness"]["p_at_1"]["guided_mean"] > 0
     assert report["weak_segments"]
+    assert dashboard.read_text(encoding="utf-8").startswith("<!doctype html>")
 
 
 def test_console_entrypoint_is_declared():

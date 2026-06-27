@@ -19,6 +19,7 @@ def classify_event(turn: ReplayTurn) -> dict[str, str]:
     return {
         "actor": classify_actor(turn.actual_next_event),
         "event_type": TOPIC_EVENT_TYPES.get(turn.expected_intent, "unknown"),
+        "profile": classify_profile(turn),
         "topic": turn.expected_intent,
     }
 
@@ -32,6 +33,23 @@ def classify_actor(event_text: str) -> str:
     return "environment"
 
 
+def classify_profile(turn: ReplayTurn) -> str:
+    lowered = turn.actual_next_event.lower()
+    if "carrier" in lowered and "exception" in lowered and "hold" in lowered:
+        return "carrier_exception_hold"
+    if "warehouse" in lowered and ("locked" in lowered or "lock" in lowered):
+        return "warehouse_lock"
+    if "inventory" in lowered and ("backorder" in lowered or "hold" in lowered):
+        return "inventory_backorder"
+    if "fraud" in lowered and ("locked" in lowered or "lock" in lowered):
+        return "fraud_review_lock"
+    if "policy" in lowered and ("feed" in lowered or "changes" in lowered):
+        return "policy_update"
+    if "payment gateway" in lowered or "gateway posts" in lowered:
+        return "payment_gateway_update"
+    return turn.expected_intent
+
+
 def summarize_segments(
     baseline_rows: Iterable[dict[str, object]],
     guided_rows: Iterable[dict[str, object]],
@@ -43,6 +61,7 @@ def summarize_segments(
         "by_topic": summarize_dimension(baseline_harness, guided_harness, "topic"),
         "by_event_type": summarize_dimension(baseline_harness, guided_harness, "event_type"),
         "by_actor": summarize_dimension(baseline_harness, guided_harness, "actor"),
+        "by_profile": summarize_dimension(baseline_harness, guided_harness, "profile"),
         "focus_areas": focus_areas(baseline_harness, guided_harness),
     }
 
@@ -113,7 +132,7 @@ def focus_areas(
     guided_rows: list[dict[str, object]],
 ) -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
-    for dimension in ("topic", "event_type", "actor"):
+    for dimension in ("topic", "event_type", "actor", "profile"):
         dimension_summary = summarize_dimension(baseline_rows, guided_rows, dimension)
         for name, summary in dimension_summary.items():
             rows.append(

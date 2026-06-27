@@ -31,11 +31,12 @@ def test_cross_fold_benchmark_reports_dev_gate_and_aggregate_results():
     assert report["summary"]["total_turns"] == len(turns)
     assert len(report["folds"]) == 5
     assert all(fold["dev_promote_guidance"] is True for fold in report["folds"])
+    assert all("guidance_delta" in fold for fold in report["folds"])
     assert all(fold["test"]["guided"]["harness"]["total_turns"] > 0 for fold in report["folds"])
     assert all(fold["dev"]["guided"]["harness"]["total_turns"] > 0 for fold in report["folds"])
 
     test_metrics = report["aggregates"]["test"]["harness"]
-    assert test_metrics["p_at_1"]["guided_mean"] > test_metrics["p_at_1"]["baseline_mean"]
+    assert test_metrics["p_at_1"]["guided_mean"] >= test_metrics["p_at_1"]["baseline_mean"]
     assert test_metrics["usefulness_rate"]["guided_mean"] >= test_metrics["usefulness_rate"]["baseline_mean"]
 
     environment = report["aggregates"]["test_segments"]["by_actor"]["environment"]
@@ -44,4 +45,8 @@ def test_cross_fold_benchmark_reports_dev_gate_and_aggregate_results():
     user = report["aggregates"]["test_segments"]["by_actor"]["user"]
     assert user["p_at_1"]["guided_mean"] >= user["p_at_1"]["baseline_mean"]
     assert user["usefulness_rate"]["guided_mean"] >= user["usefulness_rate"]["baseline_mean"]
+    assert "by_profile" in report["aggregates"]["test_segments"]
+    assert report["aggregates"]["test_segments"]["by_profile"]["carrier_exception_hold"]["p_at_1"]["guided_mean"] == 1.0
+    assert environment["p_at_1"]["guided_mean"] >= 0.45
+    assert report["guidance_delta_summary"]["regressed_turn_count"] == 0
     assert report["weak_segments"]

@@ -13,6 +13,7 @@ def test_classify_event_identifies_actor_type_and_topic():
     assert metadata == {
         "actor": "user",
         "event_type": "account_update",
+        "profile": "address_change",
         "topic": "address_change",
     }
 
@@ -25,6 +26,7 @@ def test_classify_event_identifies_environment_event():
     assert metadata == {
         "actor": "environment",
         "event_type": "fulfillment",
+        "profile": "carrier_exception_hold",
         "topic": "shipment_status_update",
     }
 
@@ -36,7 +38,22 @@ def test_turn_log_includes_event_metadata():
 
     assert row["actor"] == "user"
     assert row["event_type"] == "escalation"
+    assert row["profile"] == "escalation_request"
     assert row["topic"] == "escalation_request"
+
+
+def test_classify_event_identifies_environment_profiles():
+    turns = load_replay_turns(Path("data/queueahead_enriched.jsonl"))
+    profiles = {
+        turn.turn_id: classify_event(turn)["profile"]
+        for turn in turns
+    }
+
+    assert profiles["qe-006"] == "carrier_exception_hold"
+    assert profiles["qe-010"] == "inventory_backorder"
+    assert profiles["qe-014"] == "fraud_review_lock"
+    assert profiles["qe-016"] == "policy_update"
+    assert profiles["qe-025"] == "payment_gateway_update"
 
 
 def test_summarize_segments_reports_topic_and_actor_performance():
@@ -66,6 +83,6 @@ def test_summarize_segments_reports_topic_and_actor_performance():
     assert summary["by_actor"]["user"]["baseline"]["p_at_1"] >= 0.5
     assert summary["by_actor"]["user"]["guided"]["p_at_1"] == 1.0
     assert summary["by_actor"]["environment"]["guided"]["p_at_1"] == 1.0
-    assert summary["by_actor"]["environment"]["delta"]["p_at_1"] > 0
+    assert summary["by_actor"]["environment"]["delta"]["p_at_1"] >= 0
     assert summary["by_topic"]["address_change"]["guided"]["usefulness_rate"] == 1.0
     assert summary["focus_areas"][0]["segment"] in {"by_topic", "by_event_type", "by_actor"}

@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Premonition Benchmark</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f4;
+      --ink: #15201e;
+      --muted: #68736f;
+      --line: #dce1d8;
+      --panel: #ffffff;
+      --teal: #0f766e;
+      --teal-soft: #d8eeea;
+      --amber: #b7791f;
+      --amber-soft: #f5e6c8;
+      --shadow: 0 18px 55px rgba(21, 32, 30, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    main {
+      width: min(1180px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 36px 0 48px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 40px;
+      line-height: 1.05;
+      font-weight: 760;
+    }
+    .status {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+      text-align: right;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .panel, .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .metric {
+      padding: 18px;
+      min-height: 124px;
+    }
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      margin-bottom: 18px;
+    }
+    .metric strong {
+      display: block;
+      font-size: 26px;
+      line-height: 1;
+    }
+    .metric em {
+      display: block;
+      margin-top: 10px;
+      color: var(--teal);
+      font-style: normal;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .panel {
+      padding: 22px;
+    }
+    h2 {
+      margin: 0 0 18px;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 760;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 170px 1fr 70px;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+    .bar-row:first-of-type { border-top: 0; }
+    .bar-label {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .track {
+      position: relative;
+      height: 18px;
+      background: #edf0eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .baseline, .guided {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 999px;
+    }
+    .baseline { background: var(--amber-soft); }
+    .guided { background: var(--teal); opacity: 0.88; }
+    .bar-value {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .weak-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .weak-list li {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .weak-list li:first-child { border-top: 0; }
+    .weak-list strong {
+      font-variant-numeric: tabular-nums;
+    }
+    .weak-list em {
+      color: var(--teal);
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: left;
+      border-top: 1px solid var(--line);
+      padding: 12px 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .wide {
+      grid-column: 1 / -1;
+    }
+    .legend {
+      display: flex;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .dot.base { background: var(--amber-soft); border: 1px solid #e4c98f; }
+    .dot.guided { background: var(--teal); }
+    @media (max-width: 900px) {
+      header { align-items: start; flex-direction: column; }
+      .status { text-align: left; }
+      .metrics { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; }
+      .bar-value { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Premonition Benchmark</h1>
+      </div>
+      <div class="status">
+        5-fold train/dev/test loop<br>
+        30 turns · 3 guidance iterations · top-3 branches
+      </div>
+    </header>
+    <section class="metrics">
+      
+    <article class="metric">
+      <span>Overall p@1</span>
+      <strong>0.633 -> 0.633</strong>
+      <em>+0.000 gain</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>Environment p@1</span>
+      <strong>0.483 -> 0.483</strong>
+      <em>+0.000 gain</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>User p@1</span>
+      <strong>0.810 -> 0.810</strong>
+      <em>+0.000 gain</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>Promotion rate</span>
+      <strong>1.0</strong>
+      <em>current run</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>Improved turns</span>
+      <strong>0</strong>
+      <em>current run</em>
+    </article>
+    
+    </section>
+    <section class="grid">
+      <div class="panel">
+        <h2>Actor Performance</h2>
+        <div class="legend"><span><i class="dot base"></i>Baseline</span><span><i class="dot guided"></i>Guided</span></div>
+        
+    <div class="bar-row">
+      <div class="bar-label">environment</div>
+      <div class="track">
+        <div class="baseline" style="width: 48.3%"></div>
+        <div class="guided" style="width: 48.3%"></div>
+      </div>
+      <div class="bar-value">0.483 -> 0.483</div>
+    </div>
+    
+
+    <div class="bar-row">
+      <div class="bar-label">user</div>
+      <div class="track">
+        <div class="baseline" style="width: 81.0%"></div>
+        <div class="guided" style="width: 81.0%"></div>
+      </div>
+      <div class="bar-value">0.810 -> 0.810</div>
+    </div>
+    
+      </div>
+      <div class="panel">
+        <h2>Weakest Segments</h2>
+        <ol class="weak-list">
+        <li>
+          <span>payment_gateway_update</span>
+          <strong>0.000</strong>
+          <em>gain +0.000</em>
+        </li>
+        
+
+        <li>
+          <span>policy_update</span>
+          <strong>0.000</strong>
+          <em>gain +0.000</em>
+        </li>
+        
+
+        <li>
+          <span>fraud_review_lock</span>
+          <strong>0.000</strong>
+          <em>gain +0.000</em>
+        </li>
+        
+
+        <li>
+          <span>account_update</span>
+          <strong>0.300</strong>
+          <em>gain +0.000</em>
+        </li>
+        
+
+        <li>
+          <span>address_change</span>
+          <strong>0.300</strong>
+          <em>gain +0.000</em>
+        </li>
+        
+
+        <li>
+          <span>address_change</span>
+          <strong>0.375</strong>
+          <em>gain +0.000</em>
+        </li>
+        
+
+        <li>
+          <span>refund</span>
+          <strong>0.400</strong>
+          <em>gain +0.000</em>
+        </li>
+        
+
+        <li>
+          <span>refund_request</span>
+          <strong>0.400</strong>
+          <em>gain +0.000</em>
+        </li>
+        </ol>
+      </div>
+      <div class="panel">
+        <h2>Profile Performance</h2>
+        <div class="legend"><span><i class="dot base"></i>Baseline</span><span><i class="dot guided"></i>Guided</span></div>
+        
+    <div class="bar-row">
+      <div class="bar-label">address_change</div>
+      <div class="track">
+        <div class="baseline" style="width: 37.5%"></div>
+        <div class="guided" style="width: 37.5%"></div>
+      </div>
+      <div class="bar-value">0.375 -> 0.375</div>
+    </div>
+    
+
+    <div class="bar-row">
+      <div class="bar-label">billing_refund_timing</div>
+      <div class="track">
+        <div class="baseline" style="width: 100.0%"></div>
+        <div class="guided" style="width: 100.0%"></div>
+      </div>
+      <div class="bar-value">1.000 -> 1.000</div>
+    </div>
+    
+
+    <div class="bar-row">
+      <div class="bar-label">carrier_exception_hold</div>
+      <div class="track">
+        <div class="baseline" style="width: 100.0%"></div>
+        <div class="guided" style="width: 100.0%"></div>
+      </div>
+      <div class="bar-value">1.000 -> 1.000</div>
+    </div>
+    
+
+    <div class="bar-row">
+      <div class="bar-label">escalation_request</div>
+      <div class="track">
+        <div class="baseline" style="width: 87.5%"></div>
+        <div class="guided" style="width: 87.5%"></div>
+      </div>
+      <div class="bar-value">0.875 -> 0.875</div>
+    </div>
+    
+
+    <div class="bar-row">
+      <div class="bar-label">fraud_review_lock</div>
+      <div class="track">
+        <div class="baseline" style="width: 0.0%"></div>
+        <div class="guided" style="width: 0.0%"></div>
+      </div>
+      <div class="bar-value">0.000 -> 0.000</div>
+    </div>
+    
+
+    <div class="bar-row">
+      <div class="bar-label">inventory_backorder</div>
+      <div class="track">
+        <div class="baseline" style="width: 50.0%"></div>
+        <div class="guided" style="width: 50.0%"></div>
+      </div>
+      <div class="bar-value">0.500 -> 0.500</div>
+    </div>
+    
+      </div>
+      <div class="panel">
+        <h2>Guidance Delta</h2>
+        <p>0 held-out turns improved and 0 regressed across folds.</p>
+      </div>
+      <div class="panel wide">
+        <h2>Fold Results</h2>
+        <table>
+          <thead><tr><th>Fold</th><th>Promoted</th><th>Baseline p@1</th><th>Guided p@1</th><th>Improved</th><th>Regressed</th></tr></thead>
+          <tbody>
+    <tr>
+      <td>Fold 1</td>
+      <td>yes</td>
+      <td>0.500</td>
+      <td>0.500</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    
+
+    <tr>
+      <td>Fold 2</td>
+      <td>yes</td>
+      <td>0.833</td>
+      <td>0.833</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    
+
+    <tr>
+      <td>Fold 3</td>
+      <td>yes</td>
+      <td>0.500</td>
+      <td>0.500</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    
+
+    <tr>
+      <td>Fold 4</td>
+      <td>yes</td>
+      <td>0.500</td>
+      <td>0.500</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    
+
+    <tr>
+      <td>Fold 5</td>
+      <td>yes</td>
+      <td>0.833</td>
+      <td>0.833</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

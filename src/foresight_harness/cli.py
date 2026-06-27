@@ -11,6 +11,7 @@ from foresight_harness.experiments import load_trial_config
 from foresight_harness.guidance import run_guidance_loop
 from foresight_harness.learning import analyze_harness_misses
 from foresight_harness.split_benchmark import run_split_benchmark
+from foresight_harness.visualization import write_benchmark_dashboard
 
 
 def positive_int(value: str) -> int:
@@ -99,6 +100,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="Optional JSON path for train/test split benchmark output.",
     )
+    parser.add_argument(
+        "--dashboard-report",
+        type=Path,
+        help="Optional HTML path for a visual benchmark dashboard.",
+    )
     return parser
 
 
@@ -118,6 +124,8 @@ def main() -> None:
             with args.benchmark_report.open("w", encoding="utf-8") as handle:
                 json.dump(report, handle, indent=2, sort_keys=True)
                 handle.write("\n")
+        if args.dashboard_report:
+            write_benchmark_dashboard(report, args.dashboard_report)
         print(json.dumps(report, indent=2, sort_keys=True))
         return
 

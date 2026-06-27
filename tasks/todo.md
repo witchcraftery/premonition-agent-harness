@@ -170,3 +170,21 @@ Verification:
 - Enriched 5-fold held-out `p_at_1` improved from `0.567` to `0.667`; usefulness improved from `0.567` to `0.667`.
 - Environment-event `p_at_1` improved from `0.067` to `0.317`; user-event `p_at_1` improved from `0.91` to `0.95`.
 - Promotion rate was `1.0`; weakest segments were environment events, refund, billing, and fulfillment/shipment status.
+
+## Profile-Aware Benchmark Visualization
+
+- [x] Add event profiles for carrier exception, warehouse lock, inventory backorder, fraud review lock, policy update, and payment gateway update.
+- [x] Add guarded environment branch profile selection with negative cue handling.
+- [x] Add guidance comparison reporting for improved and regressed turns.
+- [x] Generate a static benchmark dashboard page from the cross-fold JSON report.
+- [x] Verify the dashboard visually in a browser and document the quick-reference workflow.
+
+Verification:
+
+- `python3 -m pytest -v`: 57 passed.
+- `foresight-replay --config experiments/queueahead_challenge_loop.json --iterations 3 --loop-report runs/queueahead_challenge_loop.json --guidance-markdown runs/queueahead_challenge_guidance.md`: completed.
+- `foresight-replay --train-config experiments/queueahead_challenge_train.json --test-config experiments/queueahead_challenge_test.json --iterations 3 --benchmark-report runs/queueahead_split_benchmark.json`: completed.
+- `foresight-replay --fold-config experiments/queueahead_enriched_folds.json --folds 5 --iterations 3 --benchmark-report runs/queueahead_enriched_cross_benchmark.json --dashboard-report runs/queueahead_enriched_dashboard.html`: completed.
+- Browser verification loaded `runs/queueahead_enriched_dashboard.html` and captured desktop/mobile screenshots at `runs/queueahead_enriched_dashboard_desktop.png` and `runs/queueahead_enriched_dashboard_mobile.png`.
+- Current profile-aware 5-fold report: held-out `p_at_1` is `0.633 -> 0.633`; environment-event `p_at_1` is `0.483 -> 0.483`; user-event `p_at_1` is `0.810 -> 0.810`; `carrier_exception_hold` is `1.0`; guidance delta is `0` improved and `0` regressed turns.
+- Next focus areas are now explicit: `payment_gateway_update`, `policy_update`, and `fraud_review_lock`.

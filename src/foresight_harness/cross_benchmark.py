@@ -45,6 +45,7 @@ def run_cross_fold_benchmark(
         },
         "folds": fold_reports,
         "aggregates": aggregate_folds(fold_reports),
+        "guidance_delta_summary": summarize_guidance_deltas(fold_reports),
         "weak_segments": weak_segments(fold_reports),
     }
 
@@ -98,6 +99,7 @@ def run_train_dev_test_fold(
         top_k=top_k,
         guidance=selected_guidance,
     )
+    guidance_delta = compare_turn_guidance_delta(test_baseline_rows, test_guided_rows)
 
     return {
         "fold": fold_index + 1,
@@ -122,6 +124,7 @@ def run_train_dev_test_fold(
         "test_generalization": test_generalization,
         "dev_promote_guidance": dev_promote_guidance,
         "selected_guidance": selected_guidance.to_dict(),
+        "guidance_delta": guidance_delta,
         "guidance_markdown": render_guidance_markdown(selected_guidance),
         "analytics": {
             "dev_segments": summarize_segments(dev_baseline_rows, dev_guided_rows),
@@ -164,6 +167,68 @@ def should_promote_from_dev(
         and dev_generalization["test_usefulness_gain"] >= 0
         and float(dev_guided["harness"]["unsafe_leak_rate"]) == 0.0
     )
+
+
+def compare_turn_guidance_delta(
+    baseline_rows: tuple[dict[str, object], ...],
+    guided_rows: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    baseline = {
+        str(row["turn_id"]): is_exact_top_1(row)
+        for row in baseline_rows
+        if row.get("variant") == "harness"
+    }
+    guided = {
+        str(row["turn_id"]): is_exact_top_1(row)
+        for row in guided_rows
+        if row.get("variant") == "harness"
+    }
+    turn_ids = sorted(set(baseline) | set(guided))
+    improved = [
+        turn_id
+        for turn_id in turn_ids
+        if not baseline.get(turn_id, False) and guided.get(turn_id, False)
+    ]
+    regressed = [
+        turn_id
+        for turn_id in turn_ids
+        if baseline.get(turn_id, False) and not guided.get(turn_id, False)
+    ]
+    unchanged = [
+        turn_id
+        for turn_id in turn_ids
+        if baseline.get(turn_id, False) == guided.get(turn_id, False)
+    ]
+    return {
+        "improved_turns": improved,
+        "regressed_turns": regressed,
+        "unchanged_turns": unchanged,
+        "improved_turn_count": len(improved),
+        "regressed_turn_count": len(regressed),
+    }
+
+
+def is_exact_top_1(row: dict[str, object]) -> bool:
+    branches = [
+        branch
+        for branch in row.get("branches", [])
+        if isinstance(branch, dict)
+    ]
+    top_branch = next((branch for branch in branches if branch.get("rank") == 1), None)
+    return bool(top_branch and top_branch.get("match_grade") == "exact_intent")
+
+
+def summarize_guidance_deltas(folds: list[dict[str, object]]) -> dict[str, int]:
+    improved_turns: set[str] = set()
+    regressed_turns: set[str] = set()
+    for fold in folds:
+        delta = fold["guidance_delta"]
+        improved_turns.update(str(turn_id) for turn_id in delta["improved_turns"])
+        regressed_turns.update(str(turn_id) for turn_id in delta["regressed_turns"])
+    return {
+        "improved_turn_count": len(improved_turns),
+        "regressed_turn_count": len(regressed_turns),
+    }
 
 
 def aggregate_folds(folds: list[dict[str, object]]) -> dict[str, object]:
