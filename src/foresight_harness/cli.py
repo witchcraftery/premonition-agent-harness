@@ -6,6 +6,10 @@ from importlib.resources import files
 from pathlib import Path
 
 from foresight_harness.cross_benchmark import run_cross_fold_benchmark
+from foresight_harness.conversation_probability import (
+    load_conversation_turns,
+    run_conversation_probability_loop,
+)
 from foresight_harness.evaluator import load_replay_turns, run_replay, run_replay_turn_log
 from foresight_harness.experiments import load_trial_config
 from foresight_harness.guidance import run_guidance_loop
@@ -105,11 +109,35 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="Optional HTML path for a visual benchmark dashboard.",
     )
+    parser.add_argument(
+        "--conversation-input",
+        type=Path,
+        help="Path to a JSONL human conversation probability replay file.",
+    )
+    parser.add_argument(
+        "--conversation-report",
+        type=Path,
+        help="Optional JSON path for human conversation probability loop output.",
+    )
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
+
+    if args.conversation_input:
+        turns = load_conversation_turns(args.conversation_input)
+        report = run_conversation_probability_loop(
+            turns=turns,
+            iterations=args.iterations,
+            top_k=args.top_k,
+        )
+        if args.conversation_report:
+            with args.conversation_report.open("w", encoding="utf-8") as handle:
+                json.dump(report, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return
 
     if args.fold_config:
         config = load_trial_config(args.fold_config)

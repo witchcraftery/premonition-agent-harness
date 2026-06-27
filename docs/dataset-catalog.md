@@ -22,7 +22,53 @@ repeatable benchmark.
 - Current use: measures whether the Premonition Backend improves held-out performance across actors, topics, and event profiles while surfacing weak segments for the next data or brancher pass.
 - Limitation: still synthetic; use it to harden the loop before importing larger external datasets.
 
-## Primary External Candidates
+### Human Conversation Sample
+
+- Status: included in this repository.
+- File: `data/human_conversation_sample.jsonl`.
+- Report: `runs/human_conversation_probability_loop.json`.
+- Purpose: tiny DailyDialog-style fixture for testing ordinary next-turn probability, TTS-ready draft preparation, and conversational guidance refinement.
+- Current use: proves the Probability Pack path before importing external human-dialogue datasets.
+- Limitation: synthetic and tiny; useful only as a mechanics check.
+
+## Human Conversation Candidates
+
+### DailyDialog
+
+- Fit: everyday multi-turn human dialogue with dialogue-act and emotion labels.
+- Why it matters: best first external dataset for ordinary conversational next-move prediction.
+- Link: https://arxiv.org/abs/1710.03957
+- Trial question: can the backend predict the next conversational act and prewarm speakable draft branches?
+
+### EmpatheticDialogues
+
+- Fit: emotionally grounded conversations.
+- Why it matters: voice presence depends on emotional readiness, not only fast answers.
+- Link: https://github.com/facebookresearch/EmpatheticDialogues
+- Trial question: can the backend prepare emotionally appropriate response modes without sounding premature?
+
+### Blended Skill Talk
+
+- Fit: blends personality, empathy, and knowledge in conversation.
+- Why it matters: tests whether the backend can predict conversational mode shifts.
+- Link: https://parl.ai/docs/tasks.html
+- Trial question: can probability packs choose between empathy, personality, and knowledge branches?
+
+### Taskmaster
+
+- Fit: spoken and written task-oriented assistant conversations.
+- Why it matters: bridge between ordinary conversation and practical voice-agent tasks.
+- Link: https://github.com/google-research-datasets/Taskmaster
+- Trial question: can the backend prewarm likely task responses while waiting for user confirmation?
+
+### SpokenWOZ
+
+- Fit: speech-text task-oriented dialogue with audio.
+- Why it matters: later-stage realism for ASR messiness, spoken timing, and TTS prewarming.
+- Link: https://spokenwoz.github.io/
+- Trial question: can probability refinement improve readiness in spoken assistant flows?
+
+## Support And Agent Candidates
 
 ### tau-bench / tau2
 

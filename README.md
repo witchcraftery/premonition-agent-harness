@@ -156,6 +156,29 @@ Open `runs/queueahead_enriched_dashboard.html` in a browser for a quick visual
 reference of overall accuracy, actor performance, weakest segments, profile
 performance, guidance deltas, and fold-by-fold results.
 
+Run the first human-conversation probability loop:
+
+```bash
+foresight-replay \
+  --conversation-input data/human_conversation_sample.jsonl \
+  --iterations 3 \
+  --conversation-report runs/human_conversation_probability_loop.json
+```
+
+This starts the voice-agent swarm-mind path. Instead of predicting support
+ticket events, it predicts the next ordinary conversational act, prepares
+voice-ready drafts for likely branches, and waits for observed confirmation
+before a draft would be spoken. The first tiny DailyDialog-style fixture
+improves `p_at_1` from `0.75` to `1.0` by iteration 2, keeps `top_3_recall` at
+`1.0`, and keeps `tts_readiness_rate` at `1.0`.
+
+The current Probability Pack includes:
+
+- `top_branches`: likely next conversational acts with probabilities.
+- `prepared_drafts`: speakable TTS-ready draft templates.
+- `confirmation_mode`: `wait_for_observed_next_move`.
+- `expires_after_ms`: a short freshness window for live voice use.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -176,7 +199,15 @@ Replay input is JSONL. Each line is one conversation turn:
 
 ## Next Experiments
 
-The sample data is intentionally tiny and deterministic. The next meaningful step is to replay 300-500 support turns, label branch-match grades, and compare the harness against the baseline variants using the same report schema.
+The sample data is intentionally tiny and deterministic. For support, the next
+meaningful step is to replay 300-500 real or tau-bench-style support turns,
+label branch-match grades, and compare the harness against the baseline variants
+using the same report schema.
+
+For conversational voice-agent foresight, the next meaningful step is to import
+DailyDialog, then run the same loop over ordinary dialogue acts and emotions.
+After that, add EmpatheticDialogues for emotional readiness and Taskmaster or
+SpokenWOZ for practical spoken-assistant flows.
 
 Useful expansion points:
 
@@ -184,6 +215,7 @@ Useful expansion points:
 - Add human labels for `exact_intent`, `semantic_equivalent`, `useful_partial`, `miss`, and `unsafe`.
 - Track stale artifact rates when policies, user state, or account context changes.
 - Add a real semantic scorer after the deterministic benchmark is stable.
+- Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 
 ## Benchmark Loop
 

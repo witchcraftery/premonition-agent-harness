@@ -207,3 +207,17 @@ Verification:
 - Targeted support 5-fold report: held-out `p_at_1` is `0.967 -> 0.967`; environment-event `p_at_1` is `1.000 -> 1.000`; user-event `p_at_1` is `0.950 -> 0.950`; promotion rate is `0.6`; guidance delta is `0` improved and `0` regressed turns.
 - Solved profiles in this synthetic set: `payment_gateway_update`, `policy_update`, `fraud_review_lock`, `carrier_exception_hold`, `inventory_backorder`, `refund_request`, and `address_change` all report `1.0` held-out profile `p_at_1`.
 - Next recommended move: use this as the support calibration baseline and pivot to a harder dataset or domain-shift benchmark rather than continuing to polish this small synthetic set.
+
+## Human Conversation Probability Pack
+
+- [x] Add a DailyDialog-style fixture for ordinary human next-turn probability.
+- [x] Define a model-agnostic Probability Pack shape for voice-agent readiness.
+- [x] Add an adapter that turns labeled dialogue turns into replayable probability turns.
+- [x] Add a first benchmark report for conversational act, emotion, and speakable draft readiness.
+- [x] Document the dataset path and next loop for conversational swarm-mind refinement.
+
+Verification:
+
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 4 passed.
+- `foresight-replay --conversation-input data/human_conversation_sample.jsonl --iterations 3 --conversation-report runs/human_conversation_probability_loop.json`: completed.
+- First tiny human-conversation loop improved `p_at_1` from `0.75` to `1.0` by iteration 2, held `top_3_recall=1.0`, held `tts_readiness_rate=1.0`, and learned filtered act guidance without transcript boilerplate tokens.

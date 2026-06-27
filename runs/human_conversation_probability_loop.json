@@ -1,0 +1,111 @@
+{
+  "final_guidance": {
+    "act_keywords": {
+      "directive": [
+        "coffee",
+        "good",
+        "morning",
+        "pine",
+        "place",
+        "quiet",
+        "shop",
+        "work"
+      ],
+      "question": [
+        "frustrating",
+        "late",
+        "missed",
+        "train",
+        "will"
+      ]
+    }
+  },
+  "iterations": [
+    {
+      "guidance": {
+        "act_keywords": {}
+      },
+      "iteration": 1,
+      "metrics": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.75,
+        "top_3_recall": 1.0,
+        "total_turns": 8,
+        "tts_readiness_rate": 1.0
+      },
+      "missed_turns": [
+        "hc-003",
+        "hc-006"
+      ]
+    },
+    {
+      "guidance": {
+        "act_keywords": {
+          "directive": [
+            "coffee",
+            "good",
+            "morning",
+            "pine",
+            "place",
+            "quiet",
+            "shop",
+            "work"
+          ],
+          "question": [
+            "frustrating",
+            "late",
+            "missed",
+            "train",
+            "will"
+          ]
+        }
+      },
+      "iteration": 2,
+      "metrics": {
+        "median_latency_ms": 90,
+        "p_at_1": 1.0,
+        "top_3_recall": 1.0,
+        "total_turns": 8,
+        "tts_readiness_rate": 1.0
+      },
+      "missed_turns": []
+    },
+    {
+      "guidance": {
+        "act_keywords": {
+          "directive": [
+            "coffee",
+            "good",
+            "morning",
+            "pine",
+            "place",
+            "quiet",
+            "shop",
+            "work"
+          ],
+          "question": [
+            "frustrating",
+            "late",
+            "missed",
+            "train",
+            "will"
+          ]
+        }
+      },
+      "iteration": 3,
+      "metrics": {
+        "median_latency_ms": 90,
+        "p_at_1": 1.0,
+        "top_3_recall": 1.0,
+        "total_turns": 8,
+        "tts_readiness_rate": 1.0
+      },
+      "missed_turns": []
+    }
+  ],
+  "summary": {
+    "iterations": 3,
+    "top_k": 3,
+    "total_turns": 8
+  }
+}
