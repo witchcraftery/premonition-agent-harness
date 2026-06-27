@@ -136,14 +136,21 @@ The enriched loop uses 30 synthetic replay turns with hard environment events,
 user events, and decoy cues. Each fold trains on three-fifths of the data, uses
 one-fifth as a dev promotion gate, then scores the final held-out fifth.
 
-The current profile-aware 5-fold report shows held-out `p_at_1` at
-`0.633 -> 0.633`, environment-event `p_at_1` at `0.483 -> 0.483`, and
-user-event `p_at_1` at `0.810 -> 0.810`. The flat guided gain is useful signal:
-the profile-aware brancher has moved the known hard-environment wins into the
-unguided backend behavior, and the guidance delta reports `0` improved and `0`
-regressed held-out turns. `carrier_exception_hold` is now solved at `1.0`
-`p_at_1`; the next weak profiles are `payment_gateway_update`, `policy_update`,
-and `fraud_review_lock`.
+The current targeted-support 5-fold report shows held-out `p_at_1` at
+`0.967 -> 0.967`, environment-event `p_at_1` at `1.000 -> 1.000`, and
+user-event `p_at_1` at `0.950 -> 0.950`. The flat guided gain is now useful
+signal: the profile and negative-cue rules have moved the known support wins
+into the default backend behavior, so learned guidance only promotes on folds
+where it still has something to add. The guidance delta reports `0` improved
+and `0` regressed held-out turns.
+
+The original weak profiles are now solved in this synthetic set:
+`payment_gateway_update`, `policy_update`, `fraud_review_lock`,
+`carrier_exception_hold`, `inventory_backorder`, `refund_request`, and
+`address_change` all report `1.0` held-out profile `p_at_1`. The remaining weak
+area is escalation wording at `0.875`, which is high enough that the next useful
+test is probably a harder dataset or a domain-shift benchmark rather than more
+cue polishing on this small support set.
 
 Open `runs/queueahead_enriched_dashboard.html` in a browser for a quick visual
 reference of overall accuracy, actor performance, weakest segments, profile
@@ -199,7 +206,10 @@ The enriched cross-fold benchmark adds a dev gate before the final held-out test
 
 The dashboard report turns that same JSON into a static HTML page for quick
 review. It is intentionally built from the benchmark artifact, not a separate
-data path, so visual peeks and JSON analysis stay aligned.
+data path, so visual peeks and JSON analysis stay aligned. When the backend
+baseline absorbs previous guidance wins, the dashboard makes that visible
+through flat guided gains, high baseline scores, lower promotion rate, and
+zero-regression fold rows.
 
 Each split report also includes segment analytics and focus areas. These make it possible to track whether improvements are broad or concentrated in a few topics, and to identify the next areas that deserve new data or better guidance.
 

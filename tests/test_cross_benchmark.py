@@ -30,7 +30,7 @@ def test_cross_fold_benchmark_reports_dev_gate_and_aggregate_results():
     assert report["summary"]["fold_count"] == 5
     assert report["summary"]["total_turns"] == len(turns)
     assert len(report["folds"]) == 5
-    assert all(fold["dev_promote_guidance"] is True for fold in report["folds"])
+    assert report["aggregates"]["promotion_rate"] >= 0.6
     assert all("guidance_delta" in fold for fold in report["folds"])
     assert all(fold["test"]["guided"]["harness"]["total_turns"] > 0 for fold in report["folds"])
     assert all(fold["dev"]["guided"]["harness"]["total_turns"] > 0 for fold in report["folds"])
@@ -47,6 +47,12 @@ def test_cross_fold_benchmark_reports_dev_gate_and_aggregate_results():
     assert user["usefulness_rate"]["guided_mean"] >= user["usefulness_rate"]["baseline_mean"]
     assert "by_profile" in report["aggregates"]["test_segments"]
     assert report["aggregates"]["test_segments"]["by_profile"]["carrier_exception_hold"]["p_at_1"]["guided_mean"] == 1.0
-    assert environment["p_at_1"]["guided_mean"] >= 0.45
+    assert report["aggregates"]["test_segments"]["by_profile"]["payment_gateway_update"]["p_at_1"]["guided_mean"] == 1.0
+    assert report["aggregates"]["test_segments"]["by_profile"]["policy_update"]["p_at_1"]["guided_mean"] == 1.0
+    assert report["aggregates"]["test_segments"]["by_profile"]["fraud_review_lock"]["p_at_1"]["guided_mean"] == 1.0
+    assert report["aggregates"]["test_segments"]["by_profile"]["inventory_backorder"]["p_at_1"]["guided_mean"] == 1.0
+    assert report["aggregates"]["test_segments"]["by_profile"]["refund_request"]["p_at_1"]["guided_mean"] == 1.0
+    assert report["aggregates"]["test_segments"]["by_profile"]["address_change"]["p_at_1"]["guided_mean"] == 1.0
+    assert environment["p_at_1"]["guided_mean"] == 1.0
     assert report["guidance_delta_summary"]["regressed_turn_count"] == 0
     assert report["weak_segments"]

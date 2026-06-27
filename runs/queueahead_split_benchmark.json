@@ -610,12 +610,12 @@
         },
         "user": {
           "baseline": {
-            "p_at_1": 0.25,
+            "p_at_1": 0.5,
             "total_turns": 4,
             "usefulness_rate": 0.0
           },
           "delta": {
-            "p_at_1": 0.75,
+            "p_at_1": 0.5,
             "usefulness_rate": 1.0
           },
           "guided": {
@@ -628,12 +628,12 @@
       "by_event_type": {
         "account_update": {
           "baseline": {
-            "p_at_1": 0.0,
+            "p_at_1": 1.0,
             "total_turns": 1,
             "usefulness_rate": 0.0
           },
           "delta": {
-            "p_at_1": 1.0,
+            "p_at_1": 0.0,
             "usefulness_rate": 1.0
           },
           "guided": {
@@ -710,12 +710,12 @@
       "by_profile": {
         "address_change": {
           "baseline": {
-            "p_at_1": 0.0,
+            "p_at_1": 1.0,
             "total_turns": 1,
             "usefulness_rate": 0.0
           },
           "delta": {
-            "p_at_1": 1.0,
+            "p_at_1": 0.0,
             "usefulness_rate": 1.0
           },
           "guided": {
@@ -808,12 +808,12 @@
       "by_topic": {
         "address_change": {
           "baseline": {
-            "p_at_1": 0.0,
+            "p_at_1": 1.0,
             "total_turns": 1,
             "usefulness_rate": 0.0
           },
           "delta": {
-            "p_at_1": 1.0,
+            "p_at_1": 0.0,
             "usefulness_rate": 1.0
           },
           "guided": {
@@ -891,14 +891,6 @@
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "address_change",
-          "p_at_1_delta": 1.0,
-          "segment": "by_topic",
-          "usefulness_delta": 1.0
-        },
-        {
-          "guided_p_at_1": 1.0,
-          "guided_usefulness_rate": 1.0,
           "name": "escalation_request",
           "p_at_1_delta": 1.0,
           "segment": "by_topic",
@@ -915,14 +907,6 @@
         {
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
-          "name": "account_update",
-          "p_at_1_delta": 1.0,
-          "segment": "by_event_type",
-          "usefulness_delta": 1.0
-        },
-        {
-          "guided_p_at_1": 1.0,
-          "guided_usefulness_rate": 1.0,
           "name": "escalation",
           "p_at_1_delta": 1.0,
           "segment": "by_event_type",
@@ -934,14 +918,6 @@
           "name": "troubleshooting",
           "p_at_1_delta": 1.0,
           "segment": "by_event_type",
-          "usefulness_delta": 1.0
-        },
-        {
-          "guided_p_at_1": 1.0,
-          "guided_usefulness_rate": 1.0,
-          "name": "address_change",
-          "p_at_1_delta": 1.0,
-          "segment": "by_profile",
           "usefulness_delta": 1.0
         },
         {
@@ -964,8 +940,16 @@
           "guided_p_at_1": 1.0,
           "guided_usefulness_rate": 1.0,
           "name": "user",
-          "p_at_1_delta": 0.75,
+          "p_at_1_delta": 0.5,
           "segment": "by_actor",
+          "usefulness_delta": 1.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "address_change",
+          "p_at_1_delta": 0.0,
+          "segment": "by_topic",
           "usefulness_delta": 1.0
         },
         {
@@ -983,6 +967,14 @@
           "p_at_1_delta": 0.0,
           "segment": "by_topic",
           "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "account_update",
+          "p_at_1_delta": 0.0,
+          "segment": "by_event_type",
+          "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
@@ -1007,6 +999,14 @@
           "p_at_1_delta": 0.0,
           "segment": "by_actor",
           "usefulness_delta": 0.0
+        },
+        {
+          "guided_p_at_1": 1.0,
+          "guided_usefulness_rate": 1.0,
+          "name": "address_change",
+          "p_at_1_delta": 0.0,
+          "segment": "by_profile",
+          "usefulness_delta": 1.0
         },
         {
           "guided_p_at_1": 1.0,
@@ -1086,10 +1086,10 @@
     }
   },
   "generalization": {
-    "overfit_gap": 0.167,
+    "overfit_gap": 0.0,
     "test_p_at_1_gain": 0.333,
     "test_usefulness_gain": 0.5,
-    "train_p_at_1_gain": 0.5,
+    "train_p_at_1_gain": 0.333,
     "train_usefulness_gain": 0.667
   },
   "guidance_markdown": "# Premonition Guidance\n\nLearned intent cues from replay misses.\n\n## address_change\n\naddress, changed, check, fulfillment, going, left, locked, new, old, order\n\n## billing_refund_timing\n\nbilling, card, charge, duplicate, identical, records, refund, there, two, when\n\n## escalation_request\n\nbetween, bounced, case, escalate, owns, reviewing, supervisor, unresolved\n\n## troubleshooting_loop\n\nconnect, factory, next, path, recovery, reports, result, speaker, step, steps\n",
@@ -1100,7 +1100,7 @@
         "branch_hit_rate": 0.278,
         "cache_hit_rate": 0.5,
         "median_latency_ms": 410,
-        "median_token_cost": 143,
+        "median_token_cost": 144,
         "p_at_1": 0.667,
         "stale_artifact_rate": 0.0,
         "top_3_recall": 0.833,
@@ -1191,13 +1191,13 @@
   "train": {
     "baseline": {
       "harness": {
-        "branch_hit_rate": 0.222,
+        "branch_hit_rate": 0.278,
         "cache_hit_rate": 0.333,
         "median_latency_ms": 725,
         "median_token_cost": 144,
-        "p_at_1": 0.5,
+        "p_at_1": 0.667,
         "stale_artifact_rate": 0.0,
-        "top_3_recall": 0.667,
+        "top_3_recall": 0.833,
         "total_turns": 6,
         "unsafe_leak_rate": 0.0,
         "usefulness_rate": 0.333
@@ -1338,13 +1338,13 @@
       {
         "assessment": {
           "exact_top_1_turns": [
+            "qc-002",
             "qc-003",
             "qc-005",
             "qc-006"
           ],
           "missed_turns": [
             "qc-001",
-            "qc-002",
             "qc-004"
           ],
           "p_at_1_delta": 0.0,
@@ -1366,13 +1366,13 @@
         "iteration": 1,
         "report": {
           "harness": {
-            "branch_hit_rate": 0.222,
+            "branch_hit_rate": 0.278,
             "cache_hit_rate": 0.333,
             "median_latency_ms": 725,
             "median_token_cost": 144,
-            "p_at_1": 0.5,
+            "p_at_1": 0.667,
             "stale_artifact_rate": 0.0,
-            "top_3_recall": 0.667,
+            "top_3_recall": 0.833,
             "total_turns": 6,
             "unsafe_leak_rate": 0.0,
             "usefulness_rate": 0.333
@@ -1422,7 +1422,7 @@
             "qc-006"
           ],
           "missed_turns": [],
-          "p_at_1_delta": 0.5,
+          "p_at_1_delta": 0.333,
           "prepared_turns": [
             "qc-001",
             "qc-002",

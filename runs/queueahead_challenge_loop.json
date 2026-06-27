@@ -54,13 +54,13 @@
     {
       "assessment": {
         "exact_top_1_turns": [
+          "qc-002",
           "qc-003",
           "qc-005",
           "qc-006"
         ],
         "missed_turns": [
           "qc-001",
-          "qc-002",
           "qc-004"
         ],
         "p_at_1_delta": 0.0,
@@ -82,13 +82,13 @@
       "iteration": 1,
       "report": {
         "harness": {
-          "branch_hit_rate": 0.222,
+          "branch_hit_rate": 0.278,
           "cache_hit_rate": 0.333,
           "median_latency_ms": 725,
           "median_token_cost": 144,
-          "p_at_1": 0.5,
+          "p_at_1": 0.667,
           "stale_artifact_rate": 0.0,
-          "top_3_recall": 0.667,
+          "top_3_recall": 0.833,
           "total_turns": 6,
           "unsafe_leak_rate": 0.0,
           "usefulness_rate": 0.333
@@ -138,7 +138,7 @@
           "qc-006"
         ],
         "missed_turns": [],
-        "p_at_1_delta": 0.5,
+        "p_at_1_delta": 0.333,
         "prepared_turns": [
           "qc-001",
           "qc-002",

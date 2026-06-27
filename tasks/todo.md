@@ -188,3 +188,22 @@ Verification:
 - Browser verification loaded `runs/queueahead_enriched_dashboard.html` and captured desktop/mobile screenshots at `runs/queueahead_enriched_dashboard_desktop.png` and `runs/queueahead_enriched_dashboard_mobile.png`.
 - Current profile-aware 5-fold report: held-out `p_at_1` is `0.633 -> 0.633`; environment-event `p_at_1` is `0.483 -> 0.483`; user-event `p_at_1` is `0.810 -> 0.810`; `carrier_exception_hold` is `1.0`; guidance delta is `0` improved and `0` regressed turns.
 - Next focus areas are now explicit: `payment_gateway_update`, `policy_update`, and `fraud_review_lock`.
+
+## Targeted Support Baseline Expansion
+
+- [x] Add regression tests for payment gateway, policy update, and fraud review profile branches.
+- [x] Expand profile-aware branch selection beyond shipment-status events.
+- [x] Require cross-fold weak-profile improvement without regressions.
+- [x] Regenerate benchmark JSON, dashboard HTML, and visual proof screenshots.
+- [x] Document the new baseline and next pivot decision.
+
+Verification:
+
+- `python3 -m pytest -v`: 62 passed.
+- `foresight-replay --config experiments/queueahead_challenge_loop.json --iterations 3 --loop-report runs/queueahead_challenge_loop.json --guidance-markdown runs/queueahead_challenge_guidance.md`: completed.
+- `foresight-replay --train-config experiments/queueahead_challenge_train.json --test-config experiments/queueahead_challenge_test.json --iterations 3 --benchmark-report runs/queueahead_split_benchmark.json`: completed.
+- `foresight-replay --fold-config experiments/queueahead_enriched_folds.json --folds 5 --iterations 3 --benchmark-report runs/queueahead_enriched_cross_benchmark.json --dashboard-report runs/queueahead_enriched_dashboard.html`: completed.
+- Browser verification loaded `runs/queueahead_enriched_dashboard.html` and captured refreshed desktop/mobile screenshots at `runs/queueahead_enriched_dashboard_desktop.png` and `runs/queueahead_enriched_dashboard_mobile.png`.
+- Targeted support 5-fold report: held-out `p_at_1` is `0.967 -> 0.967`; environment-event `p_at_1` is `1.000 -> 1.000`; user-event `p_at_1` is `0.950 -> 0.950`; promotion rate is `0.6`; guidance delta is `0` improved and `0` regressed turns.
+- Solved profiles in this synthetic set: `payment_gateway_update`, `policy_update`, `fraud_review_lock`, `carrier_exception_hold`, `inventory_backorder`, `refund_request`, and `address_change` all report `1.0` held-out profile `p_at_1`.
+- Next recommended move: use this as the support calibration baseline and pivot to a harder dataset or domain-shift benchmark rather than continuing to polish this small synthetic set.
