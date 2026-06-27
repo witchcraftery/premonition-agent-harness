@@ -5,12 +5,15 @@ from pathlib import Path
 
 from foresight_harness.conversation_probability import (
     build_probability_pack,
+    ConversationTurn,
     load_dailydialog_split,
     load_conversation_turns,
     load_dailydialog_export,
     run_conversation_probability_loop,
+    run_conversation_train_dev_test_loop,
     write_conversation_turns,
 )
+from foresight_harness.models import Message
 
 
 def test_load_dailydialog_export_creates_next_turn_examples(tmp_path):
@@ -128,6 +131,146 @@ def test_conversation_probability_loop_rejects_regressing_guidance(tmp_path):
     assert report["iterations"][0]["guidance_promoted"] is False
 
 
+def test_conversation_train_dev_test_loop_promotes_on_dev_and_scores_untouched_test():
+    train_turns = (
+        conversation_turn(
+            "train-question",
+            "The harbor lantern clue feels unresolved.",
+            expected_act="question",
+        ),
+        conversation_turn(
+            "train-inform",
+            "I finally finished the report.",
+            expected_act="inform",
+        ),
+    )
+    dev_turns = (
+        conversation_turn(
+            "dev-question",
+            "That harbor lantern clue is still unclear.",
+            expected_act="question",
+        ),
+        conversation_turn(
+            "dev-inform",
+            "I am happy with the plan.",
+            expected_act="inform",
+        ),
+    )
+    test_turns = (
+        conversation_turn(
+            "test-question",
+            "The harbor lantern detail needs another look.",
+            expected_act="question",
+        ),
+        conversation_turn(
+            "test-directive",
+            "We should meet after lunch.",
+            expected_act="directive",
+        ),
+    )
+
+    report = run_conversation_train_dev_test_loop(
+        train_turns=train_turns,
+        dev_turns=dev_turns,
+        test_turns=test_turns,
+        iterations=2,
+        top_k=3,
+    )
+
+    assert report["summary"]["train_turns"] == 2
+    assert report["summary"]["dev_turns"] == 2
+    assert report["summary"]["test_turns"] == 2
+    assert report["iterations"][0]["dev_promote_guidance"] is True
+    assert report["test"]["guided"]["p_at_1"] > report["test"]["baseline"]["p_at_1"]
+    assert report["efficacy"]["test_p_at_1_gain"] > 0
+    assert report["guidance_delta"]["improved_turns"] == ["test-question"]
+    assert report["guidance_delta"]["regressed_turns"] == []
+    assert report["analytics"]["test_segments"]["expected_act"]["question"]["guided"]["p_at_1"] == 1.0
+
+
+def test_conversation_train_dev_test_loop_rejects_validation_regression():
+    train_turns = (
+        conversation_turn(
+            "train-question",
+            "The harbor lantern clue feels unresolved.",
+            expected_act="question",
+        ),
+    )
+    dev_turns = (
+        conversation_turn(
+            "dev-inform",
+            "The harbor lantern clue was documented yesterday.",
+            expected_act="inform",
+        ),
+    )
+    test_turns = (
+        conversation_turn(
+            "test-inform",
+            "The harbor lantern clue is already filed.",
+            expected_act="inform",
+        ),
+    )
+
+    report = run_conversation_train_dev_test_loop(
+        train_turns=train_turns,
+        dev_turns=dev_turns,
+        test_turns=test_turns,
+        iterations=2,
+        top_k=3,
+    )
+
+    assert report["iterations"][0]["dev_promote_guidance"] is False
+    assert report["test"]["guided"] == report["test"]["baseline"]
+    assert report["efficacy"]["test_p_at_1_gain"] == 0
+    assert report["guidance_delta"]["regressed_turns"] == []
+
+
+def test_conversation_train_dev_test_loop_promotes_validation_gain_even_if_train_drops():
+    train_turns = (
+        conversation_turn(
+            "train-question",
+            "The harbor lantern clue feels unresolved.",
+            expected_act="question",
+        ),
+        conversation_turn(
+            "train-inform-1",
+            "The harbor lantern clue was documented yesterday.",
+            expected_act="inform",
+        ),
+        conversation_turn(
+            "train-inform-2",
+            "The harbor lantern clue is already filed.",
+            expected_act="inform",
+        ),
+    )
+    dev_turns = (
+        conversation_turn(
+            "dev-question",
+            "That harbor lantern clue is still unclear.",
+            expected_act="question",
+        ),
+    )
+    test_turns = (
+        conversation_turn(
+            "test-question",
+            "The harbor lantern detail needs another look.",
+            expected_act="question",
+        ),
+    )
+
+    report = run_conversation_train_dev_test_loop(
+        train_turns=train_turns,
+        dev_turns=dev_turns,
+        test_turns=test_turns,
+        iterations=2,
+        top_k=3,
+    )
+
+    assert report["iterations"][0]["train"]["candidate"]["p_at_1"] < report["iterations"][0]["train"]["selected"]["p_at_1"]
+    assert report["iterations"][0]["dev_promote_guidance"] is True
+    assert report["efficacy"]["test_p_at_1_gain"] > 0
+
+
 def test_cli_runs_conversation_probability_loop(tmp_path):
     output = tmp_path / "conversation-report.json"
 
@@ -153,6 +296,70 @@ def test_cli_runs_conversation_probability_loop(tmp_path):
 
     assert saved == report
     assert report["iterations"][-1]["metrics"]["p_at_1"] >= 0.75
+
+
+def test_cli_runs_conversation_train_dev_test_loop(tmp_path):
+    train_path = tmp_path / "train.jsonl"
+    dev_path = tmp_path / "dev.jsonl"
+    test_path = tmp_path / "test.jsonl"
+    output = tmp_path / "conversation-heldout-report.json"
+    write_conversation_turns(
+        (
+            conversation_turn(
+                "train-question",
+                "The harbor lantern clue feels unresolved.",
+                expected_act="question",
+            ),
+        ),
+        train_path,
+    )
+    write_conversation_turns(
+        (
+            conversation_turn(
+                "dev-question",
+                "That harbor lantern clue is still unclear.",
+                expected_act="question",
+            ),
+        ),
+        dev_path,
+    )
+    write_conversation_turns(
+        (
+            conversation_turn(
+                "test-question",
+                "The harbor lantern detail needs another look.",
+                expected_act="question",
+            ),
+        ),
+        test_path,
+    )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--conversation-train-input",
+            str(train_path),
+            "--conversation-dev-input",
+            str(dev_path),
+            "--conversation-test-input",
+            str(test_path),
+            "--iterations",
+            "2",
+            "--conversation-report",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    saved = json.loads(output.read_text(encoding="utf-8"))
+
+    assert saved == report
+    assert report["efficacy"]["test_p_at_1_gain"] > 0
 
 
 def test_cli_exports_dailydialog_sample(tmp_path):
@@ -188,3 +395,19 @@ def test_cli_exports_dailydialog_sample(tmp_path):
     assert len(exported) == 2
     assert exported[0].expected_act == "question"
     assert exported[1].expected_act == "directive"
+
+
+def conversation_turn(
+    turn_id: str,
+    context: str,
+    expected_act: str,
+    expected_emotion: str = "no_emotion",
+) -> ConversationTurn:
+    return ConversationTurn(
+        turn_id=turn_id,
+        conversation=(Message(role="speaker_a", content=context),),
+        next_speaker="speaker_b",
+        actual_next_utterance="Okay.",
+        expected_act=expected_act,
+        expected_emotion=expected_emotion,
+    )

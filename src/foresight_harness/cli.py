@@ -10,6 +10,7 @@ from foresight_harness.conversation_probability import (
     load_dailydialog_split,
     load_conversation_turns,
     run_conversation_probability_loop,
+    run_conversation_train_dev_test_loop,
     write_conversation_turns,
 )
 from foresight_harness.evaluator import load_replay_turns, run_replay, run_replay_turn_log
@@ -117,6 +118,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to a JSONL human conversation probability replay file.",
     )
     parser.add_argument(
+        "--conversation-train-input",
+        type=Path,
+        help="Path to a JSONL human conversation train split.",
+    )
+    parser.add_argument(
+        "--conversation-dev-input",
+        type=Path,
+        help="Path to a JSONL human conversation validation split.",
+    )
+    parser.add_argument(
+        "--conversation-test-input",
+        type=Path,
+        help="Path to a JSONL human conversation held-out test split.",
+    )
+    parser.add_argument(
         "--conversation-report",
         type=Path,
         help="Optional JSON path for human conversation probability loop output.",
@@ -166,6 +182,33 @@ def main() -> None:
                 sort_keys=True,
             )
         )
+        return
+
+    if args.conversation_train_input or args.conversation_dev_input or args.conversation_test_input:
+        if not (
+            args.conversation_train_input
+            and args.conversation_dev_input
+            and args.conversation_test_input
+        ):
+            raise SystemExit(
+                "--conversation-train-input, --conversation-dev-input, "
+                "and --conversation-test-input must be provided together"
+            )
+        train_turns = load_conversation_turns(args.conversation_train_input)
+        dev_turns = load_conversation_turns(args.conversation_dev_input)
+        test_turns = load_conversation_turns(args.conversation_test_input)
+        report = run_conversation_train_dev_test_loop(
+            train_turns=train_turns,
+            dev_turns=dev_turns,
+            test_turns=test_turns,
+            iterations=args.iterations,
+            top_k=args.top_k,
+        )
+        if args.conversation_report:
+            with args.conversation_report.open("w", encoding="utf-8") as handle:
+                json.dump(report, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+        print(json.dumps(report, indent=2, sort_keys=True))
         return
 
     if args.conversation_input:

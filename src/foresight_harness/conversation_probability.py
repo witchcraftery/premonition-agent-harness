@@ -365,6 +365,169 @@ def run_conversation_probability_loop(
     }
 
 
+def run_conversation_train_dev_test_loop(
+    train_turns: tuple[ConversationTurn, ...],
+    dev_turns: tuple[ConversationTurn, ...],
+    test_turns: tuple[ConversationTurn, ...],
+    iterations: int,
+    top_k: int = 3,
+) -> dict[str, object]:
+    if iterations <= 0:
+        raise ValueError("iterations must be positive")
+    if not train_turns or not dev_turns or not test_turns:
+        raise ValueError("train, dev, and test turns are required")
+
+    empty_guidance = ConversationGuidance(act_keywords={})
+    selected_guidance = empty_guidance
+    iteration_reports: list[dict[str, object]] = []
+
+    for iteration in range(1, iterations + 1):
+        train_rows = score_conversation_turns(
+            train_turns,
+            top_k=top_k,
+            guidance=selected_guidance,
+        )
+        train_metrics = summarize_conversation_rows(train_rows, train_turns)
+        candidate_guidance = learn_conversation_guidance(
+            train_turns,
+            train_rows,
+            selected_guidance,
+        )
+        candidate_train_rows = score_conversation_turns(
+            train_turns,
+            top_k=top_k,
+            guidance=candidate_guidance,
+        )
+        candidate_train_metrics = summarize_conversation_rows(
+            candidate_train_rows,
+            train_turns,
+        )
+        dev_rows = score_conversation_turns(
+            dev_turns,
+            top_k=top_k,
+            guidance=selected_guidance,
+        )
+        dev_metrics = summarize_conversation_rows(dev_rows, dev_turns)
+        candidate_dev_rows = score_conversation_turns(
+            dev_turns,
+            top_k=top_k,
+            guidance=candidate_guidance,
+        )
+        candidate_dev_metrics = summarize_conversation_rows(
+            candidate_dev_rows,
+            dev_turns,
+        )
+        dev_promote_guidance = should_promote_conversation_guidance(
+            current_dev=dev_metrics,
+            candidate_dev=candidate_dev_metrics,
+        )
+        iteration_reports.append(
+            {
+                "iteration": iteration,
+                "train": {
+                    "selected": train_metrics,
+                    "candidate": candidate_train_metrics,
+                },
+                "dev": {
+                    "selected": dev_metrics,
+                    "candidate": candidate_dev_metrics,
+                },
+                "dev_promote_guidance": dev_promote_guidance,
+                "selected_guidance": selected_guidance.to_dict(),
+                "candidate_guidance": candidate_guidance.to_dict(),
+            }
+        )
+        if dev_promote_guidance:
+            selected_guidance = candidate_guidance
+
+    train_baseline_rows = score_conversation_turns(
+        train_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+    )
+    train_guided_rows = score_conversation_turns(
+        train_turns,
+        top_k=top_k,
+        guidance=selected_guidance,
+    )
+    dev_baseline_rows = score_conversation_turns(
+        dev_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+    )
+    dev_guided_rows = score_conversation_turns(
+        dev_turns,
+        top_k=top_k,
+        guidance=selected_guidance,
+    )
+    test_baseline_rows = score_conversation_turns(
+        test_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+    )
+    test_guided_rows = score_conversation_turns(
+        test_turns,
+        top_k=top_k,
+        guidance=selected_guidance,
+    )
+    train_baseline = summarize_conversation_rows(train_baseline_rows, train_turns)
+    train_guided = summarize_conversation_rows(train_guided_rows, train_turns)
+    dev_baseline = summarize_conversation_rows(dev_baseline_rows, dev_turns)
+    dev_guided = summarize_conversation_rows(dev_guided_rows, dev_turns)
+    test_baseline = summarize_conversation_rows(test_baseline_rows, test_turns)
+    test_guided = summarize_conversation_rows(test_guided_rows, test_turns)
+
+    return {
+        "summary": {
+            "train_turns": len(train_turns),
+            "dev_turns": len(dev_turns),
+            "test_turns": len(test_turns),
+            "iterations": iterations,
+            "top_k": top_k,
+        },
+        "iterations": iteration_reports,
+        "train": {
+            "baseline": train_baseline,
+            "guided": train_guided,
+        },
+        "dev": {
+            "baseline": dev_baseline,
+            "guided": dev_guided,
+        },
+        "test": {
+            "baseline": test_baseline,
+            "guided": test_guided,
+        },
+        "efficacy": compare_conversation_efficacy(
+            train_baseline=train_baseline,
+            train_guided=train_guided,
+            dev_baseline=dev_baseline,
+            dev_guided=dev_guided,
+            test_baseline=test_baseline,
+            test_guided=test_guided,
+        ),
+        "analytics": {
+            "train_segments": summarize_conversation_segments(
+                train_baseline_rows,
+                train_guided_rows,
+            ),
+            "dev_segments": summarize_conversation_segments(
+                dev_baseline_rows,
+                dev_guided_rows,
+            ),
+            "test_segments": summarize_conversation_segments(
+                test_baseline_rows,
+                test_guided_rows,
+            ),
+        },
+        "guidance_delta": compare_conversation_guidance_delta(
+            test_baseline_rows,
+            test_guided_rows,
+        ),
+        "final_guidance": selected_guidance.to_dict(),
+    }
+
+
 def score_conversation_turns(
     turns: tuple[ConversationTurn, ...],
     top_k: int,
@@ -379,6 +542,7 @@ def score_conversation_turns(
                 "turn_id": turn.turn_id,
                 "expected_act": turn.expected_act,
                 "expected_emotion": turn.expected_emotion,
+                "next_speaker": turn.next_speaker,
                 "rank_1_act": rank_1["act"],
                 "top_acts": [branch["act"] for branch in pack.top_branches],
                 "tts_ready": bool(pack.prepared_drafts),
@@ -402,6 +566,188 @@ def summarize_conversation_rows(
         "top_3_recall": round(top_3 / total, 3),
         "tts_readiness_rate": round(tts_ready / total, 3),
         "median_latency_ms": int(median(row["latency_ms"] for row in rows)) if rows else 0,
+    }
+
+
+def should_promote_conversation_guidance(
+    current_dev: dict[str, float | int],
+    candidate_dev: dict[str, float | int],
+) -> bool:
+    return (
+        float(candidate_dev["p_at_1"]) >= float(current_dev["p_at_1"])
+        and float(candidate_dev["top_3_recall"]) >= float(current_dev["top_3_recall"])
+        and float(candidate_dev["tts_readiness_rate"]) >= float(current_dev["tts_readiness_rate"])
+    )
+
+
+def compare_conversation_efficacy(
+    train_baseline: dict[str, float | int],
+    train_guided: dict[str, float | int],
+    dev_baseline: dict[str, float | int],
+    dev_guided: dict[str, float | int],
+    test_baseline: dict[str, float | int],
+    test_guided: dict[str, float | int],
+) -> dict[str, float]:
+    train_p_gain = conversation_metric_gain(train_baseline, train_guided, "p_at_1")
+    dev_p_gain = conversation_metric_gain(dev_baseline, dev_guided, "p_at_1")
+    test_p_gain = conversation_metric_gain(test_baseline, test_guided, "p_at_1")
+    return {
+        "train_p_at_1_gain": train_p_gain,
+        "dev_p_at_1_gain": dev_p_gain,
+        "test_p_at_1_gain": test_p_gain,
+        "train_top_3_recall_gain": conversation_metric_gain(
+            train_baseline,
+            train_guided,
+            "top_3_recall",
+        ),
+        "dev_top_3_recall_gain": conversation_metric_gain(
+            dev_baseline,
+            dev_guided,
+            "top_3_recall",
+        ),
+        "test_top_3_recall_gain": conversation_metric_gain(
+            test_baseline,
+            test_guided,
+            "top_3_recall",
+        ),
+        "train_tts_readiness_gain": conversation_metric_gain(
+            train_baseline,
+            train_guided,
+            "tts_readiness_rate",
+        ),
+        "dev_tts_readiness_gain": conversation_metric_gain(
+            dev_baseline,
+            dev_guided,
+            "tts_readiness_rate",
+        ),
+        "test_tts_readiness_gain": conversation_metric_gain(
+            test_baseline,
+            test_guided,
+            "tts_readiness_rate",
+        ),
+        "train_test_p_at_1_gap": round(train_p_gain - test_p_gain, 3),
+        "dev_test_p_at_1_gap": round(dev_p_gain - test_p_gain, 3),
+    }
+
+
+def conversation_metric_gain(
+    baseline: dict[str, float | int],
+    guided: dict[str, float | int],
+    metric: str,
+) -> float:
+    return round(float(guided[metric]) - float(baseline[metric]), 3)
+
+
+def summarize_conversation_segments(
+    baseline_rows: tuple[dict[str, object], ...],
+    guided_rows: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    dimensions = {
+        "expected_act": sorted({str(row["expected_act"]) for row in baseline_rows}),
+        "expected_emotion": sorted({str(row["expected_emotion"]) for row in baseline_rows}),
+        "next_speaker": sorted({str(row["next_speaker"]) for row in baseline_rows}),
+    }
+    summary: dict[str, object] = {
+        dimension: {
+            value: {
+                "baseline": summarize_conversation_row_subset(
+                    tuple(row for row in baseline_rows if str(row[dimension]) == value)
+                ),
+                "guided": summarize_conversation_row_subset(
+                    tuple(row for row in guided_rows if str(row[dimension]) == value)
+                ),
+            }
+            for value in values
+        }
+        for dimension, values in dimensions.items()
+    }
+    summary["focus_areas"] = conversation_focus_areas(summary)
+    return summary
+
+
+def summarize_conversation_row_subset(
+    rows: tuple[dict[str, object], ...],
+) -> dict[str, float | int]:
+    total = max(len(rows), 1)
+    exact = sum(row["rank_1_act"] == row["expected_act"] for row in rows)
+    top_3 = sum(row["expected_act"] in row["top_acts"] for row in rows)
+    tts_ready = sum(bool(row["tts_ready"]) for row in rows)
+    return {
+        "total_turns": len(rows),
+        "p_at_1": round(exact / total, 3),
+        "top_3_recall": round(top_3 / total, 3),
+        "tts_readiness_rate": round(tts_ready / total, 3),
+    }
+
+
+def conversation_focus_areas(summary: dict[str, object]) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for dimension, dimension_rows in summary.items():
+        if dimension == "focus_areas" or not isinstance(dimension_rows, dict):
+            continue
+        for value, metrics in dimension_rows.items():
+            if not isinstance(metrics, dict):
+                continue
+            baseline = metrics["baseline"]
+            guided = metrics["guided"]
+            if not isinstance(baseline, dict) or not isinstance(guided, dict):
+                continue
+            rows.append(
+                {
+                    "segment": dimension,
+                    "name": value,
+                    "guided_p_at_1": guided["p_at_1"],
+                    "p_at_1_gain": round(
+                        float(guided["p_at_1"]) - float(baseline["p_at_1"]),
+                        3,
+                    ),
+                    "guided_top_3_recall": guided["top_3_recall"],
+                }
+            )
+    return sorted(
+        rows,
+        key=lambda row: (
+            float(row["guided_p_at_1"]),
+            float(row["guided_top_3_recall"]),
+            float(row["p_at_1_gain"]),
+        ),
+    )[:10]
+
+
+def compare_conversation_guidance_delta(
+    baseline_rows: tuple[dict[str, object], ...],
+    guided_rows: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    baseline = {
+        str(row["turn_id"]): row["rank_1_act"] == row["expected_act"]
+        for row in baseline_rows
+    }
+    guided = {
+        str(row["turn_id"]): row["rank_1_act"] == row["expected_act"]
+        for row in guided_rows
+    }
+    turn_ids = sorted(set(baseline) | set(guided))
+    improved = [
+        turn_id
+        for turn_id in turn_ids
+        if not baseline.get(turn_id, False) and guided.get(turn_id, False)
+    ]
+    regressed = [
+        turn_id
+        for turn_id in turn_ids
+        if baseline.get(turn_id, False) and not guided.get(turn_id, False)
+    ]
+    unchanged = [
+        turn_id
+        for turn_id in turn_ids
+        if baseline.get(turn_id, False) == guided.get(turn_id, False)
+    ]
+    return {
+        "improved_turns": improved,
+        "regressed_turns": regressed,
+        "unchanged_turns": unchanged,
+        "improved_turn_count": len(improved),
+        "regressed_turn_count": len(regressed),
     }
 
 

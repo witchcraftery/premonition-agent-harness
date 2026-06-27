@@ -200,6 +200,37 @@ rejected because it would have reduced `p_at_1` to `0.412`, which is the right
 behavior for a looped backend: do not promote learned probability rules that
 make held replay worse.
 
+Run the true held-out DailyDialog loop:
+
+```bash
+foresight-replay \
+  --dailydialog-dir data/external/dailydialog/validation \
+  --conversation-output data/dailydialog_validation_sample.jsonl \
+  --conversation-limit 500
+
+foresight-replay \
+  --dailydialog-dir data/external/dailydialog/test \
+  --conversation-output data/dailydialog_test_sample.jsonl \
+  --conversation-limit 500
+
+foresight-replay \
+  --conversation-train-input data/dailydialog_train_sample.jsonl \
+  --conversation-dev-input data/dailydialog_validation_sample.jsonl \
+  --conversation-test-input data/dailydialog_test_sample.jsonl \
+  --iterations 3 \
+  --conversation-report runs/dailydialog_heldout_probability_loop.json
+```
+
+This is the more honest efficacy loop: train learns candidate guidance, the
+validation split decides whether to promote it, and the untouched test split
+measures whether the promoted guidance actually generalized. On the current
+500/500/500 DailyDialog samples, validation improved from `p_at_1=0.324` to
+`0.382`, but the held-out test gain was only `0.368 -> 0.370`; `top_3_recall`
+slipped slightly from `0.858` to `0.856`. The report counted `50` improved test
+turns and `49` regressed turns. That is useful signal, not a victory lap: the
+next refinement should target act-specific guidance, especially `commissive`
+regressions and low `directive` / `question` top-1 accuracy.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -226,10 +257,10 @@ label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
 For conversational voice-agent foresight, the next meaningful step is to import
-more DailyDialog splits, then improve act-specific learning until candidate
-guidance beats the frozen baseline instead of merely preserving it. After that,
-add EmpatheticDialogues for emotional readiness and Taskmaster or SpokenWOZ for
-practical spoken-assistant flows.
+larger and more representative DailyDialog slices, then improve act-specific
+learning until validation gains become clear held-out test gains without segment
+regressions. After that, add EmpatheticDialogues for emotional readiness and
+Taskmaster or SpokenWOZ for practical spoken-assistant flows.
 
 Useful expansion points:
 
@@ -238,7 +269,7 @@ Useful expansion points:
 - Track stale artifact rates when policies, user state, or account context changes.
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
-- Split conversational guidance into train/dev/test promotion instead of same-split replay.
+- Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
 
 ## Benchmark Loop
 

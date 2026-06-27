@@ -239,3 +239,22 @@ Verification:
 - `foresight-replay --conversation-input data/dailydialog_train_sample.jsonl --iterations 3 --conversation-report runs/dailydialog_train_probability_loop.json`: completed.
 - Real DailyDialog 500-turn sample: `p_at_1=0.472`, `top_3_recall=0.920`, `tts_readiness_rate=1.0`.
 - Candidate guidance was rejected in every iteration because it would reduce `p_at_1` to `0.412`; the no-regression gate correctly preserved the stronger baseline.
+
+## Held-Out DailyDialog Efficacy Loop
+
+- [x] Add a true train/dev/test conversational probability loop.
+- [x] Promote conversational guidance only when validation metrics do not regress.
+- [x] Report final efficacy on untouched test turns.
+- [x] Add conversational segment analytics by act, emotion, and speaker.
+- [x] Export bounded DailyDialog train, validation, and test samples.
+- [x] Run the held-out loop and document the result.
+
+Verification:
+
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 11 passed.
+- `foresight-replay --dailydialog-dir data/external/dailydialog/validation --conversation-output data/dailydialog_validation_sample.jsonl --conversation-limit 500`: exported 500 of 7069 available validation turns.
+- `foresight-replay --dailydialog-dir data/external/dailydialog/test --conversation-output data/dailydialog_test_sample.jsonl --conversation-limit 500`: exported 500 of 6740 available test turns.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --iterations 3 --conversation-report runs/dailydialog_heldout_probability_loop.json`: completed.
+- Validation improved from `p_at_1=0.324` to `0.382` and from `top_3_recall=0.856` to `0.868`.
+- Untouched test moved only from `p_at_1=0.368` to `0.370`; `top_3_recall` slipped from `0.858` to `0.856`.
+- Test guidance deltas were nearly even: `50` improved turns and `49` regressed turns. `question` improved from `p_at_1=0.047` to `0.273`, while `commissive` regressed from `0.507` to `0.217`.

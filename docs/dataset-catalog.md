@@ -40,7 +40,19 @@ repeatable benchmark.
 - Purpose: first real human-dialogue sample for ordinary dialogue-act probability and TTS-ready draft readiness.
 - Current use: baseline check for DailyDialog import mechanics and no-regression guidance promotion.
 - Current result: `p_at_1=0.472`, `top_3_recall=0.920`, `tts_readiness_rate=1.0`; candidate guidance was rejected because it would reduce `p_at_1` to `0.412`.
-- Limitation: first 500 exported train turns only; not yet a held-out train/dev/test benchmark.
+- Limitation: first 500 exported train turns only; useful as an import and same-split mechanics check.
+
+### DailyDialog Held-Out Samples
+
+- Status: derived samples included in this repository; raw source files are excluded under `data/external/`.
+- Files: `data/dailydialog_train_sample.jsonl`, `data/dailydialog_validation_sample.jsonl`, and `data/dailydialog_test_sample.jsonl`.
+- Report: `runs/dailydialog_heldout_probability_loop.json`.
+- Source mirror used for import: `https://github.com/snakeztc/NeuralDialog-LAED/tree/master/data/daily_dialog`.
+- Purpose: true train/dev/test efficacy loop for ordinary conversational act prediction and TTS-ready branch preparation.
+- Current use: train learns candidate guidance, validation gates promotion, and untouched test measures generalization.
+- Current result: validation improved from `p_at_1=0.324` to `0.382`; test moved only from `p_at_1=0.368` to `0.370`, while `top_3_recall` moved from `0.858` to `0.856`.
+- Segment signal: `question` test `p_at_1` improved from `0.047` to `0.273`, while `commissive` fell from `0.507` to `0.217`; the report counted `50` improved and `49` regressed held-out test turns.
+- Limitation: first 500 turns from each split; the current keyword learner is too coarse and needs segment-aware promotion or act-specific learning before this should be treated as a strong conversational foresight result.
 
 ## Human Conversation Candidates
 
