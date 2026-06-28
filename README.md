@@ -251,16 +251,18 @@ foresight-replay \
 This compares the current heuristic brancher against a transparent learned
 act-ranker, hybrid blends, and contextual transition variants that use observed
 dialogue-act history. On the committed 500/500/500 samples, the bake-off
-selected `contextual_inform_overlay`: validation `p_at_1` rose from `0.324` to
-`0.416`, held-out test `p_at_1` rose from `0.368` to `0.448`, held-out test
-`top_3_recall` rose from `0.858` to `0.876`, and no act segment regressed.
+selected `guarded_contextual_transition`: validation `p_at_1` rose from `0.324`
+to `0.464`, held-out test `p_at_1` rose from `0.368` to `0.502`, held-out test
+`top_3_recall` rose from `0.858` to `0.970`, and no act segment regressed.
 
 The raw contextual transition brancher found an even larger signal
 (`test p_at_1=0.534`, `top_3_recall=0.970`), but it flattened `directive` and
-`question` turns to `0.0` top-1 accuracy. That makes this a real lever, not a
-free lunch: context can substantially improve conversational premonition, but
-the harness should promote only the portions that help without erasing weaker
-acts.
+`question` turns to `0.0` top-1 accuracy. The guarded variant keeps the
+heuristic's strongest `directive` and `question` reads alive while letting
+context handle the rest. It improved 73 held-out turns and regressed 6 individual
+turns, so this is a stronger but still transparent promotion: context can
+substantially improve conversational premonition, but the harness must keep
+showing where that confidence is brittle.
 
 ## Replay Data Format
 
@@ -288,11 +290,10 @@ label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
 For conversational voice-agent foresight, the next meaningful step is to import
-larger and more representative DailyDialog slices, then repair the contextual
-brancher for low-frequency `directive` and `question` turns so the system can
-capture more of the raw transition gain without segment regressions. After that,
-add EmpatheticDialogues for emotional readiness and Taskmaster or SpokenWOZ for
-practical spoken-assistant flows.
+larger and more representative DailyDialog slices, then make protected
+`directive` and `question` turns more capable instead of merely preserved. After
+that, add EmpatheticDialogues for emotional readiness and Taskmaster or SpokenWOZ
+for practical spoken-assistant flows.
 
 Useful expansion points:
 
@@ -302,7 +303,7 @@ Useful expansion points:
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 - Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
-- Add low-frequency act protection for contextual branch generation, especially `directive` and `question` turns.
+- Add protected-act specialists for `directive` and `question`, so those modes can improve under contextual scoring rather than just avoid regression.
 
 ## Benchmark Loop
 

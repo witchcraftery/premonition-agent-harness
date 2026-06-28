@@ -314,3 +314,21 @@ Verification:
 - Selected variant: `contextual_inform_overlay`; validation `p_at_1` improved from `0.324` to `0.416`, held-out test `p_at_1` improved from `0.368` to `0.448`, held-out test `top_3_recall` improved from `0.858` to `0.876`, with `40` improved and `0` regressed test turns.
 - Diagnostic full contextual transition was stronger but unsafe: held-out test `p_at_1=0.534` and `top_3_recall=0.970`, but `directive` and `question` top-1 accuracy regressed to `0.0`.
 - Next lever: protect low-frequency acts inside the contextual brancher so more of the raw transition gain can be promoted safely.
+
+## Guarded Contextual Brancher
+
+- [x] Add a low-frequency act guard for contextual transition scoring.
+- [x] Prove the guard preserves heuristic `directive` and `question` branches when transition confidence would erase them.
+- [x] Add guarded contextual variants to the bake-off.
+- [x] Rerun the DailyDialog bake-off and compare against `contextual_inform_overlay`.
+- [x] Document whether guarded context captures more raw transition gain without segment regressions.
+
+Verification:
+
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 19 passed.
+- `python3 -m pytest`: 81 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json`: completed.
+- Selected variant: `guarded_contextual_transition`; validation `p_at_1` improved from `0.324` to `0.464`, held-out test `p_at_1` improved from `0.368` to `0.502`, and held-out test `top_3_recall` improved from `0.858` to `0.970`.
+- The guarded variant improved beyond `contextual_inform_overlay`, which had validation `p_at_1=0.416`, held-out test `p_at_1=0.448`, and held-out test `top_3_recall=0.876`.
+- No act segment regressed on validation or test; full contextual transition remains stronger but unsafe because it regresses `directive` and `question` top-1 accuracy to `0.0`.
+- Held-out guidance delta: `73` improved turns and `6` regressed turns. Next lever: make protected `directive` and `question` modes improve under context instead of only avoiding collapse.

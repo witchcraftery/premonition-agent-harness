@@ -286,6 +286,7 @@ def build_probability_pack(
     transition_weight: float = 0.0,
     transition_overlay_act: str | None = None,
     transition_overlay_margin: float = 0.0,
+    transition_protected_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> ConversationProbabilityPack:
     branches = generate_conversation_branches(
@@ -298,6 +299,7 @@ def build_probability_pack(
         transition_weight=transition_weight,
         transition_overlay_act=transition_overlay_act,
         transition_overlay_margin=transition_overlay_margin,
+        transition_protected_acts=transition_protected_acts,
         scoring_variant=scoring_variant,
     )
     drafts = tuple(
@@ -331,6 +333,7 @@ def generate_conversation_branches(
     transition_weight: float = 0.0,
     transition_overlay_act: str | None = None,
     transition_overlay_margin: float = 0.0,
+    transition_protected_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     if top_k <= 0:
@@ -341,6 +344,8 @@ def generate_conversation_branches(
         raise ValueError("transition_weight must be between 0 and 1")
     if transition_overlay_margin < 0:
         raise ValueError("transition_overlay_margin must be non-negative")
+    if any(act not in CONVERSATION_ACTS for act in transition_protected_acts):
+        raise ValueError("transition_protected_acts must be known conversation acts")
     if scoring_variant == "heuristic" and act_ranker and learned_weight == 1.0:
         scoring_variant = "learned"
     if scoring_variant == "heuristic" and transition_ranker and transition_weight == 1.0:
@@ -364,6 +369,12 @@ def generate_conversation_branches(
             learned_scores=transition_ranker.score(turn),
             learned_weight=transition_weight,
         )
+        if transition_protected_acts:
+            scores = guarded_transition_scores(
+                heuristic_scores=heuristic_act_scores(turn, context_tokens),
+                transition_scores=scores,
+                protected_acts=transition_protected_acts,
+            )
     if transition_ranker and transition_overlay_act:
         scores = transition_overlay_scores(
             heuristic_scores=scores,
@@ -428,6 +439,21 @@ def transition_overlay_scores(
     if top_act != overlay_act or (top_score - second_score) < margin_min:
         return heuristic_scores
     return dict(transition_scores)
+
+
+def guarded_transition_scores(
+    heuristic_scores: dict[str, float],
+    transition_scores: dict[str, float],
+    protected_acts: tuple[str, ...],
+) -> dict[str, float]:
+    heuristic = normalize_act_scores(heuristic_scores)
+    heuristic_top_act = max(heuristic, key=heuristic.get)
+    if heuristic_top_act not in protected_acts:
+        return transition_scores
+
+    scores = dict(transition_scores)
+    scores[heuristic_top_act] = max(scores.values()) + 0.001
+    return scores
 
 
 def normalize_act_scores(scores: dict[str, float]) -> dict[str, float]:
@@ -798,6 +824,7 @@ def score_conversation_turns(
     transition_weight: float = 0.0,
     transition_overlay_act: str | None = None,
     transition_overlay_margin: float = 0.0,
+    transition_protected_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
@@ -812,6 +839,7 @@ def score_conversation_turns(
             transition_weight=transition_weight,
             transition_overlay_act=transition_overlay_act,
             transition_overlay_margin=transition_overlay_margin,
+            transition_protected_acts=transition_protected_acts,
             scoring_variant=scoring_variant,
         )
         rank_1 = pack.top_branches[0]
@@ -868,6 +896,10 @@ def run_conversation_act_ranker_bakeoff(
         transition_weight = float(variant["transition_weight"])
         transition_overlay_act = variant.get("transition_overlay_act")
         transition_overlay_margin = float(variant.get("transition_overlay_margin", 0.0))
+        transition_protected_acts = tuple(
+            str(act)
+            for act in variant.get("transition_protected_acts", ())
+        )
         train_rows = score_conversation_turns(
             train_turns,
             top_k=top_k,
@@ -878,6 +910,7 @@ def run_conversation_act_ranker_bakeoff(
             transition_weight=transition_weight,
             transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
             transition_overlay_margin=transition_overlay_margin,
+            transition_protected_acts=transition_protected_acts,
             scoring_variant=name,
         )
         dev_rows = score_conversation_turns(
@@ -890,6 +923,7 @@ def run_conversation_act_ranker_bakeoff(
             transition_weight=transition_weight,
             transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
             transition_overlay_margin=transition_overlay_margin,
+            transition_protected_acts=transition_protected_acts,
             scoring_variant=name,
         )
         test_rows = score_conversation_turns(
@@ -902,6 +936,7 @@ def run_conversation_act_ranker_bakeoff(
             transition_weight=transition_weight,
             transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
             transition_overlay_margin=transition_overlay_margin,
+            transition_protected_acts=transition_protected_acts,
             scoring_variant=name,
         )
         variants[name] = {
@@ -909,6 +944,7 @@ def run_conversation_act_ranker_bakeoff(
             "transition_weight": transition_weight,
             "transition_overlay_act": transition_overlay_act,
             "transition_overlay_margin": transition_overlay_margin,
+            "transition_protected_acts": transition_protected_acts,
             "train": summarize_conversation_rows(train_rows, train_turns),
             "dev": summarize_conversation_rows(dev_rows, dev_turns),
             "test": summarize_conversation_rows(test_rows, test_turns),
@@ -928,6 +964,10 @@ def run_conversation_act_ranker_bakeoff(
     selected_transition_weight = float(selected["transition_weight"])
     selected_overlay_act = selected.get("transition_overlay_act")
     selected_overlay_margin = float(selected.get("transition_overlay_margin", 0.0))
+    selected_protected_acts = tuple(
+        str(act)
+        for act in selected.get("transition_protected_acts", ())
+    )
     selected_train_rows = score_conversation_turns(
         train_turns,
         top_k=top_k,
@@ -938,6 +978,7 @@ def run_conversation_act_ranker_bakeoff(
         transition_weight=selected_transition_weight,
         transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
         transition_overlay_margin=selected_overlay_margin,
+        transition_protected_acts=selected_protected_acts,
         scoring_variant=selected_name,
     )
     selected_dev_rows = score_conversation_turns(
@@ -950,6 +991,7 @@ def run_conversation_act_ranker_bakeoff(
         transition_weight=selected_transition_weight,
         transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
         transition_overlay_margin=selected_overlay_margin,
+        transition_protected_acts=selected_protected_acts,
         scoring_variant=selected_name,
     )
     selected_test_rows = score_conversation_turns(
@@ -962,6 +1004,7 @@ def run_conversation_act_ranker_bakeoff(
         transition_weight=selected_transition_weight,
         transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
         transition_overlay_margin=selected_overlay_margin,
+        transition_protected_acts=selected_protected_acts,
         scoring_variant=selected_name,
     )
     train_guided = summarize_conversation_rows(selected_train_rows, train_turns)
@@ -984,6 +1027,7 @@ def run_conversation_act_ranker_bakeoff(
             "transition_weight": selected_transition_weight,
             "transition_overlay_act": selected_overlay_act,
             "transition_overlay_margin": selected_overlay_margin,
+            "transition_protected_acts": selected_protected_acts,
             "train": train_guided,
             "dev": dev_guided,
             "test": test_guided,
@@ -1042,6 +1086,12 @@ def conversation_bakeoff_variants() -> tuple[dict[str, float | str], ...]:
             "name": "contextual_transition",
             "learned_weight": 0.0,
             "transition_weight": 1.0,
+        },
+        {
+            "name": "guarded_contextual_transition",
+            "learned_weight": 0.0,
+            "transition_weight": 1.0,
+            "transition_protected_acts": ("directive", "question"),
         },
         {
             "name": "contextual_hybrid_50",

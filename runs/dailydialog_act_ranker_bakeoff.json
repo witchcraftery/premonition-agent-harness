@@ -10,8 +10,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.213,
-            "top_3_recall": 0.213,
+            "p_at_1": 0.705,
+            "top_3_recall": 0.918,
             "total_turns": 61,
             "tts_readiness_rate": 1.0
           }
@@ -25,7 +25,7 @@
           },
           "guided": {
             "p_at_1": 0.147,
-            "top_3_recall": 0.882,
+            "top_3_recall": 0.931,
             "total_turns": 102,
             "tts_readiness_rate": 1.0
           }
@@ -38,8 +38,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.825,
-            "top_3_recall": 0.986,
+            "p_at_1": 0.797,
+            "top_3_recall": 0.991,
             "total_turns": 212,
             "tts_readiness_rate": 1.0
           }
@@ -68,7 +68,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.4,
+            "p_at_1": 0.6,
             "top_3_recall": 1.0,
             "total_turns": 5,
             "tts_readiness_rate": 1.0
@@ -82,8 +82,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.48,
-            "top_3_recall": 0.8,
+            "p_at_1": 0.68,
+            "top_3_recall": 0.96,
             "total_turns": 25,
             "tts_readiness_rate": 1.0
           }
@@ -96,8 +96,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.415,
-            "top_3_recall": 0.873,
+            "p_at_1": 0.452,
+            "top_3_recall": 0.974,
             "total_turns": 458,
             "tts_readiness_rate": 1.0
           }
@@ -110,7 +110,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.75,
+            "p_at_1": 1.0,
             "top_3_recall": 1.0,
             "total_turns": 4,
             "tts_readiness_rate": 1.0
@@ -125,7 +125,7 @@
           },
           "guided": {
             "p_at_1": 0.125,
-            "top_3_recall": 1.0,
+            "top_3_recall": 0.875,
             "total_turns": 8,
             "tts_readiness_rate": 1.0
           }
@@ -141,66 +141,66 @@
         },
         {
           "guided_p_at_1": 0.125,
-          "guided_top_3_recall": 1.0,
+          "guided_top_3_recall": 0.875,
           "name": "surprise",
           "p_at_1_gain": 0.0,
           "segment": "expected_emotion"
         },
         {
           "guided_p_at_1": 0.147,
-          "guided_top_3_recall": 0.882,
+          "guided_top_3_recall": 0.931,
           "name": "directive",
           "p_at_1_gain": 0.0,
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.213,
-          "guided_top_3_recall": 0.213,
+          "guided_p_at_1": 0.423,
+          "guided_top_3_recall": 0.962,
+          "name": "speaker_a",
+          "p_at_1_gain": 0.128,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.452,
+          "guided_top_3_recall": 0.974,
+          "name": "no_emotion",
+          "p_at_1_gain": 0.138,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.5,
+          "guided_top_3_recall": 0.981,
+          "name": "speaker_b",
+          "p_at_1_gain": 0.15,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.6,
+          "guided_top_3_recall": 1.0,
+          "name": "anger",
+          "p_at_1_gain": 0.2,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.68,
+          "guided_top_3_recall": 0.96,
+          "name": "happiness",
+          "p_at_1_gain": 0.2,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.705,
+          "guided_top_3_recall": 0.918,
           "name": "commissive",
-          "p_at_1_gain": 0.0,
+          "p_at_1_gain": 0.492,
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.363,
-          "guided_top_3_recall": 0.868,
-          "name": "speaker_a",
-          "p_at_1_gain": 0.068,
-          "segment": "next_speaker"
-        },
-        {
-          "guided_p_at_1": 0.4,
-          "guided_top_3_recall": 1.0,
-          "name": "anger",
-          "p_at_1_gain": 0.0,
-          "segment": "expected_emotion"
-        },
-        {
-          "guided_p_at_1": 0.415,
-          "guided_top_3_recall": 0.873,
-          "name": "no_emotion",
-          "p_at_1_gain": 0.101,
-          "segment": "expected_emotion"
-        },
-        {
-          "guided_p_at_1": 0.462,
-          "guided_top_3_recall": 0.88,
-          "name": "speaker_b",
-          "p_at_1_gain": 0.112,
-          "segment": "next_speaker"
-        },
-        {
-          "guided_p_at_1": 0.48,
-          "guided_top_3_recall": 0.8,
-          "name": "happiness",
-          "p_at_1_gain": 0.0,
-          "segment": "expected_emotion"
-        },
-        {
-          "guided_p_at_1": 0.75,
-          "guided_top_3_recall": 1.0,
-          "name": "sadness",
-          "p_at_1_gain": 0.0,
-          "segment": "expected_emotion"
+          "guided_p_at_1": 0.797,
+          "guided_top_3_recall": 0.991,
+          "name": "inform",
+          "p_at_1_gain": 0.189,
+          "segment": "expected_act"
         }
       ],
       "next_speaker": {
@@ -212,8 +212,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.363,
-            "top_3_recall": 0.868,
+            "p_at_1": 0.423,
+            "top_3_recall": 0.962,
             "total_turns": 234,
             "tts_readiness_rate": 1.0
           }
@@ -226,8 +226,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.462,
-            "top_3_recall": 0.88,
+            "p_at_1": 0.5,
+            "top_3_recall": 0.981,
             "total_turns": 266,
             "tts_readiness_rate": 1.0
           }
@@ -244,8 +244,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.507,
-            "top_3_recall": 0.522,
+            "p_at_1": 0.884,
+            "top_3_recall": 0.942,
             "total_turns": 69,
             "tts_readiness_rate": 1.0
           }
@@ -259,7 +259,7 @@
           },
           "guided": {
             "p_at_1": 0.053,
-            "top_3_recall": 0.726,
+            "top_3_recall": 0.895,
             "total_turns": 95,
             "tts_readiness_rate": 1.0
           }
@@ -272,8 +272,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.856,
-            "top_3_recall": 1.0,
+            "p_at_1": 0.861,
+            "top_3_recall": 0.995,
             "total_turns": 208,
             "tts_readiness_rate": 1.0
           }
@@ -287,7 +287,7 @@
           },
           "guided": {
             "p_at_1": 0.047,
-            "top_3_recall": 0.977,
+            "top_3_recall": 1.0,
             "total_turns": 128,
             "tts_readiness_rate": 1.0
           }
@@ -302,8 +302,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.667,
-            "top_3_recall": 0.833,
+            "p_at_1": 0.5,
+            "top_3_recall": 1.0,
             "total_turns": 6,
             "tts_readiness_rate": 1.0
           }
@@ -330,8 +330,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.482,
-            "top_3_recall": 0.821,
+            "p_at_1": 0.696,
+            "top_3_recall": 0.964,
             "total_turns": 56,
             "tts_readiness_rate": 1.0
           }
@@ -344,8 +344,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.444,
-            "top_3_recall": 0.885,
+            "p_at_1": 0.484,
+            "top_3_recall": 0.969,
             "total_turns": 419,
             "tts_readiness_rate": 1.0
           }
@@ -358,8 +358,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.667,
-            "top_3_recall": 0.778,
+            "p_at_1": 0.556,
+            "top_3_recall": 1.0,
             "total_turns": 9,
             "tts_readiness_rate": 1.0
           }
@@ -373,7 +373,7 @@
           },
           "guided": {
             "p_at_1": 0.125,
-            "top_3_recall": 0.875,
+            "top_3_recall": 1.0,
             "total_turns": 8,
             "tts_readiness_rate": 1.0
           }
@@ -389,65 +389,65 @@
         },
         {
           "guided_p_at_1": 0.047,
-          "guided_top_3_recall": 0.977,
+          "guided_top_3_recall": 1.0,
           "name": "question",
           "p_at_1_gain": 0.0,
           "segment": "expected_act"
         },
         {
           "guided_p_at_1": 0.053,
-          "guided_top_3_recall": 0.726,
+          "guided_top_3_recall": 0.895,
           "name": "directive",
           "p_at_1_gain": 0.0,
           "segment": "expected_act"
         },
         {
           "guided_p_at_1": 0.125,
-          "guided_top_3_recall": 0.875,
+          "guided_top_3_recall": 1.0,
           "name": "surprise",
           "p_at_1_gain": 0.0,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.44,
-          "guided_top_3_recall": 0.869,
-          "name": "speaker_b",
-          "p_at_1_gain": 0.074,
-          "segment": "next_speaker"
-        },
-        {
-          "guided_p_at_1": 0.444,
-          "guided_top_3_recall": 0.885,
+          "guided_p_at_1": 0.484,
+          "guided_top_3_recall": 0.969,
           "name": "no_emotion",
-          "p_at_1_gain": 0.079,
+          "p_at_1_gain": 0.119,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.457,
-          "guided_top_3_recall": 0.884,
-          "name": "speaker_a",
-          "p_at_1_gain": 0.086,
+          "guided_p_at_1": 0.493,
+          "guided_top_3_recall": 0.959,
+          "name": "speaker_b",
+          "p_at_1_gain": 0.127,
           "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.482,
-          "guided_top_3_recall": 0.821,
-          "name": "happiness",
-          "p_at_1_gain": 0.036,
+          "guided_p_at_1": 0.5,
+          "guided_top_3_recall": 1.0,
+          "name": "anger",
+          "p_at_1_gain": 0.333,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.507,
-          "guided_top_3_recall": 0.522,
-          "name": "commissive",
-          "p_at_1_gain": 0.0,
-          "segment": "expected_act"
+          "guided_p_at_1": 0.513,
+          "guided_top_3_recall": 0.983,
+          "name": "speaker_a",
+          "p_at_1_gain": 0.142,
+          "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.667,
-          "guided_top_3_recall": 0.778,
+          "guided_p_at_1": 0.556,
+          "guided_top_3_recall": 1.0,
           "name": "sadness",
-          "p_at_1_gain": 0.223,
+          "p_at_1_gain": 0.112,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.696,
+          "guided_top_3_recall": 0.964,
+          "name": "happiness",
+          "p_at_1_gain": 0.25,
           "segment": "expected_emotion"
         }
       ],
@@ -460,8 +460,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.457,
-            "top_3_recall": 0.884,
+            "p_at_1": 0.513,
+            "top_3_recall": 0.983,
             "total_turns": 232,
             "tts_readiness_rate": 1.0
           }
@@ -474,8 +474,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.44,
-            "top_3_recall": 0.869,
+            "p_at_1": 0.493,
+            "top_3_recall": 0.959,
             "total_turns": 268,
             "tts_readiness_rate": 1.0
           }
@@ -492,8 +492,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.385,
-            "top_3_recall": 0.385,
+            "p_at_1": 0.923,
+            "top_3_recall": 0.949,
             "total_turns": 39,
             "tts_readiness_rate": 1.0
           }
@@ -507,7 +507,7 @@
           },
           "guided": {
             "p_at_1": 0.024,
-            "top_3_recall": 0.786,
+            "top_3_recall": 1.0,
             "total_turns": 42,
             "tts_readiness_rate": 1.0
           }
@@ -520,7 +520,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.803,
+            "p_at_1": 0.823,
             "top_3_recall": 1.0,
             "total_turns": 299,
             "tts_readiness_rate": 1.0
@@ -534,8 +534,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.017,
-            "top_3_recall": 0.992,
+            "p_at_1": 0.033,
+            "top_3_recall": 1.0,
             "total_turns": 120,
             "tts_readiness_rate": 1.0
           }
@@ -564,8 +564,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.636,
-            "top_3_recall": 0.818,
+            "p_at_1": 0.727,
+            "top_3_recall": 1.0,
             "total_turns": 11,
             "tts_readiness_rate": 1.0
           }
@@ -578,8 +578,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.632,
-            "top_3_recall": 0.908,
+            "p_at_1": 0.711,
+            "top_3_recall": 0.974,
             "total_turns": 76,
             "tts_readiness_rate": 1.0
           }
@@ -592,8 +592,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.496,
-            "top_3_recall": 0.938,
+            "p_at_1": 0.553,
+            "top_3_recall": 1.0,
             "total_turns": 385,
             "tts_readiness_rate": 1.0
           }
@@ -621,7 +621,7 @@
           },
           "guided": {
             "p_at_1": 0.263,
-            "top_3_recall": 0.947,
+            "top_3_recall": 1.0,
             "total_turns": 19,
             "tts_readiness_rate": 1.0
           }
@@ -629,66 +629,52 @@
       },
       "focus_areas": [
         {
-          "guided_p_at_1": 0.017,
-          "guided_top_3_recall": 0.992,
-          "name": "question",
-          "p_at_1_gain": -0.016,
-          "segment": "expected_act"
-        },
-        {
           "guided_p_at_1": 0.024,
-          "guided_top_3_recall": 0.786,
+          "guided_top_3_recall": 1.0,
           "name": "directive",
           "p_at_1_gain": 0.0,
           "segment": "expected_act"
         },
         {
+          "guided_p_at_1": 0.033,
+          "guided_top_3_recall": 1.0,
+          "name": "question",
+          "p_at_1_gain": 0.0,
+          "segment": "expected_act"
+        },
+        {
           "guided_p_at_1": 0.263,
-          "guided_top_3_recall": 0.947,
+          "guided_top_3_recall": 1.0,
           "name": "surprise",
           "p_at_1_gain": 0.052,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.385,
-          "guided_top_3_recall": 0.385,
-          "name": "commissive",
-          "p_at_1_gain": 0.0,
-          "segment": "expected_act"
-        },
-        {
-          "guided_p_at_1": 0.438,
-          "guided_top_3_recall": 0.916,
+          "guided_p_at_1": 0.509,
+          "guided_top_3_recall": 1.0,
           "name": "speaker_a",
-          "p_at_1_gain": 0.04,
+          "p_at_1_gain": 0.111,
           "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.496,
-          "guided_top_3_recall": 0.938,
+          "guided_p_at_1": 0.553,
+          "guided_top_3_recall": 1.0,
           "name": "no_emotion",
-          "p_at_1_gain": 0.047,
+          "p_at_1_gain": 0.104,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.58,
-          "guided_top_3_recall": 0.945,
+          "guided_p_at_1": 0.628,
+          "guided_top_3_recall": 0.993,
           "name": "speaker_b",
-          "p_at_1_gain": 0.047,
+          "p_at_1_gain": 0.095,
           "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.632,
-          "guided_top_3_recall": 0.908,
+          "guided_p_at_1": 0.711,
+          "guided_top_3_recall": 0.974,
           "name": "happiness",
-          "p_at_1_gain": 0.027,
-          "segment": "expected_emotion"
-        },
-        {
-          "guided_p_at_1": 0.636,
-          "guided_top_3_recall": 0.818,
-          "name": "disgust",
-          "p_at_1_gain": 0.0,
+          "p_at_1_gain": 0.106,
           "segment": "expected_emotion"
         },
         {
@@ -697,6 +683,20 @@
           "name": "anger",
           "p_at_1_gain": 0.0,
           "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.727,
+          "guided_top_3_recall": 1.0,
+          "name": "disgust",
+          "p_at_1_gain": 0.091,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.823,
+          "guided_top_3_recall": 1.0,
+          "name": "inform",
+          "p_at_1_gain": 0.101,
+          "segment": "expected_act"
         }
       ],
       "next_speaker": {
@@ -708,8 +708,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.438,
-            "top_3_recall": 0.916,
+            "p_at_1": 0.509,
+            "top_3_recall": 1.0,
             "total_turns": 226,
             "tts_readiness_rate": 1.0
           }
@@ -722,8 +722,8 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.58,
-            "top_3_recall": 0.945,
+            "p_at_1": 0.628,
+            "top_3_recall": 0.993,
             "total_turns": 274,
             "tts_readiness_rate": 1.0
           }
@@ -741,81 +741,118 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.416,
-      "top_3_recall": 0.874,
+      "p_at_1": 0.464,
+      "top_3_recall": 0.972,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     }
   },
   "efficacy": {
-    "dev_p_at_1_gain": 0.092,
-    "dev_test_p_at_1_gap": 0.012,
-    "dev_top_3_recall_gain": 0.018,
+    "dev_p_at_1_gain": 0.14,
+    "dev_test_p_at_1_gap": 0.006,
+    "dev_top_3_recall_gain": 0.116,
     "dev_tts_readiness_gain": 0.0,
-    "test_p_at_1_gain": 0.08,
-    "test_top_3_recall_gain": 0.018,
+    "test_p_at_1_gain": 0.134,
+    "test_top_3_recall_gain": 0.112,
     "test_tts_readiness_gain": 0.0,
-    "train_p_at_1_gain": 0.044,
-    "train_test_p_at_1_gap": -0.036,
-    "train_top_3_recall_gain": 0.012,
+    "train_p_at_1_gain": 0.102,
+    "train_test_p_at_1_gap": -0.032,
+    "train_top_3_recall_gain": 0.076,
     "train_tts_readiness_gain": 0.0
   },
   "guidance_delta": {
-    "improved_turn_count": 40,
+    "improved_turn_count": 73,
     "improved_turns": [
+      "dailydialog-test-0001-003",
+      "dailydialog-test-0001-005",
+      "dailydialog-test-0001-009",
+      "dailydialog-test-0004-012",
+      "dailydialog-test-0006-003",
+      "dailydialog-test-0006-007",
+      "dailydialog-test-0007-011",
+      "dailydialog-test-0008-005",
+      "dailydialog-test-0008-009",
       "dailydialog-test-0009-007",
+      "dailydialog-test-0009-008",
+      "dailydialog-test-0010-005",
       "dailydialog-test-0011-001",
+      "dailydialog-test-0012-003",
+      "dailydialog-test-0013-004",
       "dailydialog-test-0014-002",
       "dailydialog-test-0016-004",
       "dailydialog-test-0016-007",
+      "dailydialog-test-0016-015",
+      "dailydialog-test-0017-002",
       "dailydialog-test-0018-001",
       "dailydialog-test-0018-003",
+      "dailydialog-test-0018-008",
+      "dailydialog-test-0020-004",
+      "dailydialog-test-0021-010",
+      "dailydialog-test-0022-001",
+      "dailydialog-test-0022-003",
       "dailydialog-test-0025-008",
       "dailydialog-test-0025-010",
       "dailydialog-test-0025-012",
       "dailydialog-test-0026-006",
       "dailydialog-test-0026-010",
+      "dailydialog-test-0026-011",
+      "dailydialog-test-0028-003",
       "dailydialog-test-0028-008",
+      "dailydialog-test-0028-009",
+      "dailydialog-test-0028-010",
+      "dailydialog-test-0029-015",
       "dailydialog-test-0031-003",
       "dailydialog-test-0031-007",
-      "dailydialog-test-0035-003",
-      "dailydialog-test-0035-005",
-      "dailydialog-test-0035-007",
-      "dailydialog-test-0035-009",
+      "dailydialog-test-0033-002",
       "dailydialog-test-0037-001",
       "dailydialog-test-0037-003",
       "dailydialog-test-0037-005",
       "dailydialog-test-0037-010",
-      "dailydialog-test-0039-001",
-      "dailydialog-test-0039-004",
-      "dailydialog-test-0042-002",
-      "dailydialog-test-0042-004",
-      "dailydialog-test-0042-010",
-      "dailydialog-test-0044-005",
+      "dailydialog-test-0037-011",
+      "dailydialog-test-0038-002",
+      "dailydialog-test-0041-002",
       "dailydialog-test-0045-003",
       "dailydialog-test-0046-003",
       "dailydialog-test-0046-006",
       "dailydialog-test-0046-008",
       "dailydialog-test-0046-010",
+      "dailydialog-test-0046-011",
       "dailydialog-test-0046-013",
+      "dailydialog-test-0046-014",
+      "dailydialog-test-0047-010",
+      "dailydialog-test-0047-015",
+      "dailydialog-test-0048-005",
+      "dailydialog-test-0049-003",
       "dailydialog-test-0050-003",
+      "dailydialog-test-0051-004",
+      "dailydialog-test-0051-006",
+      "dailydialog-test-0053-004",
+      "dailydialog-test-0055-002",
+      "dailydialog-test-0055-004",
+      "dailydialog-test-0055-008",
       "dailydialog-test-0059-008",
       "dailydialog-test-0059-010",
+      "dailydialog-test-0060-004",
       "dailydialog-test-0061-004",
-      "dailydialog-test-0063-002"
+      "dailydialog-test-0063-002",
+      "dailydialog-test-0063-005"
     ],
-    "regressed_turn_count": 0,
-    "regressed_turns": [],
+    "regressed_turn_count": 6,
+    "regressed_turns": [
+      "dailydialog-test-0016-008",
+      "dailydialog-test-0023-001",
+      "dailydialog-test-0023-003",
+      "dailydialog-test-0027-002",
+      "dailydialog-test-0050-004",
+      "dailydialog-test-0051-001"
+    ],
     "unchanged_turns": [
       "dailydialog-test-0001-001",
       "dailydialog-test-0001-002",
-      "dailydialog-test-0001-003",
       "dailydialog-test-0001-004",
-      "dailydialog-test-0001-005",
       "dailydialog-test-0001-006",
       "dailydialog-test-0001-007",
       "dailydialog-test-0001-008",
-      "dailydialog-test-0001-009",
       "dailydialog-test-0001-010",
       "dailydialog-test-0001-011",
       "dailydialog-test-0002-001",
@@ -838,7 +875,6 @@
       "dailydialog-test-0004-009",
       "dailydialog-test-0004-010",
       "dailydialog-test-0004-011",
-      "dailydialog-test-0004-012",
       "dailydialog-test-0004-013",
       "dailydialog-test-0005-001",
       "dailydialog-test-0005-002",
@@ -849,11 +885,9 @@
       "dailydialog-test-0005-007",
       "dailydialog-test-0006-001",
       "dailydialog-test-0006-002",
-      "dailydialog-test-0006-003",
       "dailydialog-test-0006-004",
       "dailydialog-test-0006-005",
       "dailydialog-test-0006-006",
-      "dailydialog-test-0006-007",
       "dailydialog-test-0006-008",
       "dailydialog-test-0006-009",
       "dailydialog-test-0007-001",
@@ -866,30 +900,25 @@
       "dailydialog-test-0007-008",
       "dailydialog-test-0007-009",
       "dailydialog-test-0007-010",
-      "dailydialog-test-0007-011",
       "dailydialog-test-0008-001",
       "dailydialog-test-0008-002",
       "dailydialog-test-0008-003",
       "dailydialog-test-0008-004",
-      "dailydialog-test-0008-005",
       "dailydialog-test-0008-006",
       "dailydialog-test-0008-007",
       "dailydialog-test-0008-008",
-      "dailydialog-test-0008-009",
       "dailydialog-test-0009-001",
       "dailydialog-test-0009-002",
       "dailydialog-test-0009-003",
       "dailydialog-test-0009-004",
       "dailydialog-test-0009-005",
       "dailydialog-test-0009-006",
-      "dailydialog-test-0009-008",
       "dailydialog-test-0009-009",
       "dailydialog-test-0009-010",
       "dailydialog-test-0010-001",
       "dailydialog-test-0010-002",
       "dailydialog-test-0010-003",
       "dailydialog-test-0010-004",
-      "dailydialog-test-0010-005",
       "dailydialog-test-0010-006",
       "dailydialog-test-0010-007",
       "dailydialog-test-0011-002",
@@ -897,11 +926,9 @@
       "dailydialog-test-0011-004",
       "dailydialog-test-0012-001",
       "dailydialog-test-0012-002",
-      "dailydialog-test-0012-003",
       "dailydialog-test-0013-001",
       "dailydialog-test-0013-002",
       "dailydialog-test-0013-003",
-      "dailydialog-test-0013-004",
       "dailydialog-test-0014-001",
       "dailydialog-test-0014-003",
       "dailydialog-test-0015-001",
@@ -913,16 +940,13 @@
       "dailydialog-test-0016-003",
       "dailydialog-test-0016-005",
       "dailydialog-test-0016-006",
-      "dailydialog-test-0016-008",
       "dailydialog-test-0016-009",
       "dailydialog-test-0016-010",
       "dailydialog-test-0016-011",
       "dailydialog-test-0016-012",
       "dailydialog-test-0016-013",
       "dailydialog-test-0016-014",
-      "dailydialog-test-0016-015",
       "dailydialog-test-0017-001",
-      "dailydialog-test-0017-002",
       "dailydialog-test-0017-003",
       "dailydialog-test-0017-004",
       "dailydialog-test-0017-005",
@@ -931,7 +955,6 @@
       "dailydialog-test-0018-005",
       "dailydialog-test-0018-006",
       "dailydialog-test-0018-007",
-      "dailydialog-test-0018-008",
       "dailydialog-test-0019-001",
       "dailydialog-test-0019-002",
       "dailydialog-test-0019-003",
@@ -944,7 +967,6 @@
       "dailydialog-test-0020-001",
       "dailydialog-test-0020-002",
       "dailydialog-test-0020-003",
-      "dailydialog-test-0020-004",
       "dailydialog-test-0021-001",
       "dailydialog-test-0021-002",
       "dailydialog-test-0021-003",
@@ -954,15 +976,10 @@
       "dailydialog-test-0021-007",
       "dailydialog-test-0021-008",
       "dailydialog-test-0021-009",
-      "dailydialog-test-0021-010",
       "dailydialog-test-0021-011",
-      "dailydialog-test-0022-001",
       "dailydialog-test-0022-002",
-      "dailydialog-test-0022-003",
       "dailydialog-test-0022-004",
-      "dailydialog-test-0023-001",
       "dailydialog-test-0023-002",
-      "dailydialog-test-0023-003",
       "dailydialog-test-0024-001",
       "dailydialog-test-0024-002",
       "dailydialog-test-0024-003",
@@ -991,20 +1008,15 @@
       "dailydialog-test-0026-007",
       "dailydialog-test-0026-008",
       "dailydialog-test-0026-009",
-      "dailydialog-test-0026-011",
       "dailydialog-test-0027-001",
-      "dailydialog-test-0027-002",
       "dailydialog-test-0027-003",
       "dailydialog-test-0027-004",
       "dailydialog-test-0028-001",
       "dailydialog-test-0028-002",
-      "dailydialog-test-0028-003",
       "dailydialog-test-0028-004",
       "dailydialog-test-0028-005",
       "dailydialog-test-0028-006",
       "dailydialog-test-0028-007",
-      "dailydialog-test-0028-009",
-      "dailydialog-test-0028-010",
       "dailydialog-test-0029-001",
       "dailydialog-test-0029-002",
       "dailydialog-test-0029-003",
@@ -1019,7 +1031,6 @@
       "dailydialog-test-0029-012",
       "dailydialog-test-0029-013",
       "dailydialog-test-0029-014",
-      "dailydialog-test-0029-015",
       "dailydialog-test-0029-016",
       "dailydialog-test-0029-017",
       "dailydialog-test-0030-001",
@@ -1032,7 +1043,6 @@
       "dailydialog-test-0032-002",
       "dailydialog-test-0032-003",
       "dailydialog-test-0033-001",
-      "dailydialog-test-0033-002",
       "dailydialog-test-0033-003",
       "dailydialog-test-0033-004",
       "dailydialog-test-0034-001",
@@ -1049,9 +1059,13 @@
       "dailydialog-test-0034-012",
       "dailydialog-test-0035-001",
       "dailydialog-test-0035-002",
+      "dailydialog-test-0035-003",
       "dailydialog-test-0035-004",
+      "dailydialog-test-0035-005",
       "dailydialog-test-0035-006",
+      "dailydialog-test-0035-007",
       "dailydialog-test-0035-008",
+      "dailydialog-test-0035-009",
       "dailydialog-test-0035-010",
       "dailydialog-test-0035-011",
       "dailydialog-test-0036-001",
@@ -1071,15 +1085,15 @@
       "dailydialog-test-0037-007",
       "dailydialog-test-0037-008",
       "dailydialog-test-0037-009",
-      "dailydialog-test-0037-011",
       "dailydialog-test-0038-001",
-      "dailydialog-test-0038-002",
       "dailydialog-test-0038-003",
       "dailydialog-test-0038-004",
       "dailydialog-test-0038-005",
       "dailydialog-test-0038-006",
+      "dailydialog-test-0039-001",
       "dailydialog-test-0039-002",
       "dailydialog-test-0039-003",
+      "dailydialog-test-0039-004",
       "dailydialog-test-0039-005",
       "dailydialog-test-0039-006",
       "dailydialog-test-0040-001",
@@ -1092,18 +1106,20 @@
       "dailydialog-test-0040-008",
       "dailydialog-test-0040-009",
       "dailydialog-test-0041-001",
-      "dailydialog-test-0041-002",
       "dailydialog-test-0041-003",
       "dailydialog-test-0041-004",
       "dailydialog-test-0041-005",
       "dailydialog-test-0041-006",
       "dailydialog-test-0042-001",
+      "dailydialog-test-0042-002",
       "dailydialog-test-0042-003",
+      "dailydialog-test-0042-004",
       "dailydialog-test-0042-005",
       "dailydialog-test-0042-006",
       "dailydialog-test-0042-007",
       "dailydialog-test-0042-008",
       "dailydialog-test-0042-009",
+      "dailydialog-test-0042-010",
       "dailydialog-test-0042-011",
       "dailydialog-test-0042-012",
       "dailydialog-test-0042-013",
@@ -1120,6 +1136,7 @@
       "dailydialog-test-0044-002",
       "dailydialog-test-0044-003",
       "dailydialog-test-0044-004",
+      "dailydialog-test-0044-005",
       "dailydialog-test-0044-006",
       "dailydialog-test-0045-001",
       "dailydialog-test-0045-002",
@@ -1129,9 +1146,7 @@
       "dailydialog-test-0046-005",
       "dailydialog-test-0046-007",
       "dailydialog-test-0046-009",
-      "dailydialog-test-0046-011",
       "dailydialog-test-0046-012",
-      "dailydialog-test-0046-014",
       "dailydialog-test-0047-001",
       "dailydialog-test-0047-002",
       "dailydialog-test-0047-003",
@@ -1141,31 +1156,23 @@
       "dailydialog-test-0047-007",
       "dailydialog-test-0047-008",
       "dailydialog-test-0047-009",
-      "dailydialog-test-0047-010",
       "dailydialog-test-0047-011",
       "dailydialog-test-0047-012",
       "dailydialog-test-0047-013",
       "dailydialog-test-0047-014",
-      "dailydialog-test-0047-015",
       "dailydialog-test-0047-016",
       "dailydialog-test-0047-017",
       "dailydialog-test-0048-001",
       "dailydialog-test-0048-002",
       "dailydialog-test-0048-003",
       "dailydialog-test-0048-004",
-      "dailydialog-test-0048-005",
       "dailydialog-test-0049-001",
       "dailydialog-test-0049-002",
-      "dailydialog-test-0049-003",
       "dailydialog-test-0050-001",
       "dailydialog-test-0050-002",
-      "dailydialog-test-0050-004",
-      "dailydialog-test-0051-001",
       "dailydialog-test-0051-002",
       "dailydialog-test-0051-003",
-      "dailydialog-test-0051-004",
       "dailydialog-test-0051-005",
-      "dailydialog-test-0051-006",
       "dailydialog-test-0051-007",
       "dailydialog-test-0052-001",
       "dailydialog-test-0052-002",
@@ -1181,7 +1188,6 @@
       "dailydialog-test-0053-001",
       "dailydialog-test-0053-002",
       "dailydialog-test-0053-003",
-      "dailydialog-test-0053-004",
       "dailydialog-test-0053-005",
       "dailydialog-test-0053-006",
       "dailydialog-test-0053-007",
@@ -1192,13 +1198,10 @@
       "dailydialog-test-0053-012",
       "dailydialog-test-0054-001",
       "dailydialog-test-0055-001",
-      "dailydialog-test-0055-002",
       "dailydialog-test-0055-003",
-      "dailydialog-test-0055-004",
       "dailydialog-test-0055-005",
       "dailydialog-test-0055-006",
       "dailydialog-test-0055-007",
-      "dailydialog-test-0055-008",
       "dailydialog-test-0055-009",
       "dailydialog-test-0055-010",
       "dailydialog-test-0056-001",
@@ -1237,7 +1240,6 @@
       "dailydialog-test-0060-001",
       "dailydialog-test-0060-002",
       "dailydialog-test-0060-003",
-      "dailydialog-test-0060-004",
       "dailydialog-test-0060-005",
       "dailydialog-test-0060-006",
       "dailydialog-test-0060-007",
@@ -1255,7 +1257,6 @@
       "dailydialog-test-0063-001",
       "dailydialog-test-0063-003",
       "dailydialog-test-0063-004",
-      "dailydialog-test-0063-005",
       "dailydialog-test-0063-006",
       "dailydialog-test-0063-007",
       "dailydialog-test-0063-008",
@@ -1281,32 +1282,36 @@
   "selected_variant": {
     "dev": {
       "median_latency_ms": 90,
-      "p_at_1": 0.416,
-      "top_3_recall": 0.874,
+      "p_at_1": 0.464,
+      "top_3_recall": 0.972,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     },
     "dev_segment_regressions": [],
     "learned_weight": 0.0,
-    "name": "contextual_inform_overlay",
+    "name": "guarded_contextual_transition",
     "test": {
       "median_latency_ms": 90,
-      "p_at_1": 0.448,
-      "top_3_recall": 0.876,
+      "p_at_1": 0.502,
+      "top_3_recall": 0.97,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     },
     "test_segment_regressions": [],
     "train": {
       "median_latency_ms": 90,
-      "p_at_1": 0.516,
-      "top_3_recall": 0.932,
+      "p_at_1": 0.574,
+      "top_3_recall": 0.996,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     },
-    "transition_overlay_act": "inform",
-    "transition_overlay_margin": 0.25,
-    "transition_weight": 0.0
+    "transition_overlay_act": null,
+    "transition_overlay_margin": 0.0,
+    "transition_protected_acts": [
+      "directive",
+      "question"
+    ],
+    "transition_weight": 1.0
   },
   "summary": {
     "dev_turns": 500,
@@ -1324,8 +1329,8 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.448,
-      "top_3_recall": 0.876,
+      "p_at_1": 0.502,
+      "top_3_recall": 0.97,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     }
@@ -1340,8 +1345,8 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.516,
-      "top_3_recall": 0.932,
+      "p_at_1": 0.574,
+      "top_3_recall": 0.996,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     }
@@ -1413,6 +1418,7 @@
       },
       "transition_overlay_act": null,
       "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
       "transition_weight": 0.5
     },
     "contextual_inform_overlay": {
@@ -1442,6 +1448,7 @@
       },
       "transition_overlay_act": "inform",
       "transition_overlay_margin": 0.25,
+      "transition_protected_acts": [],
       "transition_weight": 0.0
     },
     "contextual_transition": {
@@ -1501,6 +1508,40 @@
       },
       "transition_overlay_act": null,
       "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 1.0
+    },
+    "guarded_contextual_transition": {
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.464,
+        "top_3_recall": 0.972,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.502,
+        "top_3_recall": 0.97,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.574,
+        "top_3_recall": 0.996,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
       "transition_weight": 1.0
     },
     "heuristic": {
@@ -1530,6 +1571,7 @@
       },
       "transition_overlay_act": null,
       "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
       "transition_weight": 0.0
     },
     "hybrid_25": {
@@ -1603,6 +1645,7 @@
       },
       "transition_overlay_act": null,
       "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
       "transition_weight": 0.0
     },
     "hybrid_50": {
@@ -1662,6 +1705,7 @@
       },
       "transition_overlay_act": null,
       "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
       "transition_weight": 0.0
     },
     "hybrid_75": {
@@ -1721,6 +1765,7 @@
       },
       "transition_overlay_act": null,
       "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
       "transition_weight": 0.0
     },
     "learned": {
@@ -1773,6 +1818,7 @@
       },
       "transition_overlay_act": null,
       "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
       "transition_weight": 0.0
     }
   }

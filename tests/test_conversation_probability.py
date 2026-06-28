@@ -254,6 +254,41 @@ def test_transition_ranker_uses_observed_act_history():
     assert branches[0]["scoring_variant"] == "contextual_transition"
 
 
+def test_guarded_transition_preserves_protected_heuristic_act():
+    train_turns = (
+        conversation_turn("train-q-i-1", "Anything else?", "inform", observed_acts=("question",)),
+        conversation_turn("train-q-i-2", "Where is it?", "inform", observed_acts=("question",)),
+        conversation_turn("train-q-i-3", "Can you explain?", "inform", observed_acts=("question",)),
+        conversation_turn("train-i-q-1", "The package arrived.", "question", observed_acts=("inform",)),
+    )
+    ranker = train_conversation_transition_ranker(train_turns)
+    turn = conversation_turn(
+        "test-directive",
+        "What should we do next?",
+        "directive",
+        observed_acts=("question",),
+    )
+
+    unguarded = generate_conversation_branches(
+        turn,
+        top_k=3,
+        transition_ranker=ranker,
+        transition_weight=1.0,
+    )
+    guarded = generate_conversation_branches(
+        turn,
+        top_k=3,
+        transition_ranker=ranker,
+        transition_weight=1.0,
+        transition_protected_acts=("directive", "question"),
+        scoring_variant="guarded_contextual_transition",
+    )
+
+    assert unguarded[0]["act"] == "inform"
+    assert guarded[0]["act"] == "directive"
+    assert guarded[0]["scoring_variant"] == "guarded_contextual_transition"
+
+
 def test_conversation_act_ranker_bakeoff_includes_contextual_transition_variant():
     train_turns = (
         conversation_turn("train-q-i-1", "Anything else?", "inform", observed_acts=("question",)),
@@ -278,6 +313,7 @@ def test_conversation_act_ranker_bakeoff_includes_contextual_transition_variant(
     )
 
     assert "contextual_transition" in report["variants"]
+    assert "guarded_contextual_transition" in report["variants"]
     assert "contextual_inform_overlay" in report["variants"]
     assert report["selected_variant"]["name"] == "contextual_transition"
     assert report["selected_variant"]["test"]["p_at_1"] == 1.0
