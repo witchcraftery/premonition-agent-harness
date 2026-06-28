@@ -292,3 +292,25 @@ Verification:
 - Learned-only overfit the train sample: train `p_at_1=0.656`, validation `p_at_1=0.260`, test `p_at_1=0.274`; validation `inform` regressed from `0.608` to `0.160`.
 - The best hybrid did not beat baseline: `hybrid_25` had validation `p_at_1=0.254` and test `p_at_1=0.324`, with validation regressions in `commissive`, `directive`, and `inform`.
 - Diagnostic runs with larger local train slices improved learned-only somewhat, but still selected the heuristic baseline through 20k train turns; this suggests the next larger-gain lever is richer contextual branch generation, not bag-of-features act ranking.
+
+## Contextual Conversation Brancher
+
+- [x] Preserve observed dialogue-act history in DailyDialog-derived turns.
+- [x] Add a transition/contextual brancher that learns next-act probabilities from prior observed acts.
+- [x] Add contextual variants to the learned-ranker bake-off.
+- [x] Regenerate DailyDialog samples with act-history fields.
+- [x] Run the bake-off and measure whether contextual structure improves held-out test.
+- [x] Document the result and next lever.
+
+Verification:
+
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 18 passed.
+- `python3 -m pytest`: 80 passed.
+- `foresight-replay --dailydialog-dir data/external/dailydialog/train --conversation-output data/dailydialog_train_sample.jsonl --conversation-limit 500`: exported 500 of 76052 available train turns with observed act history.
+- `foresight-replay --dailydialog-dir data/external/dailydialog/validation --conversation-output data/dailydialog_validation_sample.jsonl --conversation-limit 500`: exported 500 of 7069 available validation turns with observed act history.
+- `foresight-replay --dailydialog-dir data/external/dailydialog/test --conversation-output data/dailydialog_test_sample.jsonl --conversation-limit 500`: exported 500 of 6740 available test turns with observed act history.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --iterations 3 --conversation-report runs/dailydialog_heldout_probability_loop.json`: completed; keyword guidance remained blocked by segment regressions.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json`: completed.
+- Selected variant: `contextual_inform_overlay`; validation `p_at_1` improved from `0.324` to `0.416`, held-out test `p_at_1` improved from `0.368` to `0.448`, held-out test `top_3_recall` improved from `0.858` to `0.876`, with `40` improved and `0` regressed test turns.
+- Diagnostic full contextual transition was stronger but unsafe: held-out test `p_at_1=0.534` and `top_3_recall=0.970`, but `directive` and `question` top-1 accuracy regressed to `0.0`.
+- Next lever: protect low-frequency acts inside the contextual brancher so more of the raw transition gain can be promoted safely.

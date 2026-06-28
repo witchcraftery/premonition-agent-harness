@@ -52,9 +52,10 @@ repeatable benchmark.
 - Current use: train learns candidate guidance, validation gates promotion, and untouched test measures generalization.
 - Current result: act-specific candidate guidance raised validation `p_at_1` from `0.324` to `0.402`, but reduced validation `top_3_recall` from `0.856` to `0.844`, so the segment-aware gate rejected promotion.
 - Segment signal: rejected candidates regressed validation `commissive` from `0.213` to `0.066`, `directive` from `0.147` to `0.010`, and `question` from `0.040` to `0.008`.
-- Held-out result after gating: test remains at the baseline, `p_at_1=0.368` and `top_3_recall=0.858`, with `0` improved and `0` regressed held-out test turns.
-- Learned-ranker bake-off: validation selected the heuristic baseline. Learned-only reached train `p_at_1=0.656`, but fell to validation `0.260` and test `0.274`; `hybrid_25` fell to validation `0.254` and test `0.324`.
-- Limitation: first 500 turns from each split; the current act-specific keyword learner is safer but not yet more capable, and the bag-of-features learned ranker overfits. The next brancher should use richer contextual structure rather than token counts alone.
+- Held-out result after gating: the keyword-guidance loop remains at the baseline, `p_at_1=0.368` and `top_3_recall=0.858`, with `0` improved and `0` regressed held-out test turns.
+- Contextual bake-off: validation selected `contextual_inform_overlay`, which uses observed act history only when the transition signal strongly points to `inform`. It improved validation `p_at_1` from `0.324` to `0.416` and held-out test `p_at_1` from `0.368` to `0.448`, with no act-segment regressions.
+- Raw transition signal: full contextual transition reached test `p_at_1=0.534` and `top_3_recall=0.970`, but regressed `directive` and `question` top-1 accuracy to `0.0`, so it is diagnostic rather than promoted behavior.
+- Limitation: first 500 turns from each split; the strongest next lever is low-frequency act protection for contextual branching, especially `directive` and `question`.
 
 ## Human Conversation Candidates
 

@@ -16,6 +16,7 @@ from foresight_harness.conversation_probability import (
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
     train_conversation_act_ranker,
+    train_conversation_transition_ranker,
     write_conversation_turns,
 )
 from foresight_harness.models import Message
@@ -38,8 +39,10 @@ def test_load_dailydialog_export_creates_next_turn_examples(tmp_path):
     assert turns[0].turn_id == "dailydialog-0001-001"
     assert turns[0].actual_next_utterance == "How are you today?"
     assert turns[0].expected_act == "question"
+    assert turns[0].observed_acts == ("inform",)
     assert turns[1].expected_act == "inform"
     assert turns[1].expected_emotion == "happiness"
+    assert turns[1].observed_acts == ("inform", "question")
 
 
 def test_load_dailydialog_split_writes_limited_jsonl_sample(tmp_path):
@@ -61,7 +64,9 @@ def test_load_dailydialog_split_writes_limited_jsonl_sample(tmp_path):
     assert len(turns) == 3
     assert len(saved) == 3
     assert saved[0].turn_id == "dailydialog-train-0001-001"
+    assert saved[0].observed_acts == ("inform",)
     assert saved[1].expected_act == "directive"
+    assert saved[1].observed_acts == ("inform", "inform")
     assert saved[2].expected_act == "question"
 
 
@@ -219,12 +224,63 @@ def test_conversation_act_ranker_bakeoff_selects_on_dev_and_scores_test():
     assert report["summary"]["train_turns"] == 4
     assert "heuristic" in report["variants"]
     assert "learned" in report["variants"]
+    assert "contextual_inform_overlay" in report["variants"]
     assert report["selected_variant"]["name"] in report["variants"]
     assert report["selected_variant"]["dev"]["p_at_1"] == 1.0
     assert report["selected_variant"]["test"]["p_at_1"] == 1.0
     assert report["test"]["guided"]["p_at_1"] > report["test"]["baseline"]["p_at_1"]
     assert report["guidance_delta"]["regressed_turns"] == []
     assert "expected_act" in report["analytics"]["test_segments"]
+
+
+def test_transition_ranker_uses_observed_act_history():
+    train_turns = (
+        conversation_turn("train-q-i-1", "Anything else?", "inform", observed_acts=("question",)),
+        conversation_turn("train-q-i-2", "Where is it?", "inform", observed_acts=("question",)),
+        conversation_turn("train-i-q-1", "The package arrived.", "question", observed_acts=("inform",)),
+        conversation_turn("train-i-q-2", "The report is done.", "question", observed_acts=("inform",)),
+    )
+    ranker = train_conversation_transition_ranker(train_turns)
+    turn = conversation_turn("test", "Could you clarify?", "inform", observed_acts=("question",))
+
+    branches = generate_conversation_branches(
+        turn,
+        top_k=3,
+        transition_ranker=ranker,
+        transition_weight=1.0,
+    )
+
+    assert branches[0]["act"] == "inform"
+    assert branches[0]["scoring_variant"] == "contextual_transition"
+
+
+def test_conversation_act_ranker_bakeoff_includes_contextual_transition_variant():
+    train_turns = (
+        conversation_turn("train-q-i-1", "Anything else?", "inform", observed_acts=("question",)),
+        conversation_turn("train-q-i-2", "Where is it?", "inform", observed_acts=("question",)),
+        conversation_turn("train-i-q-1", "The package arrived.", "question", observed_acts=("inform",)),
+        conversation_turn("train-i-q-2", "The report is done.", "question", observed_acts=("inform",)),
+    )
+    dev_turns = (
+        conversation_turn("dev-q-i", "Could you clarify?", "inform", observed_acts=("question",)),
+        conversation_turn("dev-i-q", "The invoice is ready.", "question", observed_acts=("inform",)),
+    )
+    test_turns = (
+        conversation_turn("test-q-i", "Can you explain?", "inform", observed_acts=("question",)),
+        conversation_turn("test-i-q", "The route changed.", "question", observed_acts=("inform",)),
+    )
+
+    report = run_conversation_act_ranker_bakeoff(
+        train_turns=train_turns,
+        dev_turns=dev_turns,
+        test_turns=test_turns,
+        top_k=3,
+    )
+
+    assert "contextual_transition" in report["variants"]
+    assert "contextual_inform_overlay" in report["variants"]
+    assert report["selected_variant"]["name"] == "contextual_transition"
+    assert report["selected_variant"]["test"]["p_at_1"] == 1.0
 
 
 def test_conversation_train_dev_test_loop_blocks_act_segment_regression():
@@ -608,6 +664,7 @@ def conversation_turn(
     context: str,
     expected_act: str,
     expected_emotion: str = "no_emotion",
+    observed_acts: tuple[str, ...] = (),
 ) -> ConversationTurn:
     return ConversationTurn(
         turn_id=turn_id,
@@ -616,4 +673,5 @@ def conversation_turn(
         actual_next_utterance="Okay.",
         expected_act=expected_act,
         expected_emotion=expected_emotion,
+        observed_acts=observed_acts,
     )

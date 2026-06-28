@@ -60,6 +60,7 @@ class ConversationTurn:
     actual_next_utterance: str
     expected_act: str
     expected_emotion: str
+    observed_acts: tuple[str, ...] = tuple()
     latency_budget_ms: int = 650
 
     @classmethod
@@ -71,6 +72,7 @@ class ConversationTurn:
             actual_next_utterance=str(row["actual_next_utterance"]),
             expected_act=str(row["expected_act"]),
             expected_emotion=str(row.get("expected_emotion", "no_emotion")),
+            observed_acts=tuple(str(act) for act in row.get("observed_acts", [])),
             latency_budget_ms=int(row.get("latency_budget_ms", 650)),
         )
 
@@ -120,6 +122,22 @@ class ConversationActRanker:
         return {
             "act_counts": dict(sorted(self.act_counts.items())),
             "vocabulary_size": len(self.vocabulary),
+        }
+
+
+@dataclass(frozen=True)
+class ConversationTransitionRanker:
+    transitions: dict[str, dict[str, float]]
+    global_scores: dict[str, float]
+
+    def score(self, turn: ConversationTurn) -> dict[str, float]:
+        previous_act = turn.observed_acts[-1] if turn.observed_acts else "__none__"
+        return self.transitions.get(previous_act, self.global_scores)
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "transition_count": len(self.transitions),
+            "observed_previous_acts": sorted(self.transitions),
         }
 
 
@@ -194,6 +212,10 @@ def load_dailydialog_export(
                         emotions[next_index],
                         "no_emotion",
                     ),
+                    observed_acts=tuple(
+                        DAILYDIALOG_ACTS.get(act, "inform")
+                        for act in acts[:next_index]
+                    ),
                 )
             )
 
@@ -215,6 +237,7 @@ def load_dailydialog_split(split_dir: Path) -> tuple[ConversationTurn, ...]:
             actual_next_utterance=turn.actual_next_utterance,
             expected_act=turn.expected_act,
             expected_emotion=turn.expected_emotion,
+            observed_acts=turn.observed_acts,
             latency_budget_ms=turn.latency_budget_ms,
         )
         for turn in turns
@@ -244,6 +267,7 @@ def conversation_turn_to_dict(turn: ConversationTurn) -> dict[str, object]:
         "actual_next_utterance": turn.actual_next_utterance,
         "expected_act": turn.expected_act,
         "expected_emotion": turn.expected_emotion,
+        "observed_acts": list(turn.observed_acts),
         "latency_budget_ms": turn.latency_budget_ms,
     }
 
@@ -258,6 +282,10 @@ def build_probability_pack(
     guidance: ConversationGuidance | None = None,
     act_ranker: ConversationActRanker | None = None,
     learned_weight: float = 0.0,
+    transition_ranker: ConversationTransitionRanker | None = None,
+    transition_weight: float = 0.0,
+    transition_overlay_act: str | None = None,
+    transition_overlay_margin: float = 0.0,
     scoring_variant: str = "heuristic",
 ) -> ConversationProbabilityPack:
     branches = generate_conversation_branches(
@@ -266,6 +294,10 @@ def build_probability_pack(
         guidance=guidance,
         act_ranker=act_ranker,
         learned_weight=learned_weight,
+        transition_ranker=transition_ranker,
+        transition_weight=transition_weight,
+        transition_overlay_act=transition_overlay_act,
+        transition_overlay_margin=transition_overlay_margin,
         scoring_variant=scoring_variant,
     )
     drafts = tuple(
@@ -295,14 +327,24 @@ def generate_conversation_branches(
     guidance: ConversationGuidance | None = None,
     act_ranker: ConversationActRanker | None = None,
     learned_weight: float = 0.0,
+    transition_ranker: ConversationTransitionRanker | None = None,
+    transition_weight: float = 0.0,
+    transition_overlay_act: str | None = None,
+    transition_overlay_margin: float = 0.0,
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     if top_k <= 0:
         raise ValueError("top_k must be positive")
     if learned_weight < 0 or learned_weight > 1:
         raise ValueError("learned_weight must be between 0 and 1")
+    if transition_weight < 0 or transition_weight > 1:
+        raise ValueError("transition_weight must be between 0 and 1")
+    if transition_overlay_margin < 0:
+        raise ValueError("transition_overlay_margin must be non-negative")
     if scoring_variant == "heuristic" and act_ranker and learned_weight == 1.0:
         scoring_variant = "learned"
+    if scoring_variant == "heuristic" and transition_ranker and transition_weight == 1.0:
+        scoring_variant = "contextual_transition"
 
     context_tokens = normalized_tokens(turn.context_text())
     scores = heuristic_act_scores(turn, context_tokens)
@@ -315,6 +357,19 @@ def generate_conversation_branches(
             heuristic_scores=scores,
             learned_scores=act_ranker.score(turn),
             learned_weight=learned_weight,
+        )
+    if transition_ranker and transition_weight > 0:
+        scores = blended_act_scores(
+            heuristic_scores=scores,
+            learned_scores=transition_ranker.score(turn),
+            learned_weight=transition_weight,
+        )
+    if transition_ranker and transition_overlay_act:
+        scores = transition_overlay_scores(
+            heuristic_scores=scores,
+            transition_scores=transition_ranker.score(turn),
+            overlay_act=transition_overlay_act,
+            margin_min=transition_overlay_margin,
         )
 
     ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)[:top_k]
@@ -353,6 +408,26 @@ def blended_act_scores(
         act: (1 - learned_weight) * heuristic[act] + learned_weight * learned[act]
         for act in CONVERSATION_ACTS
     }
+
+
+def transition_overlay_scores(
+    heuristic_scores: dict[str, float],
+    transition_scores: dict[str, float],
+    overlay_act: str,
+    margin_min: float,
+) -> dict[str, float]:
+    ranked_transition = sorted(
+        transition_scores.items(),
+        key=lambda item: item[1],
+        reverse=True,
+    )
+    if len(ranked_transition) < 2:
+        return heuristic_scores
+    top_act, top_score = ranked_transition[0]
+    second_score = ranked_transition[1][1]
+    if top_act != overlay_act or (top_score - second_score) < margin_min:
+        return heuristic_scores
+    return dict(transition_scores)
 
 
 def normalize_act_scores(scores: dict[str, float]) -> dict[str, float]:
@@ -433,6 +508,38 @@ def train_conversation_act_ranker(
         vocabulary=tuple(sorted(vocabulary)),
         act_counts=act_counts,
     )
+
+
+def train_conversation_transition_ranker(
+    turns: tuple[ConversationTurn, ...],
+) -> ConversationTransitionRanker:
+    if not turns:
+        raise ValueError("training turns are required")
+
+    global_counts = {act: 1 for act in CONVERSATION_ACTS}
+    transition_counts: dict[str, dict[str, int]] = {}
+    for turn in turns:
+        expected = turn.expected_act if turn.expected_act in CONVERSATION_ACTS else "inform"
+        previous = turn.observed_acts[-1] if turn.observed_acts else "__none__"
+        global_counts[expected] += 1
+        transition_counts.setdefault(previous, {act: 1 for act in CONVERSATION_ACTS})
+        transition_counts[previous][expected] += 1
+
+    return ConversationTransitionRanker(
+        transitions={
+            previous: normalize_counts(counts)
+            for previous, counts in transition_counts.items()
+        },
+        global_scores=normalize_counts(global_counts),
+    )
+
+
+def normalize_counts(counts: dict[str, int]) -> dict[str, float]:
+    total = sum(counts.values())
+    return {
+        act: counts.get(act, 0) / total
+        for act in CONVERSATION_ACTS
+    }
 
 
 def conversation_features(turn: ConversationTurn) -> tuple[str, ...]:
@@ -687,6 +794,10 @@ def score_conversation_turns(
     guidance: ConversationGuidance,
     act_ranker: ConversationActRanker | None = None,
     learned_weight: float = 0.0,
+    transition_ranker: ConversationTransitionRanker | None = None,
+    transition_weight: float = 0.0,
+    transition_overlay_act: str | None = None,
+    transition_overlay_margin: float = 0.0,
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
@@ -697,6 +808,10 @@ def score_conversation_turns(
             guidance=guidance,
             act_ranker=act_ranker,
             learned_weight=learned_weight,
+            transition_ranker=transition_ranker,
+            transition_weight=transition_weight,
+            transition_overlay_act=transition_overlay_act,
+            transition_overlay_margin=transition_overlay_margin,
             scoring_variant=scoring_variant,
         )
         rank_1 = pack.top_branches[0]
@@ -725,6 +840,7 @@ def run_conversation_act_ranker_bakeoff(
         raise ValueError("train, dev, and test turns are required")
 
     ranker = train_conversation_act_ranker(train_turns)
+    transition_ranker = train_conversation_transition_ranker(train_turns)
     empty_guidance = ConversationGuidance(act_keywords={})
     train_baseline_rows = score_conversation_turns(
         train_turns,
@@ -746,13 +862,22 @@ def run_conversation_act_ranker_bakeoff(
     test_baseline = summarize_conversation_rows(test_baseline_rows, test_turns)
 
     variants: dict[str, dict[str, object]] = {}
-    for name, learned_weight in conversation_bakeoff_variants():
+    for variant in conversation_bakeoff_variants():
+        name = str(variant["name"])
+        learned_weight = float(variant["learned_weight"])
+        transition_weight = float(variant["transition_weight"])
+        transition_overlay_act = variant.get("transition_overlay_act")
+        transition_overlay_margin = float(variant.get("transition_overlay_margin", 0.0))
         train_rows = score_conversation_turns(
             train_turns,
             top_k=top_k,
             guidance=empty_guidance,
             act_ranker=ranker,
             learned_weight=learned_weight,
+            transition_ranker=transition_ranker,
+            transition_weight=transition_weight,
+            transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
+            transition_overlay_margin=transition_overlay_margin,
             scoring_variant=name,
         )
         dev_rows = score_conversation_turns(
@@ -761,6 +886,10 @@ def run_conversation_act_ranker_bakeoff(
             guidance=empty_guidance,
             act_ranker=ranker,
             learned_weight=learned_weight,
+            transition_ranker=transition_ranker,
+            transition_weight=transition_weight,
+            transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
+            transition_overlay_margin=transition_overlay_margin,
             scoring_variant=name,
         )
         test_rows = score_conversation_turns(
@@ -769,10 +898,17 @@ def run_conversation_act_ranker_bakeoff(
             guidance=empty_guidance,
             act_ranker=ranker,
             learned_weight=learned_weight,
+            transition_ranker=transition_ranker,
+            transition_weight=transition_weight,
+            transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
+            transition_overlay_margin=transition_overlay_margin,
             scoring_variant=name,
         )
         variants[name] = {
             "learned_weight": learned_weight,
+            "transition_weight": transition_weight,
+            "transition_overlay_act": transition_overlay_act,
+            "transition_overlay_margin": transition_overlay_margin,
             "train": summarize_conversation_rows(train_rows, train_turns),
             "dev": summarize_conversation_rows(dev_rows, dev_turns),
             "test": summarize_conversation_rows(test_rows, test_turns),
@@ -789,12 +925,19 @@ def run_conversation_act_ranker_bakeoff(
     selected_name = select_conversation_bakeoff_variant(variants)
     selected = variants[selected_name]
     selected_weight = float(selected["learned_weight"])
+    selected_transition_weight = float(selected["transition_weight"])
+    selected_overlay_act = selected.get("transition_overlay_act")
+    selected_overlay_margin = float(selected.get("transition_overlay_margin", 0.0))
     selected_train_rows = score_conversation_turns(
         train_turns,
         top_k=top_k,
         guidance=empty_guidance,
         act_ranker=ranker,
         learned_weight=selected_weight,
+        transition_ranker=transition_ranker,
+        transition_weight=selected_transition_weight,
+        transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
+        transition_overlay_margin=selected_overlay_margin,
         scoring_variant=selected_name,
     )
     selected_dev_rows = score_conversation_turns(
@@ -803,6 +946,10 @@ def run_conversation_act_ranker_bakeoff(
         guidance=empty_guidance,
         act_ranker=ranker,
         learned_weight=selected_weight,
+        transition_ranker=transition_ranker,
+        transition_weight=selected_transition_weight,
+        transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
+        transition_overlay_margin=selected_overlay_margin,
         scoring_variant=selected_name,
     )
     selected_test_rows = score_conversation_turns(
@@ -811,6 +958,10 @@ def run_conversation_act_ranker_bakeoff(
         guidance=empty_guidance,
         act_ranker=ranker,
         learned_weight=selected_weight,
+        transition_ranker=transition_ranker,
+        transition_weight=selected_transition_weight,
+        transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
+        transition_overlay_margin=selected_overlay_margin,
         scoring_variant=selected_name,
     )
     train_guided = summarize_conversation_rows(selected_train_rows, train_turns)
@@ -825,10 +976,14 @@ def run_conversation_act_ranker_bakeoff(
             "top_k": top_k,
         },
         "ranker": ranker.to_dict(),
+        "transition_ranker": transition_ranker.to_dict(),
         "variants": variants,
         "selected_variant": {
             "name": selected_name,
             "learned_weight": selected_weight,
+            "transition_weight": selected_transition_weight,
+            "transition_overlay_act": selected_overlay_act,
+            "transition_overlay_margin": selected_overlay_margin,
             "train": train_guided,
             "dev": dev_guided,
             "test": test_guided,
@@ -876,13 +1031,30 @@ def run_conversation_act_ranker_bakeoff(
     }
 
 
-def conversation_bakeoff_variants() -> tuple[tuple[str, float], ...]:
+def conversation_bakeoff_variants() -> tuple[dict[str, float | str], ...]:
     return (
-        ("heuristic", 0.0),
-        ("hybrid_25", 0.25),
-        ("hybrid_50", 0.5),
-        ("hybrid_75", 0.75),
-        ("learned", 1.0),
+        {"name": "heuristic", "learned_weight": 0.0, "transition_weight": 0.0},
+        {"name": "hybrid_25", "learned_weight": 0.25, "transition_weight": 0.0},
+        {"name": "hybrid_50", "learned_weight": 0.5, "transition_weight": 0.0},
+        {"name": "hybrid_75", "learned_weight": 0.75, "transition_weight": 0.0},
+        {"name": "learned", "learned_weight": 1.0, "transition_weight": 0.0},
+        {
+            "name": "contextual_transition",
+            "learned_weight": 0.0,
+            "transition_weight": 1.0,
+        },
+        {
+            "name": "contextual_hybrid_50",
+            "learned_weight": 0.0,
+            "transition_weight": 0.5,
+        },
+        {
+            "name": "contextual_inform_overlay",
+            "learned_weight": 0.0,
+            "transition_weight": 0.0,
+            "transition_overlay_act": "inform",
+            "transition_overlay_margin": 0.25,
+        },
     )
 
 
