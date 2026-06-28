@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import median
@@ -90,6 +91,35 @@ class ConversationGuidance:
                 act: list(keywords)
                 for act, keywords in sorted(self.act_keywords.items())
             }
+        }
+
+
+@dataclass(frozen=True)
+class ConversationActRanker:
+    act_log_priors: dict[str, float]
+    feature_log_likelihoods: dict[str, dict[str, float]]
+    default_feature_log_likelihoods: dict[str, float]
+    vocabulary: tuple[str, ...]
+    act_counts: dict[str, int]
+
+    def score(self, turn: ConversationTurn) -> dict[str, float]:
+        features = conversation_features(turn)
+        return {
+            act: self.act_log_priors[act]
+            + sum(
+                self.feature_log_likelihoods.get(act, {}).get(
+                    feature,
+                    self.default_feature_log_likelihoods[act],
+                )
+                for feature in features
+            )
+            for act in CONVERSATION_ACTS
+        }
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "act_counts": dict(sorted(self.act_counts.items())),
+            "vocabulary_size": len(self.vocabulary),
         }
 
 
@@ -226,8 +256,18 @@ def build_probability_pack(
     turn: ConversationTurn,
     top_k: int = 3,
     guidance: ConversationGuidance | None = None,
+    act_ranker: ConversationActRanker | None = None,
+    learned_weight: float = 0.0,
+    scoring_variant: str = "heuristic",
 ) -> ConversationProbabilityPack:
-    branches = generate_conversation_branches(turn, top_k=top_k, guidance=guidance)
+    branches = generate_conversation_branches(
+        turn,
+        top_k=top_k,
+        guidance=guidance,
+        act_ranker=act_ranker,
+        learned_weight=learned_weight,
+        scoring_variant=scoring_variant,
+    )
     drafts = tuple(
         {
             "branch_id": branch["branch_id"],
@@ -253,19 +293,29 @@ def generate_conversation_branches(
     turn: ConversationTurn,
     top_k: int = 3,
     guidance: ConversationGuidance | None = None,
+    act_ranker: ConversationActRanker | None = None,
+    learned_weight: float = 0.0,
+    scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     if top_k <= 0:
         raise ValueError("top_k must be positive")
+    if learned_weight < 0 or learned_weight > 1:
+        raise ValueError("learned_weight must be between 0 and 1")
+    if scoring_variant == "heuristic" and act_ranker and learned_weight == 1.0:
+        scoring_variant = "learned"
 
     context_tokens = normalized_tokens(turn.context_text())
-    scores = {
-        act: BASE_ACT_PRIORS[act] + heuristic_score(act, context_tokens, turn)
-        for act in CONVERSATION_ACTS
-    }
+    scores = heuristic_act_scores(turn, context_tokens)
     if guidance:
         for act in CONVERSATION_ACTS:
             hits = set(guidance.keywords_for(act)) & context_tokens
             scores[act] += min(0.56, 0.14 * len(hits))
+    if act_ranker and learned_weight > 0:
+        scores = blended_act_scores(
+            heuristic_scores=scores,
+            learned_scores=act_ranker.score(turn),
+            learned_weight=learned_weight,
+        )
 
     ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)[:top_k]
     return tuple(
@@ -276,9 +326,45 @@ def generate_conversation_branches(
             "emotion": predict_emotion(turn, context_tokens),
             "probability": round(min(score, 0.95), 3),
             "trigger_cues": sorted(context_tokens)[:8],
+            "scoring_variant": scoring_variant,
         }
         for index, (act, score) in enumerate(ranked, start=1)
     )
+
+
+def heuristic_act_scores(
+    turn: ConversationTurn,
+    context_tokens: set[str],
+) -> dict[str, float]:
+    return {
+        act: BASE_ACT_PRIORS[act] + heuristic_score(act, context_tokens, turn)
+        for act in CONVERSATION_ACTS
+    }
+
+
+def blended_act_scores(
+    heuristic_scores: dict[str, float],
+    learned_scores: dict[str, float],
+    learned_weight: float,
+) -> dict[str, float]:
+    heuristic = normalize_act_scores(heuristic_scores)
+    learned = normalize_act_scores(learned_scores)
+    return {
+        act: (1 - learned_weight) * heuristic[act] + learned_weight * learned[act]
+        for act in CONVERSATION_ACTS
+    }
+
+
+def normalize_act_scores(scores: dict[str, float]) -> dict[str, float]:
+    values = [scores[act] for act in CONVERSATION_ACTS]
+    low = min(values)
+    high = max(values)
+    if high == low:
+        return {act: 0.5 for act in CONVERSATION_ACTS}
+    return {
+        act: (scores[act] - low) / (high - low)
+        for act in CONVERSATION_ACTS
+    }
 
 
 def heuristic_score(
@@ -299,6 +385,67 @@ def heuristic_score(
     if act == "inform" and {"finished", "finally", "happy", "surprised"} & context_tokens:
         score += 0.18
     return score
+
+
+def train_conversation_act_ranker(
+    turns: tuple[ConversationTurn, ...],
+) -> ConversationActRanker:
+    if not turns:
+        raise ValueError("training turns are required")
+
+    act_counts = {act: 0 for act in CONVERSATION_ACTS}
+    feature_counts = {act: {} for act in CONVERSATION_ACTS}
+    feature_totals = {act: 0 for act in CONVERSATION_ACTS}
+    vocabulary: set[str] = set()
+
+    for turn in turns:
+        act = turn.expected_act if turn.expected_act in CONVERSATION_ACTS else "inform"
+        act_counts[act] += 1
+        features = conversation_features(turn)
+        vocabulary.update(features)
+        for feature in features:
+            feature_counts[act][feature] = feature_counts[act].get(feature, 0) + 1
+            feature_totals[act] += 1
+
+    total_turns = len(turns)
+    vocabulary_size = max(len(vocabulary), 1)
+    act_log_priors = {
+        act: math.log((act_counts[act] + 1) / (total_turns + len(CONVERSATION_ACTS)))
+        for act in CONVERSATION_ACTS
+    }
+    default_feature_log_likelihoods = {
+        act: math.log(1 / (feature_totals[act] + vocabulary_size))
+        for act in CONVERSATION_ACTS
+    }
+    feature_log_likelihoods = {
+        act: {
+            feature: math.log(
+                (count + 1) / (feature_totals[act] + vocabulary_size)
+            )
+            for feature, count in counts.items()
+        }
+        for act, counts in feature_counts.items()
+    }
+    return ConversationActRanker(
+        act_log_priors=act_log_priors,
+        feature_log_likelihoods=feature_log_likelihoods,
+        default_feature_log_likelihoods=default_feature_log_likelihoods,
+        vocabulary=tuple(sorted(vocabulary)),
+        act_counts=act_counts,
+    )
+
+
+def conversation_features(turn: ConversationTurn) -> tuple[str, ...]:
+    features = set(normalized_tokens(turn.context_text()))
+    latest = turn.conversation[-1].content.strip().lower() if turn.conversation else ""
+    if "?" in latest:
+        features.add("latest_has_question_mark")
+    for wh_word in ("what", "why", "how", "where", "when", "who"):
+        if latest.startswith(wh_word):
+            features.add(f"latest_starts_{wh_word}")
+    features.add(f"history_turns_{min(len(turn.conversation), 4)}")
+    features.add(f"next_speaker_{turn.next_speaker}")
+    return tuple(sorted(features))
 
 
 def predict_emotion(turn: ConversationTurn, context_tokens: set[str]) -> str:
@@ -538,10 +685,20 @@ def score_conversation_turns(
     turns: tuple[ConversationTurn, ...],
     top_k: int,
     guidance: ConversationGuidance,
+    act_ranker: ConversationActRanker | None = None,
+    learned_weight: float = 0.0,
+    scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
     for turn in turns:
-        pack = build_probability_pack(turn, top_k=top_k, guidance=guidance)
+        pack = build_probability_pack(
+            turn,
+            top_k=top_k,
+            guidance=guidance,
+            act_ranker=act_ranker,
+            learned_weight=learned_weight,
+            scoring_variant=scoring_variant,
+        )
         rank_1 = pack.top_branches[0]
         rows.append(
             {
@@ -556,6 +713,198 @@ def score_conversation_turns(
             }
         )
     return tuple(rows)
+
+
+def run_conversation_act_ranker_bakeoff(
+    train_turns: tuple[ConversationTurn, ...],
+    dev_turns: tuple[ConversationTurn, ...],
+    test_turns: tuple[ConversationTurn, ...],
+    top_k: int = 3,
+) -> dict[str, object]:
+    if not train_turns or not dev_turns or not test_turns:
+        raise ValueError("train, dev, and test turns are required")
+
+    ranker = train_conversation_act_ranker(train_turns)
+    empty_guidance = ConversationGuidance(act_keywords={})
+    train_baseline_rows = score_conversation_turns(
+        train_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+    )
+    dev_baseline_rows = score_conversation_turns(
+        dev_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+    )
+    test_baseline_rows = score_conversation_turns(
+        test_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+    )
+    train_baseline = summarize_conversation_rows(train_baseline_rows, train_turns)
+    dev_baseline = summarize_conversation_rows(dev_baseline_rows, dev_turns)
+    test_baseline = summarize_conversation_rows(test_baseline_rows, test_turns)
+
+    variants: dict[str, dict[str, object]] = {}
+    for name, learned_weight in conversation_bakeoff_variants():
+        train_rows = score_conversation_turns(
+            train_turns,
+            top_k=top_k,
+            guidance=empty_guidance,
+            act_ranker=ranker,
+            learned_weight=learned_weight,
+            scoring_variant=name,
+        )
+        dev_rows = score_conversation_turns(
+            dev_turns,
+            top_k=top_k,
+            guidance=empty_guidance,
+            act_ranker=ranker,
+            learned_weight=learned_weight,
+            scoring_variant=name,
+        )
+        test_rows = score_conversation_turns(
+            test_turns,
+            top_k=top_k,
+            guidance=empty_guidance,
+            act_ranker=ranker,
+            learned_weight=learned_weight,
+            scoring_variant=name,
+        )
+        variants[name] = {
+            "learned_weight": learned_weight,
+            "train": summarize_conversation_rows(train_rows, train_turns),
+            "dev": summarize_conversation_rows(dev_rows, dev_turns),
+            "test": summarize_conversation_rows(test_rows, test_turns),
+            "dev_segment_regressions": find_conversation_act_segment_regressions(
+                baseline_rows=dev_baseline_rows,
+                candidate_rows=dev_rows,
+            ),
+            "test_segment_regressions": find_conversation_act_segment_regressions(
+                baseline_rows=test_baseline_rows,
+                candidate_rows=test_rows,
+            ),
+        }
+
+    selected_name = select_conversation_bakeoff_variant(variants)
+    selected = variants[selected_name]
+    selected_weight = float(selected["learned_weight"])
+    selected_train_rows = score_conversation_turns(
+        train_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+        act_ranker=ranker,
+        learned_weight=selected_weight,
+        scoring_variant=selected_name,
+    )
+    selected_dev_rows = score_conversation_turns(
+        dev_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+        act_ranker=ranker,
+        learned_weight=selected_weight,
+        scoring_variant=selected_name,
+    )
+    selected_test_rows = score_conversation_turns(
+        test_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+        act_ranker=ranker,
+        learned_weight=selected_weight,
+        scoring_variant=selected_name,
+    )
+    train_guided = summarize_conversation_rows(selected_train_rows, train_turns)
+    dev_guided = summarize_conversation_rows(selected_dev_rows, dev_turns)
+    test_guided = summarize_conversation_rows(selected_test_rows, test_turns)
+
+    return {
+        "summary": {
+            "train_turns": len(train_turns),
+            "dev_turns": len(dev_turns),
+            "test_turns": len(test_turns),
+            "top_k": top_k,
+        },
+        "ranker": ranker.to_dict(),
+        "variants": variants,
+        "selected_variant": {
+            "name": selected_name,
+            "learned_weight": selected_weight,
+            "train": train_guided,
+            "dev": dev_guided,
+            "test": test_guided,
+            "dev_segment_regressions": selected["dev_segment_regressions"],
+            "test_segment_regressions": selected["test_segment_regressions"],
+        },
+        "train": {
+            "baseline": train_baseline,
+            "guided": train_guided,
+        },
+        "dev": {
+            "baseline": dev_baseline,
+            "guided": dev_guided,
+        },
+        "test": {
+            "baseline": test_baseline,
+            "guided": test_guided,
+        },
+        "efficacy": compare_conversation_efficacy(
+            train_baseline=train_baseline,
+            train_guided=train_guided,
+            dev_baseline=dev_baseline,
+            dev_guided=dev_guided,
+            test_baseline=test_baseline,
+            test_guided=test_guided,
+        ),
+        "analytics": {
+            "train_segments": summarize_conversation_segments(
+                train_baseline_rows,
+                selected_train_rows,
+            ),
+            "dev_segments": summarize_conversation_segments(
+                dev_baseline_rows,
+                selected_dev_rows,
+            ),
+            "test_segments": summarize_conversation_segments(
+                test_baseline_rows,
+                selected_test_rows,
+            ),
+        },
+        "guidance_delta": compare_conversation_guidance_delta(
+            test_baseline_rows,
+            selected_test_rows,
+        ),
+    }
+
+
+def conversation_bakeoff_variants() -> tuple[tuple[str, float], ...]:
+    return (
+        ("heuristic", 0.0),
+        ("hybrid_25", 0.25),
+        ("hybrid_50", 0.5),
+        ("hybrid_75", 0.75),
+        ("learned", 1.0),
+    )
+
+
+def select_conversation_bakeoff_variant(
+    variants: dict[str, dict[str, object]],
+) -> str:
+    safe_variants = {
+        name: row
+        for name, row in variants.items()
+        if not row["dev_segment_regressions"]
+    }
+    candidates = safe_variants if safe_variants else variants
+    return sorted(
+        candidates,
+        key=lambda name: (
+            float(candidates[name]["dev"]["p_at_1"]),
+            float(candidates[name]["dev"]["top_3_recall"]),
+            -len(candidates[name]["dev_segment_regressions"]),
+            -float(candidates[name]["learned_weight"]),
+        ),
+        reverse=True,
+    )[0]
 
 
 def summarize_conversation_rows(

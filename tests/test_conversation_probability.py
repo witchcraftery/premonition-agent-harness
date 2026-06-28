@@ -7,12 +7,15 @@ from foresight_harness.conversation_probability import (
     build_probability_pack,
     ConversationGuidance,
     ConversationTurn,
+    generate_conversation_branches,
     learn_conversation_guidance,
     load_dailydialog_split,
     load_conversation_turns,
     load_dailydialog_export,
+    run_conversation_act_ranker_bakeoff,
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
+    train_conversation_act_ranker,
     write_conversation_turns,
 )
 from foresight_harness.models import Message
@@ -167,6 +170,61 @@ def test_act_specific_learning_ignores_shared_tokens():
 
     assert "lanterncue" in guidance.keywords_for("question")
     assert "sharedcue" not in guidance.keywords_for("question")
+
+
+def test_learned_act_ranker_predicts_repeated_question_cue():
+    train_turns = (
+        conversation_turn("q1", "lanterncue mystery details", "question"),
+        conversation_turn("q2", "lanterncue unclear plan", "question"),
+        conversation_turn("i1", "finished report happy", "inform"),
+        conversation_turn("i2", "finished ledger summary", "inform"),
+    )
+    ranker = train_conversation_act_ranker(train_turns)
+    test_turn = conversation_turn("test-question", "lanterncue unclear topic", "question")
+
+    branches = generate_conversation_branches(
+        test_turn,
+        top_k=3,
+        act_ranker=ranker,
+        learned_weight=1.0,
+    )
+
+    assert branches[0]["act"] == "question"
+    assert branches[0]["scoring_variant"] == "learned"
+
+
+def test_conversation_act_ranker_bakeoff_selects_on_dev_and_scores_test():
+    train_turns = (
+        conversation_turn("train-q1", "lanterncue mystery details", "question"),
+        conversation_turn("train-q2", "lanterncue unclear plan", "question"),
+        conversation_turn("train-i1", "finished report happy", "inform"),
+        conversation_turn("train-i2", "finished ledger summary", "inform"),
+    )
+    dev_turns = (
+        conversation_turn("dev-q", "lanterncue unclear topic", "question"),
+        conversation_turn("dev-i", "finished report today", "inform"),
+    )
+    test_turns = (
+        conversation_turn("test-q", "lanterncue mystery topic", "question"),
+        conversation_turn("test-i", "finished ledger today", "inform"),
+    )
+
+    report = run_conversation_act_ranker_bakeoff(
+        train_turns=train_turns,
+        dev_turns=dev_turns,
+        test_turns=test_turns,
+        top_k=3,
+    )
+
+    assert report["summary"]["train_turns"] == 4
+    assert "heuristic" in report["variants"]
+    assert "learned" in report["variants"]
+    assert report["selected_variant"]["name"] in report["variants"]
+    assert report["selected_variant"]["dev"]["p_at_1"] == 1.0
+    assert report["selected_variant"]["test"]["p_at_1"] == 1.0
+    assert report["test"]["guided"]["p_at_1"] > report["test"]["baseline"]["p_at_1"]
+    assert report["guidance_delta"]["regressed_turns"] == []
+    assert "expected_act" in report["analytics"]["test_segments"]
 
 
 def test_conversation_train_dev_test_loop_blocks_act_segment_regression():
@@ -454,6 +512,60 @@ def test_cli_runs_conversation_train_dev_test_loop(tmp_path):
 
     assert saved == report
     assert report["efficacy"]["test_p_at_1_gain"] > 0
+
+
+def test_cli_runs_conversation_act_ranker_bakeoff(tmp_path):
+    train_path = tmp_path / "train.jsonl"
+    dev_path = tmp_path / "dev.jsonl"
+    test_path = tmp_path / "test.jsonl"
+    output = tmp_path / "conversation-bakeoff-report.json"
+    write_conversation_turns(
+        (
+            conversation_turn("train-q1", "lanterncue mystery details", "question"),
+            conversation_turn("train-q2", "lanterncue unclear plan", "question"),
+            conversation_turn("train-i1", "finished report happy", "inform"),
+        ),
+        train_path,
+    )
+    write_conversation_turns(
+        (
+            conversation_turn("dev-q", "lanterncue unclear topic", "question"),
+            conversation_turn("dev-i", "finished report today", "inform"),
+        ),
+        dev_path,
+    )
+    write_conversation_turns(
+        (
+            conversation_turn("test-q", "lanterncue mystery topic", "question"),
+            conversation_turn("test-i", "finished ledger today", "inform"),
+        ),
+        test_path,
+    )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--conversation-train-input",
+            str(train_path),
+            "--conversation-dev-input",
+            str(dev_path),
+            "--conversation-test-input",
+            str(test_path),
+            "--conversation-bakeoff-report",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    saved = json.loads(output.read_text(encoding="utf-8"))
+
+    assert saved == report
+    assert report["selected_variant"]["test"]["p_at_1"] == 1.0
 
 
 def test_cli_exports_dailydialog_sample(tmp_path):

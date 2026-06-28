@@ -46,14 +46,15 @@ repeatable benchmark.
 
 - Status: derived samples included in this repository; raw source files are excluded under `data/external/`.
 - Files: `data/dailydialog_train_sample.jsonl`, `data/dailydialog_validation_sample.jsonl`, and `data/dailydialog_test_sample.jsonl`.
-- Report: `runs/dailydialog_heldout_probability_loop.json`.
+- Reports: `runs/dailydialog_heldout_probability_loop.json` and `runs/dailydialog_act_ranker_bakeoff.json`.
 - Source mirror used for import: `https://github.com/snakeztc/NeuralDialog-LAED/tree/master/data/daily_dialog`.
 - Purpose: true train/dev/test efficacy loop for ordinary conversational act prediction and TTS-ready branch preparation.
 - Current use: train learns candidate guidance, validation gates promotion, and untouched test measures generalization.
 - Current result: act-specific candidate guidance raised validation `p_at_1` from `0.324` to `0.402`, but reduced validation `top_3_recall` from `0.856` to `0.844`, so the segment-aware gate rejected promotion.
 - Segment signal: rejected candidates regressed validation `commissive` from `0.213` to `0.066`, `directive` from `0.147` to `0.010`, and `question` from `0.040` to `0.008`.
 - Held-out result after gating: test remains at the baseline, `p_at_1=0.368` and `top_3_recall=0.858`, with `0` improved and `0` regressed held-out test turns.
-- Limitation: first 500 turns from each split; the current act-specific keyword learner is safer but not yet more capable. It needs smaller segment-local patches, calibration weights, or a learned brancher before this should be treated as a strong conversational foresight result.
+- Learned-ranker bake-off: validation selected the heuristic baseline. Learned-only reached train `p_at_1=0.656`, but fell to validation `0.260` and test `0.274`; `hybrid_25` fell to validation `0.254` and test `0.324`.
+- Limitation: first 500 turns from each split; the current act-specific keyword learner is safer but not yet more capable, and the bag-of-features learned ranker overfits. The next brancher should use richer contextual structure rather than token counts alone.
 
 ## Human Conversation Candidates
 

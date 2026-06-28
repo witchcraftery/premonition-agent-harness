@@ -274,3 +274,21 @@ Verification:
 - Candidate guidance improved validation `p_at_1` from `0.324` to `0.402`, but reduced validation `top_3_recall` from `0.856` to `0.844`.
 - Segment-aware promotion rejected the candidate in all three iterations because validation `commissive` regressed from `0.213` to `0.066`, `directive` regressed from `0.147` to `0.010`, and `question` regressed from `0.040` to `0.008`.
 - Held-out test stayed at the baseline after gating: `p_at_1=0.368`, `top_3_recall=0.858`, and `0` improved / `0` regressed test turns.
+
+## Learned Conversation Act-Ranker Bake-Off
+
+- [x] Add a transparent learned act-ranker for ordinary conversation turns.
+- [x] Blend learned scores with the current heuristic brancher at multiple weights.
+- [x] Select the best variant on validation only.
+- [x] Score the selected variant on untouched test data.
+- [x] Report segment regressions and guidance deltas for the selected variant.
+- [x] Document whether the learned brancher discovers larger held-out improvements.
+
+Verification:
+
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 16 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json`: completed.
+- Validation selected the current heuristic brancher: dev `p_at_1=0.324`, test `p_at_1=0.368`, with no segment regressions.
+- Learned-only overfit the train sample: train `p_at_1=0.656`, validation `p_at_1=0.260`, test `p_at_1=0.274`; validation `inform` regressed from `0.608` to `0.160`.
+- The best hybrid did not beat baseline: `hybrid_25` had validation `p_at_1=0.254` and test `p_at_1=0.324`, with validation regressions in `commissive`, `directive`, and `inform`.
+- Diagnostic runs with larger local train slices improved learned-only somewhat, but still selected the heuristic baseline through 20k train turns; this suggests the next larger-gain lever is richer contextual branch generation, not bag-of-features act ranking.

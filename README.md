@@ -238,6 +238,25 @@ but not yet more capable on held-out DailyDialog. The next refinement should
 learn smaller segment-local patches or branch-calibration weights so an
 aggregate validation win cannot depend on hurting weak conversational acts.
 
+Run the learned act-ranker bake-off:
+
+```bash
+foresight-replay \
+  --conversation-train-input data/dailydialog_train_sample.jsonl \
+  --conversation-dev-input data/dailydialog_validation_sample.jsonl \
+  --conversation-test-input data/dailydialog_test_sample.jsonl \
+  --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json
+```
+
+This compares the current heuristic brancher against a transparent learned
+act-ranker and hybrid blends. On the committed 500/500/500 samples, validation
+selected the current heuristic brancher. The learned-only variant overfit train
+(`p_at_1=0.656`) but fell to `p_at_1=0.260` on validation and `0.274` on test;
+hybrid variants also regressed `inform`, `commissive`, or `directive` segments.
+The result is a useful negative finding: a bag-of-features act classifier is not
+the bigger-improvement lever yet. The next likely lever is a contextual brancher
+that reads the latest turn structure, not just token counts.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -277,6 +296,7 @@ Useful expansion points:
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 - Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
+- Replace bag-of-features act ranking with contextual branch generation that can inspect the latest utterance role, dialogue rhythm, and candidate reply mode.
 
 ## Benchmark Loop
 

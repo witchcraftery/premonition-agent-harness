@@ -9,6 +9,7 @@ from foresight_harness.cross_benchmark import run_cross_fold_benchmark
 from foresight_harness.conversation_probability import (
     load_dailydialog_split,
     load_conversation_turns,
+    run_conversation_act_ranker_bakeoff,
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
     write_conversation_turns,
@@ -138,6 +139,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional JSON path for human conversation probability loop output.",
     )
     parser.add_argument(
+        "--conversation-bakeoff-report",
+        type=Path,
+        help="Optional JSON path for learned conversation act-ranker bake-off output.",
+    )
+    parser.add_argument(
         "--dailydialog-dir",
         type=Path,
         help="Path to one DailyDialog split directory containing dialogues.txt and label files.",
@@ -197,6 +203,18 @@ def main() -> None:
         train_turns = load_conversation_turns(args.conversation_train_input)
         dev_turns = load_conversation_turns(args.conversation_dev_input)
         test_turns = load_conversation_turns(args.conversation_test_input)
+        if args.conversation_bakeoff_report:
+            report = run_conversation_act_ranker_bakeoff(
+                train_turns=train_turns,
+                dev_turns=dev_turns,
+                test_turns=test_turns,
+                top_k=args.top_k,
+            )
+            with args.conversation_bakeoff_report.open("w", encoding="utf-8") as handle:
+                json.dump(report, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+            print(json.dumps(report, indent=2, sort_keys=True))
+            return
         report = run_conversation_train_dev_test_loop(
             train_turns=train_turns,
             dev_turns=dev_turns,
