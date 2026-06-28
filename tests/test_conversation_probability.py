@@ -5,7 +5,9 @@ from pathlib import Path
 
 from foresight_harness.conversation_probability import (
     build_probability_pack,
+    ConversationGuidance,
     ConversationTurn,
+    learn_conversation_guidance,
     load_dailydialog_split,
     load_conversation_turns,
     load_dailydialog_export,
@@ -131,6 +133,98 @@ def test_conversation_probability_loop_rejects_regressing_guidance(tmp_path):
     assert report["iterations"][0]["guidance_promoted"] is False
 
 
+def test_act_specific_learning_ignores_shared_tokens():
+    turns = (
+        conversation_turn(
+            "question-miss",
+            "sharedcue lanterncue mysterycue",
+            expected_act="question",
+        ),
+        conversation_turn(
+            "inform-context-1",
+            "sharedcue ledgercue finished",
+            expected_act="inform",
+        ),
+        conversation_turn(
+            "inform-context-2",
+            "sharedcue plancue happy",
+            expected_act="inform",
+        ),
+    )
+    rows = (
+        {
+            "turn_id": "question-miss",
+            "rank_1_act": "inform",
+            "expected_act": "question",
+        },
+    )
+
+    guidance = learn_conversation_guidance(
+        turns=turns,
+        rows=rows,
+        prior=ConversationGuidance(act_keywords={}),
+    )
+
+    assert "lanterncue" in guidance.keywords_for("question")
+    assert "sharedcue" not in guidance.keywords_for("question")
+
+
+def test_conversation_train_dev_test_loop_blocks_act_segment_regression():
+    train_turns = (
+        conversation_turn(
+            "train-question",
+            "lanterncue mysterycue aftercue",
+            expected_act="question",
+        ),
+    )
+    dev_turns = (
+        conversation_turn(
+            "dev-question-1",
+            "lanterncue mysterycue aftercue",
+            expected_act="question",
+        ),
+        conversation_turn(
+            "dev-question-2",
+            "lanterncue mysterycue aftercue",
+            expected_act="question",
+        ),
+        conversation_turn(
+            "dev-commissive",
+            "please help with lanterncue mysterycue aftercue",
+            expected_act="commissive",
+        ),
+    )
+    test_turns = (
+        conversation_turn(
+            "test-question",
+            "lanterncue mysterycue aftercue",
+            expected_act="question",
+        ),
+    )
+
+    report = run_conversation_train_dev_test_loop(
+        train_turns=train_turns,
+        dev_turns=dev_turns,
+        test_turns=test_turns,
+        iterations=2,
+        top_k=3,
+    )
+
+    iteration = report["iterations"][0]
+    assert iteration["dev"]["candidate"]["p_at_1"] > iteration["dev"]["selected"]["p_at_1"]
+    assert iteration["dev_promote_guidance"] is False
+    assert iteration["dev_segment_regressions"] == [
+        {
+            "segment": "expected_act",
+            "name": "commissive",
+            "baseline_p_at_1": 1.0,
+            "candidate_p_at_1": 0.0,
+            "p_at_1_delta": -1.0,
+        }
+    ]
+    assert report["test"]["guided"] == report["test"]["baseline"]
+
+
 def test_conversation_train_dev_test_loop_promotes_on_dev_and_scores_untouched_test():
     train_turns = (
         conversation_turn(
@@ -225,7 +319,7 @@ def test_conversation_train_dev_test_loop_rejects_validation_regression():
     assert report["guidance_delta"]["regressed_turns"] == []
 
 
-def test_conversation_train_dev_test_loop_promotes_validation_gain_even_if_train_drops():
+def test_conversation_train_dev_test_loop_rejects_validation_noop():
     train_turns = (
         conversation_turn(
             "train-question",
@@ -266,9 +360,9 @@ def test_conversation_train_dev_test_loop_promotes_validation_gain_even_if_train
         top_k=3,
     )
 
-    assert report["iterations"][0]["train"]["candidate"]["p_at_1"] < report["iterations"][0]["train"]["selected"]["p_at_1"]
-    assert report["iterations"][0]["dev_promote_guidance"] is True
-    assert report["efficacy"]["test_p_at_1_gain"] > 0
+    assert report["iterations"][0]["dev"]["candidate"]["p_at_1"] == report["iterations"][0]["dev"]["selected"]["p_at_1"]
+    assert report["iterations"][0]["dev_promote_guidance"] is False
+    assert report["efficacy"]["test_p_at_1_gain"] == 0
 
 
 def test_cli_runs_conversation_probability_loop(tmp_path):

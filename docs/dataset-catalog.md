@@ -50,9 +50,10 @@ repeatable benchmark.
 - Source mirror used for import: `https://github.com/snakeztc/NeuralDialog-LAED/tree/master/data/daily_dialog`.
 - Purpose: true train/dev/test efficacy loop for ordinary conversational act prediction and TTS-ready branch preparation.
 - Current use: train learns candidate guidance, validation gates promotion, and untouched test measures generalization.
-- Current result: validation improved from `p_at_1=0.324` to `0.382`; test moved only from `p_at_1=0.368` to `0.370`, while `top_3_recall` moved from `0.858` to `0.856`.
-- Segment signal: `question` test `p_at_1` improved from `0.047` to `0.273`, while `commissive` fell from `0.507` to `0.217`; the report counted `50` improved and `49` regressed held-out test turns.
-- Limitation: first 500 turns from each split; the current keyword learner is too coarse and needs segment-aware promotion or act-specific learning before this should be treated as a strong conversational foresight result.
+- Current result: act-specific candidate guidance raised validation `p_at_1` from `0.324` to `0.402`, but reduced validation `top_3_recall` from `0.856` to `0.844`, so the segment-aware gate rejected promotion.
+- Segment signal: rejected candidates regressed validation `commissive` from `0.213` to `0.066`, `directive` from `0.147` to `0.010`, and `question` from `0.040` to `0.008`.
+- Held-out result after gating: test remains at the baseline, `p_at_1=0.368` and `top_3_recall=0.858`, with `0` improved and `0` regressed held-out test turns.
+- Limitation: first 500 turns from each split; the current act-specific keyword learner is safer but not yet more capable. It needs smaller segment-local patches, calibration weights, or a learned brancher before this should be treated as a strong conversational foresight result.
 
 ## Human Conversation Candidates
 

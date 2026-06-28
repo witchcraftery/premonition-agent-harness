@@ -258,3 +258,19 @@ Verification:
 - Validation improved from `p_at_1=0.324` to `0.382` and from `top_3_recall=0.856` to `0.868`.
 - Untouched test moved only from `p_at_1=0.368` to `0.370`; `top_3_recall` slipped from `0.858` to `0.856`.
 - Test guidance deltas were nearly even: `50` improved turns and `49` regressed turns. `question` improved from `p_at_1=0.047` to `0.273`, while `commissive` regressed from `0.507` to `0.217`.
+
+## Act-Specific Conversation Refinement
+
+- [x] Add act-specific guidance learning that favors cues discriminative to one expected act.
+- [x] Add a segment-aware validation gate so no meaningful act segment regresses during promotion.
+- [x] Report validation segment regressions in each iteration.
+- [x] Rerun the DailyDialog train/dev/test loop and compare efficacy.
+- [x] Document whether the refined loop improves held-out accuracy or mainly prevents brittle promotion.
+
+Verification:
+
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 13 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --iterations 3 --conversation-report runs/dailydialog_heldout_probability_loop.json`: completed.
+- Candidate guidance improved validation `p_at_1` from `0.324` to `0.402`, but reduced validation `top_3_recall` from `0.856` to `0.844`.
+- Segment-aware promotion rejected the candidate in all three iterations because validation `commissive` regressed from `0.213` to `0.066`, `directive` regressed from `0.147` to `0.010`, and `question` regressed from `0.040` to `0.008`.
+- Held-out test stayed at the baseline after gating: `p_at_1=0.368`, `top_3_recall=0.858`, and `0` improved / `0` regressed test turns.

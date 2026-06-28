@@ -223,13 +223,20 @@ foresight-replay \
 
 This is the more honest efficacy loop: train learns candidate guidance, the
 validation split decides whether to promote it, and the untouched test split
-measures whether the promoted guidance actually generalized. On the current
-500/500/500 DailyDialog samples, validation improved from `p_at_1=0.324` to
-`0.382`, but the held-out test gain was only `0.368 -> 0.370`; `top_3_recall`
-slipped slightly from `0.858` to `0.856`. The report counted `50` improved test
-turns and `49` regressed turns. That is useful signal, not a victory lap: the
-next refinement should target act-specific guidance, especially `commissive`
-regressions and low `directive` / `question` top-1 accuracy.
+measures whether the promoted guidance actually generalized. The current
+refined loop uses act-specific token learning and a segment-aware promotion
+gate. On the 500/500/500 DailyDialog samples, the candidate guidance would have
+raised validation `p_at_1` from `0.324` to `0.402`, but it also dropped
+validation `top_3_recall` from `0.856` to `0.844` and regressed the
+`commissive`, `directive`, and `question` act segments. The gate rejected it in
+all three iterations, so held-out test stayed at the baseline:
+`p_at_1=0.368`, `top_3_recall=0.858`, and `0` improved / `0` regressed test
+turns.
+
+That is useful signal, not a victory lap: the act-specific learner is now safer,
+but not yet more capable on held-out DailyDialog. The next refinement should
+learn smaller segment-local patches or branch-calibration weights so an
+aggregate validation win cannot depend on hurting weak conversational acts.
 
 ## Replay Data Format
 
@@ -258,9 +265,9 @@ using the same report schema.
 
 For conversational voice-agent foresight, the next meaningful step is to import
 larger and more representative DailyDialog slices, then improve act-specific
-learning until validation gains become clear held-out test gains without segment
-regressions. After that, add EmpatheticDialogues for emotional readiness and
-Taskmaster or SpokenWOZ for practical spoken-assistant flows.
+learning until validation candidates become clear held-out test gains without
+segment regressions. After that, add EmpatheticDialogues for emotional readiness
+and Taskmaster or SpokenWOZ for practical spoken-assistant flows.
 
 Useful expansion points:
 

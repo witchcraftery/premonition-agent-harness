@@ -334,7 +334,7 @@ def run_conversation_probability_loop(
         )
         candidate_metrics = summarize_conversation_rows(candidate_rows, turns)
         guidance_promoted = (
-            float(candidate_metrics["p_at_1"]) >= float(metrics["p_at_1"])
+            float(candidate_metrics["p_at_1"]) > float(metrics["p_at_1"])
             and float(candidate_metrics["tts_readiness_rate"]) >= float(metrics["tts_readiness_rate"])
         )
         iteration_reports.append(
@@ -417,9 +417,14 @@ def run_conversation_train_dev_test_loop(
             candidate_dev_rows,
             dev_turns,
         )
+        dev_segment_regressions = find_conversation_act_segment_regressions(
+            baseline_rows=dev_rows,
+            candidate_rows=candidate_dev_rows,
+        )
         dev_promote_guidance = should_promote_conversation_guidance(
             current_dev=dev_metrics,
             candidate_dev=candidate_dev_metrics,
+            dev_segment_regressions=dev_segment_regressions,
         )
         iteration_reports.append(
             {
@@ -433,6 +438,7 @@ def run_conversation_train_dev_test_loop(
                     "candidate": candidate_dev_metrics,
                 },
                 "dev_promote_guidance": dev_promote_guidance,
+                "dev_segment_regressions": dev_segment_regressions,
                 "selected_guidance": selected_guidance.to_dict(),
                 "candidate_guidance": candidate_guidance.to_dict(),
             }
@@ -572,12 +578,41 @@ def summarize_conversation_rows(
 def should_promote_conversation_guidance(
     current_dev: dict[str, float | int],
     candidate_dev: dict[str, float | int],
+    dev_segment_regressions: list[dict[str, object]],
 ) -> bool:
     return (
-        float(candidate_dev["p_at_1"]) >= float(current_dev["p_at_1"])
+        not dev_segment_regressions
+        and float(candidate_dev["p_at_1"]) > float(current_dev["p_at_1"])
         and float(candidate_dev["top_3_recall"]) >= float(current_dev["top_3_recall"])
         and float(candidate_dev["tts_readiness_rate"]) >= float(current_dev["tts_readiness_rate"])
     )
+
+
+def find_conversation_act_segment_regressions(
+    baseline_rows: tuple[dict[str, object], ...],
+    candidate_rows: tuple[dict[str, object], ...],
+) -> list[dict[str, object]]:
+    regressions: list[dict[str, object]] = []
+    acts = sorted({str(row["expected_act"]) for row in baseline_rows})
+    for act in acts:
+        baseline = summarize_conversation_row_subset(
+            tuple(row for row in baseline_rows if str(row["expected_act"]) == act)
+        )
+        candidate = summarize_conversation_row_subset(
+            tuple(row for row in candidate_rows if str(row["expected_act"]) == act)
+        )
+        delta = round(float(candidate["p_at_1"]) - float(baseline["p_at_1"]), 3)
+        if delta < 0:
+            regressions.append(
+                {
+                    "segment": "expected_act",
+                    "name": act,
+                    "baseline_p_at_1": baseline["p_at_1"],
+                    "candidate_p_at_1": candidate["p_at_1"],
+                    "p_at_1_delta": delta,
+                }
+            )
+    return regressions
 
 
 def compare_conversation_efficacy(
@@ -760,6 +795,7 @@ def learn_conversation_guidance(
         act: list(existing)
         for act, existing in prior.act_keywords.items()
     }
+    token_counts = conversation_token_act_counts(turns)
     turns_by_id = {turn.turn_id: turn for turn in turns}
     for row in rows:
         if row["rank_1_act"] == row["expected_act"]:
@@ -767,11 +803,20 @@ def learn_conversation_guidance(
         turn = turns_by_id[str(row["turn_id"])]
         act = turn.expected_act
         keywords.setdefault(act, [])
-        for token in sorted(normalized_tokens(turn.context_text())):
+        turn_tokens = sorted(
+            normalized_tokens(turn.context_text()),
+            key=lambda token: (
+                -conversation_token_discrimination_score(token, act, token_counts),
+                -token_counts.get(token, {}).get(act, 0),
+                token,
+            ),
+        )
+        for token in turn_tokens:
             if (
                 len(token) < 4
                 or token in CONVERSATION_GUIDANCE_STOP_WORDS
                 or token in keywords[act]
+                or conversation_token_discrimination_score(token, act, token_counts) <= 0
             ):
                 continue
             keywords[act].append(token)
@@ -785,3 +830,28 @@ def learn_conversation_guidance(
             if values
         }
     )
+
+
+def conversation_token_act_counts(
+    turns: tuple[ConversationTurn, ...],
+) -> dict[str, dict[str, int]]:
+    counts: dict[str, dict[str, int]] = {}
+    for turn in turns:
+        for token in normalized_tokens(turn.context_text()):
+            counts.setdefault(token, {})
+            counts[token][turn.expected_act] = counts[token].get(turn.expected_act, 0) + 1
+    return counts
+
+
+def conversation_token_discrimination_score(
+    token: str,
+    target_act: str,
+    token_counts: dict[str, dict[str, int]],
+) -> int:
+    counts = token_counts.get(token, {})
+    target_count = counts.get(target_act, 0)
+    other_count = max(
+        (count for act, count in counts.items() if act != target_act),
+        default=0,
+    )
+    return target_count - other_count
