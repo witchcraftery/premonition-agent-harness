@@ -362,6 +362,106 @@ def test_history_ranker_promotes_repeated_act_rhythm():
     assert history[0]["scoring_variant"] == "act_rhythm_contextual"
 
 
+def test_history_ranker_only_promotes_allowed_specialist_acts():
+    train_turns = (
+        conversation_turn(
+            "train-history-inform-1",
+            "Anything else?",
+            "inform",
+            observed_acts=("question", "directive"),
+        ),
+        conversation_turn(
+            "train-history-inform-2",
+            "Where next?",
+            "inform",
+            observed_acts=("question", "directive"),
+        ),
+        conversation_turn(
+            "train-history-question",
+            "The route changed.",
+            "question",
+            observed_acts=("inform", "commissive"),
+        ),
+    )
+    history_ranker = train_conversation_history_ranker(train_turns, window_size=2)
+    turn = conversation_turn(
+        "test-history-guard",
+        "Why did anyone move?",
+        "question",
+        observed_acts=("question", "directive"),
+    )
+
+    branches = generate_conversation_branches(
+        turn,
+        top_k=3,
+        history_ranker=history_ranker,
+        history_margin=0.0,
+        history_overlay_acts=("directive", "question"),
+        scoring_variant="protected_history",
+    )
+
+    assert branches[0]["act"] == "question"
+
+
+def test_history_ranker_promotes_allowed_question_specialist():
+    train_turns = (
+        conversation_turn(
+            "train-history-question-1",
+            "The package arrived.",
+            "question",
+            observed_acts=("inform", "directive"),
+        ),
+        conversation_turn(
+            "train-history-question-2",
+            "The route changed.",
+            "question",
+            observed_acts=("inform", "directive"),
+        ),
+        conversation_turn(
+            "train-history-inform",
+            "Where next?",
+            "inform",
+            observed_acts=("question", "commissive"),
+        ),
+    )
+    history_ranker = train_conversation_history_ranker(train_turns, window_size=2)
+    turn = conversation_turn(
+        "test-history-question",
+        "The plan is ready.",
+        "question",
+        observed_acts=("inform", "directive"),
+    )
+
+    branches = generate_conversation_branches(
+        turn,
+        top_k=3,
+        history_ranker=history_ranker,
+        history_margin=0.0,
+        history_overlay_acts=("question",),
+        scoring_variant="question_history_specialist",
+    )
+
+    assert branches[0]["act"] == "question"
+
+
+def test_bakeoff_variants_include_protected_act_specialists():
+    variants = {
+        str(variant["name"]): variant
+        for variant in conversation_bakeoff_variants()
+    }
+
+    assert variants["protected_act_rhythm_contextual"]["history_overlay_acts"] == (
+        "directive",
+        "question",
+    )
+    assert variants["question_act_rhythm_contextual"]["history_overlay_acts"] == (
+        "question",
+    )
+    assert variants["directive_act_rhythm_contextual"]["history_overlay_acts"] == (
+        "directive",
+    )
+
+
 def test_conversation_act_ranker_bakeoff_includes_contextual_transition_variant():
     train_turns = (
         conversation_turn("train-q-i-1", "Anything else?", "inform", observed_acts=("question",)),
@@ -502,6 +602,50 @@ def test_bakeoff_selection_prefers_cross_validated_stability():
     selected = select_conversation_bakeoff_variant(variants)
 
     assert selected == "stable_candidate"
+
+
+def test_bakeoff_selection_allows_small_gap_for_cross_validated_specialist():
+    variants = {
+        "guarded_candidate": {
+            "learned_weight": 0.0,
+            "train": {"p_at_1": 0.66, "top_3_recall": 1.0},
+            "dev": {"p_at_1": 0.55, "top_3_recall": 1.0},
+            "dev_segment_regressions": [],
+            "cross_validation": {
+                "mean_p_at_1_gain": 0.04,
+                "min_p_at_1_gain": 0.02,
+                "segment_regression_count": 0,
+            },
+        },
+        "stable_specialist": {
+            "learned_weight": 0.0,
+            "history_overlay_acts": ("directive",),
+            "train": {"p_at_1": 0.684, "top_3_recall": 1.0},
+            "dev": {"p_at_1": 0.56, "top_3_recall": 1.0},
+            "dev_segment_regressions": [],
+            "cross_validation": {
+                "mean_p_at_1_gain": 0.05,
+                "min_p_at_1_gain": 0.02,
+                "segment_regression_count": 0,
+            },
+        },
+        "unstable_specialist": {
+            "learned_weight": 0.0,
+            "history_overlay_acts": ("question",),
+            "train": {"p_at_1": 0.69, "top_3_recall": 1.0},
+            "dev": {"p_at_1": 0.57, "top_3_recall": 1.0},
+            "dev_segment_regressions": [],
+            "cross_validation": {
+                "mean_p_at_1_gain": 0.05,
+                "min_p_at_1_gain": 0.02,
+                "segment_regression_count": 1,
+            },
+        },
+    }
+
+    selected = select_conversation_bakeoff_variant(variants)
+
+    assert selected == "stable_specialist"
 
 
 def test_conversation_train_dev_test_loop_blocks_act_segment_regression():

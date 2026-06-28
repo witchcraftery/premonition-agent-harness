@@ -24,7 +24,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.147,
+            "p_at_1": 0.186,
             "top_3_recall": 0.931,
             "total_turns": 102,
             "tts_readiness_rate": 1.0
@@ -38,7 +38,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.797,
+            "p_at_1": 0.783,
             "top_3_recall": 0.991,
             "total_turns": 212,
             "tts_readiness_rate": 1.0
@@ -68,7 +68,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.6,
+            "p_at_1": 0.8,
             "top_3_recall": 1.0,
             "total_turns": 5,
             "tts_readiness_rate": 1.0
@@ -147,17 +147,17 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.147,
+          "guided_p_at_1": 0.186,
           "guided_top_3_recall": 0.931,
           "name": "directive",
-          "p_at_1_gain": 0.0,
+          "p_at_1_gain": 0.039,
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.423,
+          "guided_p_at_1": 0.419,
           "guided_top_3_recall": 0.962,
           "name": "speaker_a",
-          "p_at_1_gain": 0.128,
+          "p_at_1_gain": 0.124,
           "segment": "next_speaker"
         },
         {
@@ -168,18 +168,11 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.5,
+          "guided_p_at_1": 0.508,
           "guided_top_3_recall": 0.981,
           "name": "speaker_b",
-          "p_at_1_gain": 0.15,
+          "p_at_1_gain": 0.158,
           "segment": "next_speaker"
-        },
-        {
-          "guided_p_at_1": 0.6,
-          "guided_top_3_recall": 1.0,
-          "name": "anger",
-          "p_at_1_gain": 0.2,
-          "segment": "expected_emotion"
         },
         {
           "guided_p_at_1": 0.68,
@@ -196,11 +189,18 @@
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.797,
+          "guided_p_at_1": 0.783,
           "guided_top_3_recall": 0.991,
           "name": "inform",
-          "p_at_1_gain": 0.189,
+          "p_at_1_gain": 0.175,
           "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.8,
+          "guided_top_3_recall": 1.0,
+          "name": "anger",
+          "p_at_1_gain": 0.4,
+          "segment": "expected_emotion"
         }
       ],
       "next_speaker": {
@@ -212,7 +212,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.423,
+            "p_at_1": 0.419,
             "top_3_recall": 0.962,
             "total_turns": 234,
             "tts_readiness_rate": 1.0
@@ -226,7 +226,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.5,
+            "p_at_1": 0.508,
             "top_3_recall": 0.981,
             "total_turns": 266,
             "tts_readiness_rate": 1.0
@@ -258,7 +258,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.053,
+            "p_at_1": 0.116,
             "top_3_recall": 0.895,
             "total_turns": 95,
             "tts_readiness_rate": 1.0
@@ -272,7 +272,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.861,
+            "p_at_1": 0.837,
             "top_3_recall": 0.995,
             "total_turns": 208,
             "tts_readiness_rate": 1.0
@@ -330,7 +330,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.696,
+            "p_at_1": 0.679,
             "top_3_recall": 0.964,
             "total_turns": 56,
             "tts_readiness_rate": 1.0
@@ -344,7 +344,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.484,
+            "p_at_1": 0.489,
             "top_3_recall": 0.969,
             "total_turns": 419,
             "tts_readiness_rate": 1.0
@@ -395,10 +395,10 @@
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.053,
+          "guided_p_at_1": 0.116,
           "guided_top_3_recall": 0.895,
           "name": "directive",
-          "p_at_1_gain": 0.0,
+          "p_at_1_gain": 0.063,
           "segment": "expected_act"
         },
         {
@@ -409,18 +409,18 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.484,
-          "guided_top_3_recall": 0.969,
-          "name": "no_emotion",
-          "p_at_1_gain": 0.119,
-          "segment": "expected_emotion"
-        },
-        {
-          "guided_p_at_1": 0.493,
+          "guided_p_at_1": 0.485,
           "guided_top_3_recall": 0.959,
           "name": "speaker_b",
-          "p_at_1_gain": 0.127,
+          "p_at_1_gain": 0.119,
           "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.489,
+          "guided_top_3_recall": 0.969,
+          "name": "no_emotion",
+          "p_at_1_gain": 0.124,
+          "segment": "expected_emotion"
         },
         {
           "guided_p_at_1": 0.5,
@@ -430,10 +430,10 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.513,
+          "guided_p_at_1": 0.526,
           "guided_top_3_recall": 0.983,
           "name": "speaker_a",
-          "p_at_1_gain": 0.142,
+          "p_at_1_gain": 0.155,
           "segment": "next_speaker"
         },
         {
@@ -444,10 +444,10 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.696,
+          "guided_p_at_1": 0.679,
           "guided_top_3_recall": 0.964,
           "name": "happiness",
-          "p_at_1_gain": 0.25,
+          "p_at_1_gain": 0.233,
           "segment": "expected_emotion"
         }
       ],
@@ -460,7 +460,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.513,
+            "p_at_1": 0.526,
             "top_3_recall": 0.983,
             "total_turns": 232,
             "tts_readiness_rate": 1.0
@@ -474,7 +474,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.493,
+            "p_at_1": 0.485,
             "top_3_recall": 0.959,
             "total_turns": 268,
             "tts_readiness_rate": 1.0
@@ -506,7 +506,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.024,
+            "p_at_1": 0.238,
             "top_3_recall": 1.0,
             "total_turns": 42,
             "tts_readiness_rate": 1.0
@@ -520,7 +520,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.823,
+            "p_at_1": 0.819,
             "top_3_recall": 1.0,
             "total_turns": 299,
             "tts_readiness_rate": 1.0
@@ -578,7 +578,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.711,
+            "p_at_1": 0.697,
             "top_3_recall": 0.974,
             "total_turns": 76,
             "tts_readiness_rate": 1.0
@@ -592,7 +592,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.553,
+            "p_at_1": 0.577,
             "top_3_recall": 1.0,
             "total_turns": 385,
             "tts_readiness_rate": 1.0
@@ -629,17 +629,17 @@
       },
       "focus_areas": [
         {
-          "guided_p_at_1": 0.024,
-          "guided_top_3_recall": 1.0,
-          "name": "directive",
-          "p_at_1_gain": 0.0,
-          "segment": "expected_act"
-        },
-        {
           "guided_p_at_1": 0.033,
           "guided_top_3_recall": 1.0,
           "name": "question",
           "p_at_1_gain": 0.0,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.238,
+          "guided_top_3_recall": 1.0,
+          "name": "directive",
+          "p_at_1_gain": 0.214,
           "segment": "expected_act"
         },
         {
@@ -650,31 +650,31 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.509,
+          "guided_p_at_1": 0.522,
           "guided_top_3_recall": 1.0,
           "name": "speaker_a",
-          "p_at_1_gain": 0.111,
+          "p_at_1_gain": 0.124,
           "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.553,
+          "guided_p_at_1": 0.577,
           "guided_top_3_recall": 1.0,
           "name": "no_emotion",
-          "p_at_1_gain": 0.104,
+          "p_at_1_gain": 0.128,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.628,
+          "guided_p_at_1": 0.646,
           "guided_top_3_recall": 0.993,
           "name": "speaker_b",
-          "p_at_1_gain": 0.095,
+          "p_at_1_gain": 0.113,
           "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.711,
+          "guided_p_at_1": 0.697,
           "guided_top_3_recall": 0.974,
           "name": "happiness",
-          "p_at_1_gain": 0.106,
+          "p_at_1_gain": 0.092,
           "segment": "expected_emotion"
         },
         {
@@ -692,10 +692,10 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.823,
+          "guided_p_at_1": 0.819,
           "guided_top_3_recall": 1.0,
           "name": "inform",
-          "p_at_1_gain": 0.101,
+          "p_at_1_gain": 0.097,
           "segment": "expected_act"
         }
       ],
@@ -708,7 +708,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.509,
+            "p_at_1": 0.522,
             "top_3_recall": 1.0,
             "total_turns": 226,
             "tts_readiness_rate": 1.0
@@ -722,7 +722,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.628,
+            "p_at_1": 0.646,
             "top_3_recall": 0.993,
             "total_turns": 274,
             "tts_readiness_rate": 1.0
@@ -741,30 +741,31 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.464,
+      "p_at_1": 0.466,
       "top_3_recall": 0.972,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     }
   },
   "efficacy": {
-    "dev_p_at_1_gain": 0.14,
+    "dev_p_at_1_gain": 0.142,
     "dev_test_p_at_1_gap": 0.006,
     "dev_top_3_recall_gain": 0.116,
     "dev_tts_readiness_gain": 0.0,
-    "test_p_at_1_gain": 0.134,
+    "test_p_at_1_gain": 0.136,
     "test_top_3_recall_gain": 0.112,
     "test_tts_readiness_gain": 0.0,
-    "train_p_at_1_gain": 0.102,
-    "train_test_p_at_1_gap": -0.032,
+    "train_p_at_1_gain": 0.118,
+    "train_test_p_at_1_gap": -0.018,
     "train_top_3_recall_gain": 0.076,
     "train_tts_readiness_gain": 0.0
   },
   "guidance_delta": {
-    "improved_turn_count": 73,
+    "improved_turn_count": 77,
     "improved_turns": [
       "dailydialog-test-0001-003",
       "dailydialog-test-0001-005",
+      "dailydialog-test-0001-006",
       "dailydialog-test-0001-009",
       "dailydialog-test-0004-012",
       "dailydialog-test-0006-003",
@@ -781,15 +782,14 @@
       "dailydialog-test-0014-002",
       "dailydialog-test-0016-004",
       "dailydialog-test-0016-007",
-      "dailydialog-test-0016-015",
       "dailydialog-test-0017-002",
       "dailydialog-test-0018-001",
       "dailydialog-test-0018-003",
-      "dailydialog-test-0018-008",
       "dailydialog-test-0020-004",
       "dailydialog-test-0021-010",
       "dailydialog-test-0022-001",
       "dailydialog-test-0022-003",
+      "dailydialog-test-0022-004",
       "dailydialog-test-0025-008",
       "dailydialog-test-0025-010",
       "dailydialog-test-0025-012",
@@ -800,8 +800,10 @@
       "dailydialog-test-0028-008",
       "dailydialog-test-0028-009",
       "dailydialog-test-0028-010",
+      "dailydialog-test-0029-014",
       "dailydialog-test-0029-015",
       "dailydialog-test-0031-003",
+      "dailydialog-test-0031-004",
       "dailydialog-test-0031-007",
       "dailydialog-test-0033-002",
       "dailydialog-test-0037-001",
@@ -835,22 +837,26 @@
       "dailydialog-test-0060-004",
       "dailydialog-test-0061-004",
       "dailydialog-test-0063-002",
-      "dailydialog-test-0063-005"
+      "dailydialog-test-0063-005",
+      "dailydialog-test-0064-005",
+      "dailydialog-test-0064-007"
     ],
-    "regressed_turn_count": 6,
+    "regressed_turn_count": 9,
     "regressed_turns": [
       "dailydialog-test-0016-008",
       "dailydialog-test-0023-001",
       "dailydialog-test-0023-003",
       "dailydialog-test-0027-002",
       "dailydialog-test-0050-004",
-      "dailydialog-test-0051-001"
+      "dailydialog-test-0051-001",
+      "dailydialog-test-0051-007",
+      "dailydialog-test-0055-005",
+      "dailydialog-test-0058-007"
     ],
     "unchanged_turns": [
       "dailydialog-test-0001-001",
       "dailydialog-test-0001-002",
       "dailydialog-test-0001-004",
-      "dailydialog-test-0001-006",
       "dailydialog-test-0001-007",
       "dailydialog-test-0001-008",
       "dailydialog-test-0001-010",
@@ -946,6 +952,7 @@
       "dailydialog-test-0016-012",
       "dailydialog-test-0016-013",
       "dailydialog-test-0016-014",
+      "dailydialog-test-0016-015",
       "dailydialog-test-0017-001",
       "dailydialog-test-0017-003",
       "dailydialog-test-0017-004",
@@ -955,6 +962,7 @@
       "dailydialog-test-0018-005",
       "dailydialog-test-0018-006",
       "dailydialog-test-0018-007",
+      "dailydialog-test-0018-008",
       "dailydialog-test-0019-001",
       "dailydialog-test-0019-002",
       "dailydialog-test-0019-003",
@@ -978,7 +986,6 @@
       "dailydialog-test-0021-009",
       "dailydialog-test-0021-011",
       "dailydialog-test-0022-002",
-      "dailydialog-test-0022-004",
       "dailydialog-test-0023-002",
       "dailydialog-test-0024-001",
       "dailydialog-test-0024-002",
@@ -1030,13 +1037,11 @@
       "dailydialog-test-0029-011",
       "dailydialog-test-0029-012",
       "dailydialog-test-0029-013",
-      "dailydialog-test-0029-014",
       "dailydialog-test-0029-016",
       "dailydialog-test-0029-017",
       "dailydialog-test-0030-001",
       "dailydialog-test-0031-001",
       "dailydialog-test-0031-002",
-      "dailydialog-test-0031-004",
       "dailydialog-test-0031-005",
       "dailydialog-test-0031-006",
       "dailydialog-test-0032-001",
@@ -1173,7 +1178,6 @@
       "dailydialog-test-0051-002",
       "dailydialog-test-0051-003",
       "dailydialog-test-0051-005",
-      "dailydialog-test-0051-007",
       "dailydialog-test-0052-001",
       "dailydialog-test-0052-002",
       "dailydialog-test-0052-003",
@@ -1199,7 +1203,6 @@
       "dailydialog-test-0054-001",
       "dailydialog-test-0055-001",
       "dailydialog-test-0055-003",
-      "dailydialog-test-0055-005",
       "dailydialog-test-0055-006",
       "dailydialog-test-0055-007",
       "dailydialog-test-0055-009",
@@ -1226,7 +1229,6 @@
       "dailydialog-test-0058-004",
       "dailydialog-test-0058-005",
       "dailydialog-test-0058-006",
-      "dailydialog-test-0058-007",
       "dailydialog-test-0058-008",
       "dailydialog-test-0058-009",
       "dailydialog-test-0059-001",
@@ -1265,9 +1267,7 @@
       "dailydialog-test-0064-002",
       "dailydialog-test-0064-003",
       "dailydialog-test-0064-004",
-      "dailydialog-test-0064-005",
-      "dailydialog-test-0064-006",
-      "dailydialog-test-0064-007"
+      "dailydialog-test-0064-006"
     ]
   },
   "history_ranker": {
@@ -1303,13 +1303,13 @@
           },
           "candidate": {
             "median_latency_ms": 90,
-            "p_at_1": 0.56,
+            "p_at_1": 0.57,
             "top_3_recall": 0.99,
             "total_turns": 100,
             "tts_readiness_rate": 1.0
           },
           "fold": 1,
-          "p_at_1_gain": 0.09,
+          "p_at_1_gain": 0.1,
           "segment_regressions": [],
           "top_3_recall_gain": 0.07,
           "validation_turns": 100
@@ -1345,13 +1345,13 @@
           },
           "candidate": {
             "median_latency_ms": 90,
-            "p_at_1": 0.53,
+            "p_at_1": 0.55,
             "top_3_recall": 1.0,
             "total_turns": 100,
             "tts_readiness_rate": 1.0
           },
           "fold": 3,
-          "p_at_1_gain": 0.11,
+          "p_at_1_gain": 0.13,
           "segment_regressions": [],
           "top_3_recall_gain": 0.09,
           "validation_turns": 100
@@ -1366,13 +1366,13 @@
           },
           "candidate": {
             "median_latency_ms": 90,
-            "p_at_1": 0.61,
+            "p_at_1": 0.62,
             "top_3_recall": 0.99,
             "total_turns": 100,
             "tts_readiness_rate": 1.0
           },
           "fold": 4,
-          "p_at_1_gain": 0.08,
+          "p_at_1_gain": 0.09,
           "segment_regressions": [],
           "top_3_recall_gain": 0.09,
           "validation_turns": 100
@@ -1399,26 +1399,29 @@
           "validation_turns": 100
         }
       ],
-      "mean_p_at_1_gain": 0.096,
+      "mean_p_at_1_gain": 0.104,
       "mean_top_3_recall_gain": 0.076,
-      "min_p_at_1_gain": 0.08,
+      "min_p_at_1_gain": 0.09,
       "min_top_3_recall_gain": 0.04,
       "segment_regression_count": 0
     },
     "dev": {
       "median_latency_ms": 90,
-      "p_at_1": 0.464,
+      "p_at_1": 0.466,
       "top_3_recall": 0.972,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     },
     "dev_segment_regressions": [],
-    "history_margin": 0.0,
+    "history_margin": 0.25,
+    "history_overlay_acts": [
+      "directive"
+    ],
     "learned_weight": 0.0,
-    "name": "guarded_contextual_transition",
+    "name": "directive_act_rhythm_contextual",
     "test": {
       "median_latency_ms": 90,
-      "p_at_1": 0.502,
+      "p_at_1": 0.504,
       "top_3_recall": 0.97,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1426,7 +1429,7 @@
     "test_segment_regressions": [],
     "train": {
       "median_latency_ms": 90,
-      "p_at_1": 0.574,
+      "p_at_1": 0.59,
       "top_3_recall": 0.996,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1438,7 +1441,7 @@
       "question"
     ],
     "transition_weight": 1.0,
-    "use_history_ranker": false
+    "use_history_ranker": true
   },
   "summary": {
     "dev_turns": 500,
@@ -1456,7 +1459,7 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.502,
+      "p_at_1": 0.504,
       "top_3_recall": 0.97,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1472,7 +1475,7 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.574,
+      "p_at_1": 0.59,
       "top_3_recall": 0.996,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1621,6 +1624,7 @@
       },
       "dev_segment_regressions": [],
       "history_margin": 0.25,
+      "history_overlay_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -1779,6 +1783,7 @@
       },
       "dev_segment_regressions": [],
       "history_margin": 0.6,
+      "history_overlay_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -1975,6 +1980,7 @@
         }
       ],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2161,6 +2167,7 @@
       },
       "dev_segment_regressions": [],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2354,6 +2361,7 @@
         }
       ],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2390,6 +2398,159 @@
       "transition_protected_acts": [],
       "transition_weight": 1.0,
       "use_history_ranker": false
+    },
+    "directive_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.57,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.55,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.13,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.62,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.62,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.104,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.09,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 0
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.466,
+        "top_3_recall": 0.972,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "directive"
+      ],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.504,
+        "top_3_recall": 0.97,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.59,
+        "top_3_recall": 0.996,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
     },
     "guarded_contextual_transition": {
       "cross_validation": {
@@ -2516,6 +2677,7 @@
       },
       "dev_segment_regressions": [],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2666,6 +2828,7 @@
       },
       "dev_segment_regressions": [],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2896,6 +3059,7 @@
         }
       ],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.25,
       "test": {
         "median_latency_ms": 90,
@@ -3141,6 +3305,7 @@
         }
       ],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.5,
       "test": {
         "median_latency_ms": 90,
@@ -3393,6 +3558,7 @@
         }
       ],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 0.75,
       "test": {
         "median_latency_ms": 90,
@@ -3645,6 +3811,7 @@
         }
       ],
       "history_margin": 0.0,
+      "history_overlay_acts": [],
       "learned_weight": 1.0,
       "test": {
         "median_latency_ms": 90,
@@ -3681,6 +3848,337 @@
       "transition_protected_acts": [],
       "transition_weight": 0.0,
       "use_history_ranker": false
+    },
+    "protected_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.55,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.08,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.714,
+                "candidate_p_at_1": 0.696,
+                "name": "inform",
+                "p_at_1_delta": -0.018,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.58,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.16,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.65,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.12,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.61,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.112,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.08,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 1
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.478,
+        "top_3_recall": 0.972,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "directive",
+        "question"
+      ],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.514,
+        "top_3_recall": 0.97,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.62,
+        "top_3_recall": 0.996,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    },
+    "question_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.54,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.07,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.714,
+                "candidate_p_at_1": 0.696,
+                "name": "inform",
+                "p_at_1_delta": -0.018,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.56,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.14,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.64,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.61,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.104,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.07,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 1
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.476,
+        "top_3_recall": 0.972,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "question"
+      ],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.512,
+        "top_3_recall": 0.97,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.053,
+          "candidate_p_at_1": 0.042,
+          "name": "directive",
+          "p_at_1_delta": -0.011,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.604,
+        "top_3_recall": 0.996,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
     }
   }
 }

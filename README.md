@@ -252,11 +252,11 @@ This compares the current heuristic brancher against a transparent learned
 act-ranker, hybrid blends, and contextual transition variants that use observed
 dialogue-act history. On the committed 500/500/500 samples, the bake-off now
 records internal cross-validation for every variant before selecting promoted
-behavior. The stable selected variant is `guarded_contextual_transition`:
-validation `p_at_1` rose from `0.324` to `0.464`, held-out test `p_at_1` rose
-from `0.368` to `0.502`, held-out test `top_3_recall` rose from `0.858` to
+behavior. The stable selected variant is now `directive_act_rhythm_contextual`:
+validation `p_at_1` rose from `0.324` to `0.466`, held-out test `p_at_1` rose
+from `0.368` to `0.504`, held-out test `top_3_recall` rose from `0.858` to
 `0.970`, and no act segment regressed. Its internal cross-validation mean
-`p_at_1` gain is `0.096`, minimum fold gain is `0.080`, and segment regression
+`p_at_1` gain is `0.104`, minimum fold gain is `0.090`, and segment regression
 count is `0`.
 
 The raw contextual transition brancher found an even larger signal
@@ -269,12 +269,14 @@ diagnostic signal: it reached held-out test `p_at_1=0.508`, cross-validation
 mean gain `0.112`, and minimum fold gain `0.100`, but it showed `1` internal
 act-segment regression. That makes it promising, but not yet default behavior.
 
-The looser act-rhythm specialist is useful but not promoted. It improved
-validation `question` top-1 from `0.040` to `0.136`, but its train/dev gap was
-too wide and its held-out test `p_at_1` fell behind the stricter variant. The
-next research lever is not simply a higher headline score; it is making
-protected-act specialists improve `directive` and `question` across folds with
-zero segment regressions.
+The per-act specialists are useful because they separate safer gains from
+fragile ones. The combined protected-act specialist reached held-out test
+`p_at_1=0.514`, and the question-only specialist reached `0.512`, but both still
+showed `1` internal cross-validation segment regression. The directive-only
+specialist is smaller but stable: it improved held-out `directive` top-1 from
+`0.053` to `0.116`, kept question top-1 flat while raising question top-3
+recall to `1.0`, and passed the zero-regression cross-validation gate. The next
+lever is targeted question-specialist stability, not broad rhythm promotion.
 
 ## Replay Data Format
 
@@ -302,11 +304,10 @@ label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
 For conversational voice-agent foresight, the next meaningful step is to import
-larger and more representative DailyDialog slices, then train per-act
-specialists under the same cross-validation gate so `directive` and `question`
-can improve without overfitting one split. After that, add EmpatheticDialogues
-for emotional readiness and Taskmaster or SpokenWOZ for practical
-spoken-assistant flows.
+larger and more representative DailyDialog slices, then make the question
+specialist stable under the same cross-validation gate. After that, add
+EmpatheticDialogues for emotional readiness and Taskmaster or SpokenWOZ for
+practical spoken-assistant flows.
 
 Useful expansion points:
 
@@ -316,7 +317,7 @@ Useful expansion points:
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 - Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
-- Expand protected-act specialists for `directive` and `question`, and require cross-fold stability before promotion.
+- Stabilize the question specialist without reducing directive accuracy, then rerun the same cross-fold promotion gate.
 
 ## Benchmark Loop
 

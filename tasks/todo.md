@@ -372,3 +372,23 @@ Verification:
 - Selected cross-validation: mean `p_at_1` gain `0.096`, minimum fold gain `0.080`, mean `top_3_recall` gain `0.076`, minimum fold gain `0.040`, and `0` segment regressions.
 - Diagnostic strict act-rhythm variant: held-out test `p_at_1=0.508`, cross-validation mean `p_at_1` gain `0.112`, and minimum fold gain `0.100`, but `1` internal segment regression, so it was not promoted.
 - Result: cross-validation improved reliability and transparency, and changed selected behavior back to the safer guarded contextual variant.
+
+## Per-Act Specialist Expansion
+
+- [x] Add targeted `directive` and `question` specialist variants to the conversation bake-off.
+- [x] Prove specialist variants can promote protected acts without bypassing the cross-validation stability gate.
+- [x] Rerun the DailyDialog bake-off and compare promoted behavior against `guarded_contextual_transition`.
+- [x] Report whether the lever improves held-out accuracy, segment performance, or only adds diagnostic transparency.
+- [x] Document the next lever based on the benchmark result.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py -v` failed because `history_overlay_acts` and targeted specialist variants did not exist.
+- Selector red check: `python3 -m pytest tests/test_conversation_probability.py::test_bakeoff_selection_allows_small_gap_for_cross_validated_specialist -v` failed because the train/dev cutoff blocked a stable per-act specialist.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 28 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json`: completed.
+- Selected variant: `directive_act_rhythm_contextual`; validation `p_at_1` improved from `0.324` to `0.466`, held-out test `p_at_1` improved from `0.368` to `0.504`, and held-out test `top_3_recall` improved from `0.858` to `0.970`.
+- Selected cross-validation: mean `p_at_1` gain `0.104`, minimum fold gain `0.090`, mean `top_3_recall` gain `0.076`, minimum fold gain `0.040`, and `0` segment regressions.
+- Segment signal: held-out `directive` top-1 improved from `0.053` to `0.116`, while held-out `question` top-1 stayed at `0.047` and question top-3 recall rose to `1.0`.
+- Diagnostic higher-score variants remain blocked: `protected_act_rhythm_contextual` reached test `p_at_1=0.514` and `question_act_rhythm_contextual` reached `0.512`, but each had `1` internal segment regression.
+- Result: the lever produced a small stable promoted gain and identified the next focus as question-specialist stability.
