@@ -15,7 +15,9 @@ from foresight_harness.conversation_probability import (
     run_conversation_act_ranker_bakeoff,
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
+    select_conversation_bakeoff_variant,
     train_conversation_act_ranker,
+    train_conversation_history_ranker,
     train_conversation_transition_ranker,
     write_conversation_turns,
 )
@@ -289,6 +291,63 @@ def test_guarded_transition_preserves_protected_heuristic_act():
     assert guarded[0]["scoring_variant"] == "guarded_contextual_transition"
 
 
+def test_history_ranker_promotes_repeated_act_rhythm():
+    train_turns = (
+        conversation_turn(
+            "train-history-q-1",
+            "The agenda is ready.",
+            "question",
+            observed_acts=("inform", "question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "train-history-q-2",
+            "The checklist is ready.",
+            "question",
+            observed_acts=("inform", "question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "train-prev-directive-i-1",
+            "Anything else?",
+            "inform",
+            observed_acts=("commissive", "inform", "directive"),
+        ),
+        conversation_turn(
+            "train-prev-directive-i-2",
+            "Can you continue?",
+            "inform",
+            observed_acts=("question", "inform", "directive"),
+        ),
+    )
+    transition_ranker = train_conversation_transition_ranker(train_turns)
+    history_ranker = train_conversation_history_ranker(train_turns, window_size=4)
+    turn = conversation_turn(
+        "test-history-question",
+        "The agenda is ready.",
+        "question",
+        observed_acts=("inform", "question", "inform", "directive"),
+    )
+
+    transition = generate_conversation_branches(
+        turn,
+        top_k=3,
+        transition_ranker=transition_ranker,
+        transition_weight=1.0,
+    )
+    history = generate_conversation_branches(
+        turn,
+        top_k=3,
+        transition_ranker=transition_ranker,
+        transition_weight=1.0,
+        history_ranker=history_ranker,
+        history_margin=0.25,
+        scoring_variant="act_rhythm_contextual",
+    )
+
+    assert transition[0]["act"] == "inform"
+    assert history[0]["act"] == "question"
+    assert history[0]["scoring_variant"] == "act_rhythm_contextual"
+
+
 def test_conversation_act_ranker_bakeoff_includes_contextual_transition_variant():
     train_turns = (
         conversation_turn("train-q-i-1", "Anything else?", "inform", observed_acts=("question",)),
@@ -314,9 +373,31 @@ def test_conversation_act_ranker_bakeoff_includes_contextual_transition_variant(
 
     assert "contextual_transition" in report["variants"]
     assert "guarded_contextual_transition" in report["variants"]
+    assert "act_rhythm_contextual" in report["variants"]
     assert "contextual_inform_overlay" in report["variants"]
     assert report["selected_variant"]["name"] == "contextual_transition"
     assert report["selected_variant"]["test"]["p_at_1"] == 1.0
+
+
+def test_bakeoff_selection_rejects_large_train_dev_gap():
+    variants = {
+        "overfit_dev_winner": {
+            "learned_weight": 0.0,
+            "train": {"p_at_1": 0.9, "top_3_recall": 1.0},
+            "dev": {"p_at_1": 0.6, "top_3_recall": 1.0},
+            "dev_segment_regressions": [],
+        },
+        "robust_candidate": {
+            "learned_weight": 0.0,
+            "train": {"p_at_1": 0.58, "top_3_recall": 1.0},
+            "dev": {"p_at_1": 0.56, "top_3_recall": 1.0},
+            "dev_segment_regressions": [],
+        },
+    }
+
+    selected = select_conversation_bakeoff_variant(variants)
+
+    assert selected == "robust_candidate"
 
 
 def test_conversation_train_dev_test_loop_blocks_act_segment_regression():

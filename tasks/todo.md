@@ -332,3 +332,24 @@ Verification:
 - The guarded variant improved beyond `contextual_inform_overlay`, which had validation `p_at_1=0.416`, held-out test `p_at_1=0.448`, and held-out test `top_3_recall=0.876`.
 - No act segment regressed on validation or test; full contextual transition remains stronger but unsafe because it regresses `directive` and `question` top-1 accuracy to `0.0`.
 - Held-out guidance delta: `73` improved turns and `6` regressed turns. Next lever: make protected `directive` and `question` modes improve under context instead of only avoiding collapse.
+
+## Act-Rhythm Context Specialist
+
+- [x] Add an act-history specialist that learns next-act probabilities from longer observed dialogue rhythms.
+- [x] Prove the specialist can promote a `directive` or `question` pattern when the one-step transition model would flatten it.
+- [x] Add act-rhythm contextual variants to the bake-off.
+- [x] Add an overfit-aware selector so high train/dev-gap variants remain diagnostic.
+- [x] Rerun the DailyDialog bake-off and measure whether protected acts improve without segment regressions.
+- [x] Document the result and the next refinement lever.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py -v` failed because `train_conversation_history_ranker` did not exist.
+- Selector red check: `python3 -m pytest tests/test_conversation_probability.py -v` failed because `select_conversation_bakeoff_variant` still chose a large train/dev-gap variant.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 21 passed.
+- `python3 -m pytest`: 83 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json`: completed.
+- Selected variant: `act_rhythm_contextual_strict`; validation `p_at_1` improved from `0.324` to `0.476`, held-out test `p_at_1` improved from `0.368` to `0.508`, and held-out test `top_3_recall` improved from `0.858` to `0.970`.
+- The strict act-rhythm variant improved beyond `guarded_contextual_transition`, which had validation `p_at_1=0.464` and held-out test `p_at_1=0.502`.
+- No act segment regressed on validation or test. Held-out guidance delta: `76` improved turns and `6` regressed turns.
+- Diagnostic loose act-rhythm variant improved validation `question` top-1 from `0.040` to `0.136`, but its train/dev gap was too wide to promote; next lever is cross-validated protected-act specialization.
