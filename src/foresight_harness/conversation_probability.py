@@ -1038,6 +1038,16 @@ def run_conversation_act_ranker_bakeoff(
             history_margin=history_margin,
             scoring_variant=name,
         )
+        cross_validation = (
+            cross_validate_conversation_variant(
+                train_turns,
+                variant,
+                fold_count=min(5, len(train_turns)),
+                top_k=top_k,
+            )
+            if len(train_turns) >= 2
+            else empty_conversation_cross_validation()
+        )
         variants[name] = {
             "learned_weight": learned_weight,
             "transition_weight": transition_weight,
@@ -1049,6 +1059,7 @@ def run_conversation_act_ranker_bakeoff(
             "train": summarize_conversation_rows(train_rows, train_turns),
             "dev": summarize_conversation_rows(dev_rows, dev_turns),
             "test": summarize_conversation_rows(test_rows, test_turns),
+            "cross_validation": cross_validation,
             "dev_segment_regressions": find_conversation_act_segment_regressions(
                 baseline_rows=dev_baseline_rows,
                 candidate_rows=dev_rows,
@@ -1140,6 +1151,7 @@ def run_conversation_act_ranker_bakeoff(
             "transition_protected_acts": selected_protected_acts,
             "use_history_ranker": selected_use_history_ranker,
             "history_margin": selected_history_margin,
+            "cross_validation": selected["cross_validation"],
             "train": train_guided,
             "dev": dev_guided,
             "test": test_guided,
@@ -1236,6 +1248,129 @@ def conversation_bakeoff_variants() -> tuple[dict[str, object], ...]:
     )
 
 
+def cross_validate_conversation_variant(
+    turns: tuple[ConversationTurn, ...],
+    variant: dict[str, object],
+    fold_count: int = 5,
+    top_k: int = 3,
+) -> dict[str, object]:
+    if fold_count < 2:
+        raise ValueError("fold_count must be at least 2")
+    if len(turns) < fold_count:
+        raise ValueError("turn count must be at least fold_count")
+
+    folds = tuple(
+        score_conversation_variant_fold(
+            turns=turns,
+            variant=variant,
+            fold_index=fold_index,
+            fold_count=fold_count,
+            top_k=top_k,
+        )
+        for fold_index in range(fold_count)
+    )
+    p_at_1_gains = [float(fold["p_at_1_gain"]) for fold in folds]
+    top_3_gains = [float(fold["top_3_recall_gain"]) for fold in folds]
+    return {
+        "fold_count": fold_count,
+        "folds": list(folds),
+        "mean_p_at_1_gain": round(sum(p_at_1_gains) / len(p_at_1_gains), 3),
+        "min_p_at_1_gain": round(min(p_at_1_gains), 3),
+        "mean_top_3_recall_gain": round(sum(top_3_gains) / len(top_3_gains), 3),
+        "min_top_3_recall_gain": round(min(top_3_gains), 3),
+        "segment_regression_count": sum(
+            len(fold["segment_regressions"]) for fold in folds
+        ),
+    }
+
+
+def empty_conversation_cross_validation() -> dict[str, object]:
+    return {
+        "fold_count": 0,
+        "folds": [],
+        "mean_p_at_1_gain": 0.0,
+        "min_p_at_1_gain": 0.0,
+        "mean_top_3_recall_gain": 0.0,
+        "min_top_3_recall_gain": 0.0,
+        "segment_regression_count": 0,
+    }
+
+
+def score_conversation_variant_fold(
+    turns: tuple[ConversationTurn, ...],
+    variant: dict[str, object],
+    fold_index: int,
+    fold_count: int,
+    top_k: int,
+) -> dict[str, object]:
+    train_turns = tuple(
+        turn
+        for index, turn in enumerate(turns)
+        if index % fold_count != fold_index
+    )
+    validation_turns = tuple(
+        turn
+        for index, turn in enumerate(turns)
+        if index % fold_count == fold_index
+    )
+    ranker = train_conversation_act_ranker(train_turns)
+    transition_ranker = train_conversation_transition_ranker(train_turns)
+    history_ranker = train_conversation_history_ranker(train_turns, window_size=4)
+    empty_guidance = ConversationGuidance(act_keywords={})
+
+    baseline_rows = score_conversation_turns(
+        validation_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+    )
+    candidate_rows = score_conversation_turns(
+        validation_turns,
+        top_k=top_k,
+        guidance=empty_guidance,
+        act_ranker=ranker,
+        learned_weight=float(variant["learned_weight"]),
+        transition_ranker=transition_ranker,
+        transition_weight=float(variant["transition_weight"]),
+        transition_overlay_act=(
+            str(variant["transition_overlay_act"])
+            if variant.get("transition_overlay_act")
+            else None
+        ),
+        transition_overlay_margin=float(variant.get("transition_overlay_margin", 0.0)),
+        transition_protected_acts=tuple(
+            str(act)
+            for act in variant.get("transition_protected_acts", ())
+        ),
+        history_ranker=(
+            history_ranker
+            if bool(variant.get("use_history_ranker", False))
+            else None
+        ),
+        history_margin=float(variant.get("history_margin", 0.0)),
+        scoring_variant=str(variant["name"]),
+    )
+    baseline = summarize_conversation_rows(baseline_rows, validation_turns)
+    candidate = summarize_conversation_rows(candidate_rows, validation_turns)
+    return {
+        "fold": fold_index + 1,
+        "validation_turns": len(validation_turns),
+        "baseline": baseline,
+        "candidate": candidate,
+        "p_at_1_gain": round(
+            float(candidate["p_at_1"]) - float(baseline["p_at_1"]),
+            3,
+        ),
+        "top_3_recall_gain": round(
+            float(candidate["top_3_recall"]) - float(baseline["top_3_recall"]),
+            3,
+        ),
+        "segment_regressions": find_conversation_act_segment_regressions(
+            baseline_rows=baseline_rows,
+            candidate_rows=candidate_rows,
+        ),
+    }
+
+
 def select_conversation_bakeoff_variant(
     variants: dict[str, dict[str, object]],
 ) -> str:
@@ -1251,6 +1386,12 @@ def select_conversation_bakeoff_variant(
         if conversation_train_dev_gap(row) <= MAX_CONVERSATION_BAKEOFF_TRAIN_DEV_GAP
     }
     candidates = robust_candidates if robust_candidates else candidates
+    cross_validated_candidates = {
+        name: row
+        for name, row in candidates.items()
+        if conversation_cross_validation_ok(row)
+    }
+    candidates = cross_validated_candidates if cross_validated_candidates else candidates
     return sorted(
         candidates,
         key=lambda name: (
@@ -1261,6 +1402,16 @@ def select_conversation_bakeoff_variant(
         ),
         reverse=True,
     )[0]
+
+
+def conversation_cross_validation_ok(row: dict[str, object]) -> bool:
+    cross_validation = row.get("cross_validation")
+    if not cross_validation:
+        return True
+    return (
+        float(cross_validation["min_p_at_1_gain"]) >= 0
+        and int(cross_validation["segment_regression_count"]) == 0
+    )
 
 
 def conversation_train_dev_gap(row: dict[str, object]) -> float:

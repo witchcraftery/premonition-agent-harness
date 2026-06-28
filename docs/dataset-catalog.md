@@ -53,10 +53,11 @@ repeatable benchmark.
 - Current result: act-specific candidate guidance raised validation `p_at_1` from `0.324` to `0.402`, but reduced validation `top_3_recall` from `0.856` to `0.844`, so the segment-aware gate rejected promotion.
 - Segment signal: rejected candidates regressed validation `commissive` from `0.213` to `0.066`, `directive` from `0.147` to `0.010`, and `question` from `0.040` to `0.008`.
 - Held-out result after gating: the keyword-guidance loop remains at the baseline, `p_at_1=0.368` and `top_3_recall=0.858`, with `0` improved and `0` regressed held-out test turns.
-- Contextual bake-off: validation selected `act_rhythm_contextual_strict`, which protects the heuristic's strongest `directive` and `question` reads while allowing high-margin longer act-history patterns to override the one-step transition model. It improved validation `p_at_1` from `0.324` to `0.476` and held-out test `p_at_1` from `0.368` to `0.508`, with no act-segment regressions.
+- Contextual bake-off: cross-validation selected `guarded_contextual_transition`, which protects the heuristic's strongest `directive` and `question` reads while allowing safer contextual transition scores. It improved validation `p_at_1` from `0.324` to `0.464` and held-out test `p_at_1` from `0.368` to `0.502`, with no act-segment regressions.
+- Cross-validation signal: the selected guarded variant has mean internal `p_at_1` gain `0.096`, minimum fold gain `0.080`, and `0` segment regressions.
 - Raw transition signal: full contextual transition reached test `p_at_1=0.534` and `top_3_recall=0.970`, but regressed `directive` and `question` top-1 accuracy to `0.0`, so it remains diagnostic rather than promoted behavior.
-- Diagnostic signal: a looser act-rhythm variant improved validation `question` top-1 from `0.040` to `0.136`, but its train/dev gap was too wide to promote.
-- Limitation: first 500 turns from each split; the selected strict act-rhythm variant improved `76` held-out turns and regressed `6` individual turns, so the next lever is cross-validating protected `directive` and `question` specialists.
+- Diagnostic signal: `act_rhythm_contextual_strict` reached held-out test `p_at_1=0.508`, cross-validation mean gain `0.112`, and minimum fold gain `0.100`, but it showed `1` internal act-segment regression, so it remains diagnostic rather than promoted behavior.
+- Limitation: first 500 turns from each split; the next lever is expanding protected `directive` and `question` specialists until they improve across folds with `0` segment regressions.
 
 ## Human Conversation Candidates
 

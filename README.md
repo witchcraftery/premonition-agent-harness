@@ -250,29 +250,31 @@ foresight-replay \
 
 This compares the current heuristic brancher against a transparent learned
 act-ranker, hybrid blends, and contextual transition variants that use observed
-dialogue-act history. On the committed 500/500/500 samples, the bake-off
-selected `act_rhythm_contextual_strict`: validation `p_at_1` rose from `0.324`
-to `0.476`, held-out test `p_at_1` rose from `0.368` to `0.508`, held-out test
-`top_3_recall` rose from `0.858` to `0.970`, and no act segment regressed. The
-selector now rejects variants with a large train/dev gap before choosing among
-safe validation winners, so a brittle rhythm rule stays diagnostic instead of
-becoming promoted behavior.
+dialogue-act history. On the committed 500/500/500 samples, the bake-off now
+records internal cross-validation for every variant before selecting promoted
+behavior. The stable selected variant is `guarded_contextual_transition`:
+validation `p_at_1` rose from `0.324` to `0.464`, held-out test `p_at_1` rose
+from `0.368` to `0.502`, held-out test `top_3_recall` rose from `0.858` to
+`0.970`, and no act segment regressed. Its internal cross-validation mean
+`p_at_1` gain is `0.096`, minimum fold gain is `0.080`, and segment regression
+count is `0`.
 
 The raw contextual transition brancher found an even larger signal
 (`test p_at_1=0.534`, `top_3_recall=0.970`), but it flattened `directive` and
 `question` turns to `0.0` top-1 accuracy. The guarded variant keeps the
 heuristic's strongest `directive` and `question` reads alive, and the strict
 act-rhythm specialist only lets longer dialogue-act history override that guard
-when its margin is high. It improved 76 held-out turns and regressed 6
-individual turns, so this is a stronger but still transparent promotion: context
-can substantially improve conversational premonition, but the harness must keep
-showing where that confidence is brittle.
+when its margin is high. The strict act-rhythm variant remains valuable
+diagnostic signal: it reached held-out test `p_at_1=0.508`, cross-validation
+mean gain `0.112`, and minimum fold gain `0.100`, but it showed `1` internal
+act-segment regression. That makes it promising, but not yet default behavior.
 
 The looser act-rhythm specialist is useful but not promoted. It improved
 validation `question` top-1 from `0.040` to `0.136`, but its train/dev gap was
-too wide and its held-out test `p_at_1` fell behind the stricter variant. That
-is the next research seam: protected-act specialists need cross-fold evidence
-before they can become default behavior.
+too wide and its held-out test `p_at_1` fell behind the stricter variant. The
+next research lever is not simply a higher headline score; it is making
+protected-act specialists improve `directive` and `question` across folds with
+zero segment regressions.
 
 ## Replay Data Format
 
@@ -300,10 +302,11 @@ label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
 For conversational voice-agent foresight, the next meaningful step is to import
-larger and more representative DailyDialog slices, then cross-validate the
-protected-act specialists so `directive` and `question` can improve without
-overfitting one split. After that, add EmpatheticDialogues for emotional
-readiness and Taskmaster or SpokenWOZ for practical spoken-assistant flows.
+larger and more representative DailyDialog slices, then train per-act
+specialists under the same cross-validation gate so `directive` and `question`
+can improve without overfitting one split. After that, add EmpatheticDialogues
+for emotional readiness and Taskmaster or SpokenWOZ for practical
+spoken-assistant flows.
 
 Useful expansion points:
 
@@ -313,7 +316,7 @@ Useful expansion points:
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 - Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
-- Cross-validate protected-act specialists for `directive` and `question`, so those modes can improve under contextual scoring rather than just avoid regression.
+- Expand protected-act specialists for `directive` and `question`, and require cross-fold stability before promotion.
 
 ## Benchmark Loop
 

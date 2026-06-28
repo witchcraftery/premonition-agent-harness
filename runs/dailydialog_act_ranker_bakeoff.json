@@ -10,7 +10,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.738,
+            "p_at_1": 0.705,
             "top_3_recall": 0.918,
             "total_turns": 61,
             "tts_readiness_rate": 1.0
@@ -38,7 +38,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.816,
+            "p_at_1": 0.797,
             "top_3_recall": 0.991,
             "total_turns": 212,
             "tts_readiness_rate": 1.0
@@ -96,7 +96,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.465,
+            "p_at_1": 0.452,
             "top_3_recall": 0.974,
             "total_turns": 458,
             "tts_readiness_rate": 1.0
@@ -154,24 +154,24 @@
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.436,
+          "guided_p_at_1": 0.423,
           "guided_top_3_recall": 0.962,
           "name": "speaker_a",
-          "p_at_1_gain": 0.141,
+          "p_at_1_gain": 0.128,
           "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.465,
+          "guided_p_at_1": 0.452,
           "guided_top_3_recall": 0.974,
           "name": "no_emotion",
-          "p_at_1_gain": 0.151,
+          "p_at_1_gain": 0.138,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.511,
+          "guided_p_at_1": 0.5,
           "guided_top_3_recall": 0.981,
           "name": "speaker_b",
-          "p_at_1_gain": 0.161,
+          "p_at_1_gain": 0.15,
           "segment": "next_speaker"
         },
         {
@@ -189,17 +189,17 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.738,
+          "guided_p_at_1": 0.705,
           "guided_top_3_recall": 0.918,
           "name": "commissive",
-          "p_at_1_gain": 0.525,
+          "p_at_1_gain": 0.492,
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.816,
+          "guided_p_at_1": 0.797,
           "guided_top_3_recall": 0.991,
           "name": "inform",
-          "p_at_1_gain": 0.208,
+          "p_at_1_gain": 0.189,
           "segment": "expected_act"
         }
       ],
@@ -212,7 +212,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.436,
+            "p_at_1": 0.423,
             "top_3_recall": 0.962,
             "total_turns": 234,
             "tts_readiness_rate": 1.0
@@ -226,7 +226,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.511,
+            "p_at_1": 0.5,
             "top_3_recall": 0.981,
             "total_turns": 266,
             "tts_readiness_rate": 1.0
@@ -272,7 +272,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.875,
+            "p_at_1": 0.861,
             "top_3_recall": 0.995,
             "total_turns": 208,
             "tts_readiness_rate": 1.0
@@ -344,7 +344,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.492,
+            "p_at_1": 0.484,
             "top_3_recall": 0.969,
             "total_turns": 419,
             "tts_readiness_rate": 1.0
@@ -409,11 +409,18 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.492,
+          "guided_p_at_1": 0.484,
           "guided_top_3_recall": 0.969,
           "name": "no_emotion",
-          "p_at_1_gain": 0.127,
+          "p_at_1_gain": 0.119,
           "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.493,
+          "guided_top_3_recall": 0.959,
+          "name": "speaker_b",
+          "p_at_1_gain": 0.127,
+          "segment": "next_speaker"
         },
         {
           "guided_p_at_1": 0.5,
@@ -421,13 +428,6 @@
           "name": "anger",
           "p_at_1_gain": 0.333,
           "segment": "expected_emotion"
-        },
-        {
-          "guided_p_at_1": 0.504,
-          "guided_top_3_recall": 0.959,
-          "name": "speaker_b",
-          "p_at_1_gain": 0.138,
-          "segment": "next_speaker"
         },
         {
           "guided_p_at_1": 0.513,
@@ -474,7 +474,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.504,
+            "p_at_1": 0.493,
             "top_3_recall": 0.959,
             "total_turns": 268,
             "tts_readiness_rate": 1.0
@@ -520,7 +520,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.86,
+            "p_at_1": 0.823,
             "top_3_recall": 1.0,
             "total_turns": 299,
             "tts_readiness_rate": 1.0
@@ -534,7 +534,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.025,
+            "p_at_1": 0.033,
             "top_3_recall": 1.0,
             "total_turns": 120,
             "tts_readiness_rate": 1.0
@@ -578,7 +578,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.724,
+            "p_at_1": 0.711,
             "top_3_recall": 0.974,
             "total_turns": 76,
             "tts_readiness_rate": 1.0
@@ -592,7 +592,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.574,
+            "p_at_1": 0.553,
             "top_3_recall": 1.0,
             "total_turns": 385,
             "tts_readiness_rate": 1.0
@@ -620,7 +620,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.316,
+            "p_at_1": 0.263,
             "top_3_recall": 1.0,
             "total_turns": 19,
             "tts_readiness_rate": 1.0
@@ -636,52 +636,52 @@
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.025,
+          "guided_p_at_1": 0.033,
           "guided_top_3_recall": 1.0,
           "name": "question",
-          "p_at_1_gain": -0.008,
+          "p_at_1_gain": 0.0,
           "segment": "expected_act"
         },
         {
-          "guided_p_at_1": 0.316,
+          "guided_p_at_1": 0.263,
           "guided_top_3_recall": 1.0,
           "name": "surprise",
-          "p_at_1_gain": 0.105,
+          "p_at_1_gain": 0.052,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.527,
+          "guided_p_at_1": 0.509,
           "guided_top_3_recall": 1.0,
           "name": "speaker_a",
-          "p_at_1_gain": 0.129,
+          "p_at_1_gain": 0.111,
           "segment": "next_speaker"
         },
         {
-          "guided_p_at_1": 0.574,
+          "guided_p_at_1": 0.553,
           "guided_top_3_recall": 1.0,
           "name": "no_emotion",
-          "p_at_1_gain": 0.125,
+          "p_at_1_gain": 0.104,
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.65,
+          "guided_p_at_1": 0.628,
           "guided_top_3_recall": 0.993,
           "name": "speaker_b",
-          "p_at_1_gain": 0.117,
+          "p_at_1_gain": 0.095,
           "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.711,
+          "guided_top_3_recall": 0.974,
+          "name": "happiness",
+          "p_at_1_gain": 0.106,
+          "segment": "expected_emotion"
         },
         {
           "guided_p_at_1": 0.714,
           "guided_top_3_recall": 1.0,
           "name": "anger",
           "p_at_1_gain": 0.0,
-          "segment": "expected_emotion"
-        },
-        {
-          "guided_p_at_1": 0.724,
-          "guided_top_3_recall": 0.974,
-          "name": "happiness",
-          "p_at_1_gain": 0.119,
           "segment": "expected_emotion"
         },
         {
@@ -692,10 +692,10 @@
           "segment": "expected_emotion"
         },
         {
-          "guided_p_at_1": 0.86,
+          "guided_p_at_1": 0.823,
           "guided_top_3_recall": 1.0,
           "name": "inform",
-          "p_at_1_gain": 0.138,
+          "p_at_1_gain": 0.101,
           "segment": "expected_act"
         }
       ],
@@ -708,7 +708,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.527,
+            "p_at_1": 0.509,
             "top_3_recall": 1.0,
             "total_turns": 226,
             "tts_readiness_rate": 1.0
@@ -722,7 +722,7 @@
             "tts_readiness_rate": 1.0
           },
           "guided": {
-            "p_at_1": 0.65,
+            "p_at_1": 0.628,
             "top_3_recall": 0.993,
             "total_turns": 274,
             "tts_readiness_rate": 1.0
@@ -741,27 +741,27 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.476,
+      "p_at_1": 0.464,
       "top_3_recall": 0.972,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     }
   },
   "efficacy": {
-    "dev_p_at_1_gain": 0.152,
-    "dev_test_p_at_1_gap": 0.012,
+    "dev_p_at_1_gain": 0.14,
+    "dev_test_p_at_1_gap": 0.006,
     "dev_top_3_recall_gain": 0.116,
     "dev_tts_readiness_gain": 0.0,
-    "test_p_at_1_gain": 0.14,
+    "test_p_at_1_gain": 0.134,
     "test_top_3_recall_gain": 0.112,
     "test_tts_readiness_gain": 0.0,
-    "train_p_at_1_gain": 0.122,
-    "train_test_p_at_1_gap": -0.018,
+    "train_p_at_1_gain": 0.102,
+    "train_test_p_at_1_gap": -0.032,
     "train_top_3_recall_gain": 0.076,
     "train_tts_readiness_gain": 0.0
   },
   "guidance_delta": {
-    "improved_turn_count": 76,
+    "improved_turn_count": 73,
     "improved_turns": [
       "dailydialog-test-0001-003",
       "dailydialog-test-0001-005",
@@ -804,8 +804,6 @@
       "dailydialog-test-0031-003",
       "dailydialog-test-0031-007",
       "dailydialog-test-0033-002",
-      "dailydialog-test-0035-007",
-      "dailydialog-test-0035-009",
       "dailydialog-test-0037-001",
       "dailydialog-test-0037-003",
       "dailydialog-test-0037-005",
@@ -813,7 +811,6 @@
       "dailydialog-test-0037-011",
       "dailydialog-test-0038-002",
       "dailydialog-test-0041-002",
-      "dailydialog-test-0044-005",
       "dailydialog-test-0045-003",
       "dailydialog-test-0046-003",
       "dailydialog-test-0046-006",
@@ -1066,7 +1063,9 @@
       "dailydialog-test-0035-004",
       "dailydialog-test-0035-005",
       "dailydialog-test-0035-006",
+      "dailydialog-test-0035-007",
       "dailydialog-test-0035-008",
+      "dailydialog-test-0035-009",
       "dailydialog-test-0035-010",
       "dailydialog-test-0035-011",
       "dailydialog-test-0036-001",
@@ -1137,6 +1136,7 @@
       "dailydialog-test-0044-002",
       "dailydialog-test-0044-003",
       "dailydialog-test-0044-004",
+      "dailydialog-test-0044-005",
       "dailydialog-test-0044-006",
       "dailydialog-test-0045-001",
       "dailydialog-test-0045-002",
@@ -1290,20 +1290,135 @@
     "vocabulary_size": 1305
   },
   "selected_variant": {
+    "cross_validation": {
+      "fold_count": 5,
+      "folds": [
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.47,
+            "top_3_recall": 0.92,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.56,
+            "top_3_recall": 0.99,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 1,
+          "p_at_1_gain": 0.09,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.07,
+          "validation_turns": 100
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.42,
+            "top_3_recall": 0.91,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.52,
+            "top_3_recall": 1.0,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 2,
+          "p_at_1_gain": 0.1,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.09,
+          "validation_turns": 100
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.42,
+            "top_3_recall": 0.91,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.53,
+            "top_3_recall": 1.0,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 3,
+          "p_at_1_gain": 0.11,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.09,
+          "validation_turns": 100
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.53,
+            "top_3_recall": 0.9,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.61,
+            "top_3_recall": 0.99,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 4,
+          "p_at_1_gain": 0.08,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.09,
+          "validation_turns": 100
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.52,
+            "top_3_recall": 0.96,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.62,
+            "top_3_recall": 1.0,
+            "total_turns": 100,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 5,
+          "p_at_1_gain": 0.1,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.04,
+          "validation_turns": 100
+        }
+      ],
+      "mean_p_at_1_gain": 0.096,
+      "mean_top_3_recall_gain": 0.076,
+      "min_p_at_1_gain": 0.08,
+      "min_top_3_recall_gain": 0.04,
+      "segment_regression_count": 0
+    },
     "dev": {
       "median_latency_ms": 90,
-      "p_at_1": 0.476,
+      "p_at_1": 0.464,
       "top_3_recall": 0.972,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
     },
     "dev_segment_regressions": [],
-    "history_margin": 0.6,
+    "history_margin": 0.0,
     "learned_weight": 0.0,
-    "name": "act_rhythm_contextual_strict",
+    "name": "guarded_contextual_transition",
     "test": {
       "median_latency_ms": 90,
-      "p_at_1": 0.508,
+      "p_at_1": 0.502,
       "top_3_recall": 0.97,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1311,7 +1426,7 @@
     "test_segment_regressions": [],
     "train": {
       "median_latency_ms": 90,
-      "p_at_1": 0.594,
+      "p_at_1": 0.574,
       "top_3_recall": 0.996,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1323,7 +1438,7 @@
       "question"
     ],
     "transition_weight": 1.0,
-    "use_history_ranker": true
+    "use_history_ranker": false
   },
   "summary": {
     "dev_turns": 500,
@@ -1341,7 +1456,7 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.508,
+      "p_at_1": 0.502,
       "top_3_recall": 0.97,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1357,7 +1472,7 @@
     },
     "guided": {
       "median_latency_ms": 90,
-      "p_at_1": 0.594,
+      "p_at_1": 0.574,
       "top_3_recall": 0.996,
       "total_turns": 500,
       "tts_readiness_rate": 1.0
@@ -1374,6 +1489,129 @@
   },
   "variants": {
     "act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.58,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.57,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.15,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.66,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.24,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.64,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.538,
+                "candidate_p_at_1": 0.308,
+                "name": "commissive",
+                "p_at_1_delta": -0.23,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.63,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.144,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.11,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 1
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.504,
@@ -1409,6 +1647,129 @@
       "use_history_ranker": true
     },
     "act_rhythm_contextual_strict": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.57,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.54,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.12,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.033,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.033,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.54,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.12,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.63,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.64,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.12,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.112,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.1,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 1
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.476,
@@ -1444,6 +1805,152 @@
       "use_history_ranker": true
     },
     "contextual_hybrid_50": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.6,
+              "top_3_recall": 0.95,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.13,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.042,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.042,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.03,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.55,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.13,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.08,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.59,
+              "top_3_recall": 0.95,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.17,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.077,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.077,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.083,
+                "candidate_p_at_1": 0.042,
+                "name": "question",
+                "p_at_1_delta": -0.041,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.64,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.538,
+                "candidate_p_at_1": 0.462,
+                "name": "commissive",
+                "p_at_1_delta": -0.076,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.06,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.69,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.17,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.03,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.142,
+        "mean_top_3_recall_gain": 0.048,
+        "min_p_at_1_gain": 0.11,
+        "min_top_3_recall_gain": 0.03,
+        "segment_regression_count": 4
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.438,
@@ -1506,6 +2013,145 @@
       "use_history_ranker": false
     },
     "contextual_inform_overlay": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.61,
+              "top_3_recall": 0.95,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.14,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.042,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.042,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.03,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.44,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.02,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.033,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.033,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.083,
+                "candidate_p_at_1": 0.042,
+                "name": "question",
+                "p_at_1_delta": -0.041,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.01,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.56,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.03,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.01,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.58,
+              "top_3_recall": 0.97,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.06,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.01,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.068,
+        "mean_top_3_recall_gain": 0.012,
+        "min_p_at_1_gain": 0.02,
+        "min_top_3_recall_gain": 0.0,
+        "segment_regression_count": 3
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.416,
@@ -1538,6 +2184,152 @@
       "use_history_ranker": false
     },
     "contextual_transition": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.63,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.16,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.042,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.042,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.61,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.19,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.033,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.033,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.63,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.21,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.077,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.077,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.083,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.083,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.69,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.16,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.73,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.21,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.186,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.16,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 4
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.508,
@@ -1600,6 +2392,121 @@
       "use_history_ranker": false
     },
     "guarded_contextual_transition": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.56,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.61,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.08,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.62,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.096,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.08,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 0
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.464,
@@ -1635,6 +2542,121 @@
       "use_history_ranker": false
     },
     "heuristic": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.0,
+        "mean_top_3_recall_gain": 0.0,
+        "min_p_at_1_gain": 0.0,
+        "min_top_3_recall_gain": 0.0,
+        "segment_regression_count": 0
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.324,
@@ -1667,6 +2689,182 @@
       "use_history_ranker": false
     },
     "hybrid_25": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.44,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": -0.03,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.333,
+                "candidate_p_at_1": 0.167,
+                "name": "commissive",
+                "p_at_1_delta": -0.166,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.746,
+                "candidate_p_at_1": 0.644,
+                "name": "inform",
+                "p_at_1_delta": -0.102,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.02,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.41,
+              "top_3_recall": 0.88,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": -0.01,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.714,
+                "candidate_p_at_1": 0.607,
+                "name": "inform",
+                "p_at_1_delta": -0.107,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.03,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.38,
+              "top_3_recall": 0.86,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.04,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.077,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.077,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.638,
+                "candidate_p_at_1": 0.552,
+                "name": "inform",
+                "p_at_1_delta": -0.086,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.05,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.48,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": -0.05,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.538,
+                "candidate_p_at_1": 0.462,
+                "name": "commissive",
+                "p_at_1_delta": -0.076,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.807,
+                "candidate_p_at_1": 0.649,
+                "name": "inform",
+                "p_at_1_delta": -0.158,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.01,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.49,
+              "top_3_recall": 0.95,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": -0.03,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.71,
+                "candidate_p_at_1": 0.638,
+                "name": "inform",
+                "p_at_1_delta": -0.072,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.01,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": -0.032,
+        "mean_top_3_recall_gain": -0.02,
+        "min_p_at_1_gain": -0.05,
+        "min_top_3_recall_gain": -0.05,
+        "segment_regression_count": 8
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.254,
@@ -1743,6 +2941,182 @@
       "use_history_ranker": false
     },
     "hybrid_50": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.88,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.333,
+                "candidate_p_at_1": 0.167,
+                "name": "commissive",
+                "p_at_1_delta": -0.166,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.746,
+                "candidate_p_at_1": 0.695,
+                "name": "inform",
+                "p_at_1_delta": -0.051,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.04,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.86,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.714,
+                "candidate_p_at_1": 0.607,
+                "name": "inform",
+                "p_at_1_delta": -0.107,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.05,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.39,
+              "top_3_recall": 0.86,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.03,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.4,
+                "candidate_p_at_1": 0.0,
+                "name": "commissive",
+                "p_at_1_delta": -0.4,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.638,
+                "candidate_p_at_1": 0.603,
+                "name": "inform",
+                "p_at_1_delta": -0.035,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.05,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.89,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": -0.06,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.538,
+                "candidate_p_at_1": 0.231,
+                "name": "commissive",
+                "p_at_1_delta": -0.307,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.807,
+                "candidate_p_at_1": 0.667,
+                "name": "inform",
+                "p_at_1_delta": -0.14,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.01,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.01,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.71,
+                "candidate_p_at_1": 0.667,
+                "name": "inform",
+                "p_at_1_delta": -0.043,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": -0.016,
+        "mean_top_3_recall_gain": -0.03,
+        "min_p_at_1_gain": -0.06,
+        "min_top_3_recall_gain": -0.05,
+        "segment_regression_count": 8
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.246,
@@ -1805,6 +3179,196 @@
       "use_history_ranker": false
     },
     "hybrid_75": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.46,
+              "top_3_recall": 0.88,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": -0.01,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.333,
+                "candidate_p_at_1": 0.167,
+                "name": "commissive",
+                "p_at_1_delta": -0.166,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.746,
+                "candidate_p_at_1": 0.678,
+                "name": "inform",
+                "p_at_1_delta": -0.068,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.04,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.41,
+              "top_3_recall": 0.85,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": -0.01,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.111,
+                "candidate_p_at_1": 0.0,
+                "name": "commissive",
+                "p_at_1_delta": -0.111,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.714,
+                "candidate_p_at_1": 0.607,
+                "name": "inform",
+                "p_at_1_delta": -0.107,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.06,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.39,
+              "top_3_recall": 0.83,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.03,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.4,
+                "candidate_p_at_1": 0.0,
+                "name": "commissive",
+                "p_at_1_delta": -0.4,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.638,
+                "candidate_p_at_1": 0.603,
+                "name": "inform",
+                "p_at_1_delta": -0.035,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.08,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.45,
+              "top_3_recall": 0.87,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": -0.08,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.538,
+                "candidate_p_at_1": 0.154,
+                "name": "commissive",
+                "p_at_1_delta": -0.384,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.807,
+                "candidate_p_at_1": 0.649,
+                "name": "inform",
+                "p_at_1_delta": -0.158,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.03,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.94,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": -0.01,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.5,
+                "candidate_p_at_1": 0.0,
+                "name": "commissive",
+                "p_at_1_delta": -0.5,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.71,
+                "candidate_p_at_1": 0.681,
+                "name": "inform",
+                "p_at_1_delta": -0.029,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.02,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": -0.028,
+        "mean_top_3_recall_gain": -0.046,
+        "min_p_at_1_gain": -0.08,
+        "min_top_3_recall_gain": -0.08,
+        "segment_regression_count": 10
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.234,
@@ -1867,6 +3431,203 @@
       "use_history_ranker": false
     },
     "learned": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.88,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.333,
+                "candidate_p_at_1": 0.167,
+                "name": "commissive",
+                "p_at_1_delta": -0.166,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.746,
+                "candidate_p_at_1": 0.695,
+                "name": "inform",
+                "p_at_1_delta": -0.051,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.04,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.39,
+              "top_3_recall": 0.84,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": -0.03,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.111,
+                "candidate_p_at_1": 0.0,
+                "name": "commissive",
+                "p_at_1_delta": -0.111,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.714,
+                "candidate_p_at_1": 0.589,
+                "name": "inform",
+                "p_at_1_delta": -0.125,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.38,
+              "top_3_recall": 0.82,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.04,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.4,
+                "candidate_p_at_1": 0.2,
+                "name": "commissive",
+                "p_at_1_delta": -0.2,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.077,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.077,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.638,
+                "candidate_p_at_1": 0.569,
+                "name": "inform",
+                "p_at_1_delta": -0.069,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.45,
+              "top_3_recall": 0.86,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": -0.08,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.538,
+                "candidate_p_at_1": 0.077,
+                "name": "commissive",
+                "p_at_1_delta": -0.461,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.807,
+                "candidate_p_at_1": 0.632,
+                "name": "inform",
+                "p_at_1_delta": -0.175,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.04,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": -0.02,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.5,
+                "candidate_p_at_1": 0.0,
+                "name": "commissive",
+                "p_at_1_delta": -0.5,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.71,
+                "candidate_p_at_1": 0.652,
+                "name": "inform",
+                "p_at_1_delta": -0.058,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": -0.034,
+        "mean_top_3_recall_gain": -0.056,
+        "min_p_at_1_gain": -0.08,
+        "min_top_3_recall_gain": -0.09,
+        "segment_regression_count": 11
+      },
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.26,

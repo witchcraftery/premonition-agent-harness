@@ -7,6 +7,8 @@ from foresight_harness.conversation_probability import (
     build_probability_pack,
     ConversationGuidance,
     ConversationTurn,
+    conversation_bakeoff_variants,
+    cross_validate_conversation_variant,
     generate_conversation_branches,
     learn_conversation_guidance,
     load_dailydialog_split,
@@ -230,9 +232,21 @@ def test_conversation_act_ranker_bakeoff_selects_on_dev_and_scores_test():
     assert report["selected_variant"]["name"] in report["variants"]
     assert report["selected_variant"]["dev"]["p_at_1"] == 1.0
     assert report["selected_variant"]["test"]["p_at_1"] == 1.0
+    assert "cross_validation" in report["selected_variant"]
     assert report["test"]["guided"]["p_at_1"] > report["test"]["baseline"]["p_at_1"]
     assert report["guidance_delta"]["regressed_turns"] == []
     assert "expected_act" in report["analytics"]["test_segments"]
+
+
+def test_conversation_act_ranker_bakeoff_handles_single_train_turn():
+    report = run_conversation_act_ranker_bakeoff(
+        train_turns=(conversation_turn("train-q", "lanterncue details", "question"),),
+        dev_turns=(conversation_turn("dev-q", "lanterncue topic", "question"),),
+        test_turns=(conversation_turn("test-q", "lanterncue mystery", "question"),),
+        top_k=3,
+    )
+
+    assert report["selected_variant"]["cross_validation"]["fold_count"] == 0
 
 
 def test_transition_ranker_uses_observed_act_history():
@@ -398,6 +412,96 @@ def test_bakeoff_selection_rejects_large_train_dev_gap():
     selected = select_conversation_bakeoff_variant(variants)
 
     assert selected == "robust_candidate"
+
+
+def test_cross_validate_conversation_variant_reports_fold_stability():
+    turns = (
+        conversation_turn(
+            "fold-a-1",
+            "The agenda is ready.",
+            "question",
+            observed_acts=("inform", "question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "fold-a-2",
+            "The checklist is ready.",
+            "question",
+            observed_acts=("inform", "question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "fold-b-1",
+            "Anything else?",
+            "inform",
+            observed_acts=("commissive", "inform", "directive"),
+        ),
+        conversation_turn(
+            "fold-b-2",
+            "Can you continue?",
+            "inform",
+            observed_acts=("question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "fold-c-1",
+            "The package arrived.",
+            "question",
+            observed_acts=("inform",),
+        ),
+        conversation_turn(
+            "fold-c-2",
+            "The package arrived.",
+            "question",
+            observed_acts=("inform",),
+        ),
+    )
+    variant = next(
+        row
+        for row in conversation_bakeoff_variants()
+        if row["name"] == "act_rhythm_contextual_strict"
+    )
+
+    report = cross_validate_conversation_variant(
+        turns,
+        variant,
+        fold_count=3,
+        top_k=3,
+    )
+
+    assert report["fold_count"] == 3
+    assert len(report["folds"]) == 3
+    assert "mean_p_at_1_gain" in report
+    assert "min_p_at_1_gain" in report
+    assert "segment_regression_count" in report
+
+
+def test_bakeoff_selection_prefers_cross_validated_stability():
+    variants = {
+        "unstable_dev_winner": {
+            "learned_weight": 0.0,
+            "train": {"p_at_1": 0.58, "top_3_recall": 1.0},
+            "dev": {"p_at_1": 0.6, "top_3_recall": 1.0},
+            "dev_segment_regressions": [],
+            "cross_validation": {
+                "mean_p_at_1_gain": 0.04,
+                "min_p_at_1_gain": -0.1,
+                "segment_regression_count": 0,
+            },
+        },
+        "stable_candidate": {
+            "learned_weight": 0.0,
+            "train": {"p_at_1": 0.57, "top_3_recall": 1.0},
+            "dev": {"p_at_1": 0.56, "top_3_recall": 1.0},
+            "dev_segment_regressions": [],
+            "cross_validation": {
+                "mean_p_at_1_gain": 0.02,
+                "min_p_at_1_gain": 0.0,
+                "segment_regression_count": 0,
+            },
+        },
+    }
+
+    selected = select_conversation_bakeoff_variant(variants)
+
+    assert selected == "stable_candidate"
 
 
 def test_conversation_train_dev_test_loop_blocks_act_segment_regression():

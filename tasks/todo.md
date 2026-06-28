@@ -353,3 +353,22 @@ Verification:
 - The strict act-rhythm variant improved beyond `guarded_contextual_transition`, which had validation `p_at_1=0.464` and held-out test `p_at_1=0.502`.
 - No act segment regressed on validation or test. Held-out guidance delta: `76` improved turns and `6` regressed turns.
 - Diagnostic loose act-rhythm variant improved validation `question` top-1 from `0.040` to `0.136`, but its train/dev gap was too wide to promote; next lever is cross-validated protected-act specialization.
+
+## Cross-Validated Protected-Act Specialists
+
+- [x] Add internal cross-validation diagnostics for conversation bake-off variants.
+- [x] Require selector support for cross-validated stability before promoting specialist variants.
+- [x] Report cross-validation mean/min gains and segment regressions for protected-act specialists.
+- [x] Rerun the DailyDialog bake-off and compare selected behavior against `act_rhythm_contextual_strict`.
+- [x] Document whether cross-validation improves reliability, changes selected behavior, or mainly adds transparency.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py -v` failed during collection because `cross_validate_conversation_variant` did not exist.
+- Selector red check: `python3 -m pytest tests/test_conversation_probability.py::test_conversation_act_ranker_bakeoff_selects_on_dev_and_scores_test -v` failed because the selected variant did not report cross-validation evidence.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 23 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json`: completed.
+- Selected variant: `guarded_contextual_transition`; validation `p_at_1` improved from `0.324` to `0.464`, held-out test `p_at_1` improved from `0.368` to `0.502`, and held-out test `top_3_recall` improved from `0.858` to `0.970`.
+- Selected cross-validation: mean `p_at_1` gain `0.096`, minimum fold gain `0.080`, mean `top_3_recall` gain `0.076`, minimum fold gain `0.040`, and `0` segment regressions.
+- Diagnostic strict act-rhythm variant: held-out test `p_at_1=0.508`, cross-validation mean `p_at_1` gain `0.112`, and minimum fold gain `0.100`, but `1` internal segment regression, so it was not promoted.
+- Result: cross-validation improved reliability and transparency, and changed selected behavior back to the safer guarded contextual variant.
