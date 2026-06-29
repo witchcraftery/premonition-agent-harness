@@ -448,3 +448,20 @@ Verification:
 - Selected 5k variant: `protected_act_rhythm_contextual`; held-out test `p_at_1` improved from `0.368` to `0.515`, held-out top-3 recall improved from `0.863` to `0.977`, cross-validation mean gain `0.108`, minimum fold gain `0.099`, and `0` cross-fold segment regressions.
 - Segment result: held-out `question` top-1 improved from `0.021` to `0.123`, and held-out `directive` top-1 improved from `0.076` to `0.115`, with no held-out act-segment regressions.
 - Result: scaling strengthened the specialist from question-only at 2k to protected directive+question at 5k. Next lever is scaling as far as validation/test split size allows, then adding question-specific evidence beyond act history.
+
+## Full-Test-Depth DailyDialog Scale-Up
+
+- [x] Export balanced 6,740-turn DailyDialog train/dev/test samples.
+- [x] Run the same act-ranker bake-off at full test-split depth.
+- [x] Compare selected variant, held-out score, cross-fold stability, and act-segment regressions against the 5k result.
+- [x] Document whether the protected specialist keeps strengthening or starts to plateau.
+- [x] Commit and push reproducible full-depth artifacts if the run is useful.
+
+Verification:
+
+- Exported balanced full-test-depth samples: `data/dailydialog_train_6740_sample.jsonl`, `data/dailydialog_validation_6740_sample.jsonl`, and `data/dailydialog_test_6740_sample.jsonl`.
+- `foresight-replay --conversation-train-input data/dailydialog_train_6740_sample.jsonl --conversation-dev-input data/dailydialog_validation_6740_sample.jsonl --conversation-test-input data/dailydialog_test_6740_sample.jsonl --conversation-bakeoff-report runs/dailydialog_6740_act_ranker_bakeoff.json`: completed.
+- Selected full-depth variant: `safe_question_act_rhythm_contextual`; held-out test `p_at_1` improved from `0.408` to `0.541`, held-out top-3 recall improved from `0.881` to `0.982`, cross-validation mean gain `0.104`, minimum fold gain `0.083`, and `0` cross-fold segment regressions.
+- Segment result: held-out `question` top-1 improved from `0.026` to `0.134`, and held-out `directive` top-1 stayed at `0.077`, with no held-out act-segment regressions.
+- Diagnostic note: `protected_act_rhythm_contextual` reached a slightly higher held-out `p_at_1=0.542`, but had tiny `directive` regressions on dev, held-out test, and internal folds, so it was not promoted.
+- Result: scaling to full test depth improved the selected safe specialist score, but the broader protected specialist started to plateau against the directive guard. Next lever is adding question-specific evidence beyond act history.
