@@ -26,6 +26,8 @@ from foresight_harness.conversation_probability import (
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
     response_mode_bakeoff_variants,
+    response_mode_background_recovery_evaluation,
+    response_mode_background_recovery_policy,
     response_mode_draft_quality_score,
     response_mode_match_grade,
     response_mode_probability_pack_policy,
@@ -420,6 +422,8 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "background_preparation" in report["probability_pack_policy"]
     assert "probability_pack_replay" in report
     assert "prepared_hit_rate" in report["probability_pack_replay"]
+    assert "probability_pack_replay_baseline" in report
+    assert "background_recovery_policy" in report
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():
@@ -1009,6 +1013,181 @@ def test_response_mode_probability_pack_replay_reports_per_mode_quality():
     assert reassure_segment["average_quality_score"] == 1.0
     assert ask_segment["first_speech_hit_rate"] == 1.0
     assert ask_segment["median_latency_saved_ms"] == 560
+
+
+def test_response_mode_probability_pack_replay_counts_background_recovery_hits():
+    disclose_turn = conversation_turn(
+        "disclose-recovery-turn",
+        "I feel alone in this.",
+        "inform",
+        expected_response_mode="disclose",
+    )
+    policy = {
+        "first_speech_variant": "response_mode_hybrid_75",
+        "first_speech_delivery": "confirm_before_delivery",
+        "background_readiness_variant": "calibrated_minority_specialist_coverage",
+        "background_preparation": "prewarm_tts",
+        "confirmation_mode": "confirm_first_speech_then_stream_prepared_background",
+    }
+    pack = build_response_mode_probability_pack(
+        disclose_turn,
+        first_speech_branches=(
+            response_mode_branch("ask_followup", "response_mode_hybrid_75", 0.7),
+        ),
+        background_readiness_branches=(
+            response_mode_branch("ask_followup", "calibrated_minority_specialist_coverage", 0.5),
+            response_mode_branch("reassure", "calibrated_minority_specialist_coverage", 0.49),
+        ),
+        background_recovery_branches=(
+            response_mode_branch("disclose", "learned_response_mode", 0.41),
+        ),
+        policy=policy,
+    )
+
+    summary = score_response_mode_probability_pack_replay(
+        (disclose_turn,),
+        (pack,),
+        prepared_latency_ms=90,
+    )
+
+    assert summary["background_hit_rate"] == 1.0
+    assert summary["background_recovery_hit_rate"] == 1.0
+    assert (
+        summary["segments"]["expected_response_mode"]["disclose"][
+            "background_recovery_hit_rate"
+        ]
+        == 1.0
+    )
+
+
+def test_response_mode_background_recovery_policy_targets_zero_hit_modes_only():
+    replay_summary = {
+        "average_quality_score": 0.974,
+        "quality_ready_rate": 0.546,
+        "first_speech_hit_rate": 0.217,
+        "segments": {
+            "expected_response_mode": {
+                "ask_followup": {
+                    "prepared_hit_rate": 0.833,
+                    "quality_ready_rate": 0.833,
+                },
+                "disclose": {
+                    "prepared_hit_rate": 0.0,
+                    "quality_ready_rate": 0.0,
+                },
+                "inform": {
+                    "prepared_hit_rate": 0.0,
+                    "quality_ready_rate": 0.0,
+                },
+                "other": {
+                    "prepared_hit_rate": 0.0,
+                    "quality_ready_rate": 0.0,
+                },
+                "reassure": {
+                    "prepared_hit_rate": 1.0,
+                    "quality_ready_rate": 0.993,
+                },
+                "suggest": {
+                    "prepared_hit_rate": 0.651,
+                    "quality_ready_rate": 0.651,
+                },
+                "validate": {
+                    "prepared_hit_rate": 1.0,
+                    "quality_ready_rate": 0.811,
+                },
+            }
+        },
+    }
+
+    policy = response_mode_background_recovery_policy(replay_summary)
+
+    assert policy["target_modes"] == ["disclose", "inform", "other"]
+    assert policy["preparation_role"] == "background_recovery"
+    assert policy["first_speech_locked"] is True
+    assert policy["quality_floor"] == 0.974
+
+
+def test_response_mode_background_recovery_policy_uses_best_top_3_variants():
+    replay_summary = {
+        "average_quality_score": 0.974,
+        "quality_ready_rate": 0.546,
+        "first_speech_hit_rate": 0.217,
+        "segments": {
+            "expected_response_mode": {
+                "disclose": {"prepared_hit_rate": 0.0},
+                "inform": {"prepared_hit_rate": 0.0},
+                "reassure": {"prepared_hit_rate": 1.0},
+            }
+        },
+    }
+    coverage_projection = {
+        "expected_response_mode": {
+            "disclose": {
+                "best_top_3_variant": "learned_response_mode",
+                "best_top_3_gain": 0.449,
+            },
+            "inform": {
+                "best_top_3_variant": "balanced_response_mode_50",
+                "best_top_3_gain": 0.739,
+            },
+            "reassure": {
+                "best_top_3_variant": "calibrated_minority_specialist_coverage",
+                "best_top_3_gain": 0.305,
+            },
+        }
+    }
+
+    policy = response_mode_background_recovery_policy(
+        replay_summary,
+        coverage_projection=coverage_projection,
+    )
+
+    assert policy["target_modes"] == ["disclose", "inform"]
+    assert policy["mode_variants"] == {
+        "disclose": "learned_response_mode",
+        "inform": "balanced_response_mode_50",
+    }
+
+
+def test_response_mode_background_recovery_evaluation_blocks_quality_drop():
+    baseline = {
+        "prepared_hit_rate": 0.577,
+        "first_speech_hit_rate": 0.217,
+        "average_quality_score": 0.974,
+        "segments": {
+            "expected_response_mode": {
+                "disclose": {"prepared_hit_rate": 0.0},
+                "inform": {"prepared_hit_rate": 0.0},
+            }
+        },
+    }
+    candidate = {
+        "prepared_hit_rate": 0.843,
+        "first_speech_hit_rate": 0.217,
+        "average_quality_score": 0.955,
+        "segments": {
+            "expected_response_mode": {
+                "disclose": {"prepared_hit_rate": 0.858},
+                "inform": {"prepared_hit_rate": 0.812},
+            }
+        },
+    }
+    policy = {
+        "target_modes": ["disclose", "inform"],
+        "quality_floor": 0.974,
+        "first_speech_locked": True,
+    }
+
+    evaluation = response_mode_background_recovery_evaluation(
+        baseline,
+        candidate,
+        policy,
+    )
+
+    assert evaluation["promoted"] is False
+    assert evaluation["quality_floor_met"] is False
+    assert evaluation["target_modes_improved"] is True
+    assert evaluation["first_speech_preserved"] is True
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():

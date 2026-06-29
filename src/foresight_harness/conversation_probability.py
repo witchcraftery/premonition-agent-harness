@@ -848,6 +848,7 @@ def build_response_mode_probability_pack(
     background_readiness_branches: tuple[dict[str, object], ...],
     policy: dict[str, object],
     top_k: int = 3,
+    background_recovery_branches: tuple[dict[str, object], ...] = tuple(),
 ) -> ConversationProbabilityPack:
     if top_k <= 0:
         raise ValueError("top_k must be positive")
@@ -859,6 +860,7 @@ def build_response_mode_probability_pack(
     top_branches = response_mode_probability_pack_branches(
         first_speech_branches=first_speech_branches,
         background_readiness_branches=background_readiness_branches,
+        background_recovery_branches=background_recovery_branches,
         policy=policy,
         top_k=top_k,
     )
@@ -895,6 +897,7 @@ def response_mode_probability_pack_branches(
     background_readiness_branches: tuple[dict[str, object], ...],
     policy: dict[str, object],
     top_k: int,
+    background_recovery_branches: tuple[dict[str, object], ...] = tuple(),
 ) -> tuple[dict[str, object], ...]:
     first = response_mode_pack_branch(
         first_speech_branches[0],
@@ -920,6 +923,20 @@ def response_mode_probability_pack_branches(
         selected_modes.add(mode)
         if len(selected) >= top_k:
             break
+
+    for branch in background_recovery_branches:
+        mode = str(branch["response_mode"])
+        if mode in selected_modes:
+            continue
+        selected.append(
+            response_mode_pack_branch(
+                branch,
+                rank=len(selected) + 1,
+                preparation_role="background_recovery",
+                source_variant=str(branch.get("scoring_variant", "background_recovery")),
+            )
+        )
+        selected_modes.add(mode)
 
     return tuple(selected)
 
@@ -986,7 +1003,12 @@ def summarize_response_mode_probability_pack_rows(
     semantic_hits = sum(row["match_grade"] == "semantic_equivalent" for row in rows)
     background_hits = sum(
         row["match_grade"] != "miss"
-        and row["preparation_role"] == "background_readiness"
+        and row["preparation_role"] in {"background_readiness", "background_recovery"}
+        for row in rows
+    )
+    background_recovery_hits = sum(
+        row["match_grade"] != "miss"
+        and row["preparation_role"] == "background_recovery"
         for row in rows
     )
     first_speech_hits = sum(
@@ -1007,6 +1029,7 @@ def summarize_response_mode_probability_pack_rows(
         "exact_prepared_hit_rate": round(exact_hits / total, 3),
         "semantic_prepared_hit_rate": round(semantic_hits / total, 3),
         "background_hit_rate": round(background_hits / total, 3),
+        "background_recovery_hit_rate": round(background_recovery_hits / total, 3),
         "first_speech_hit_rate": round(first_speech_hits / total, 3),
         "average_quality_score": (
             round(sum(quality_scores) / len(quality_scores), 3)
@@ -1106,6 +1129,92 @@ def response_mode_draft_quality_score(
     return round(min(1.0, base_score + (0.35 * overlap)), 3)
 
 
+def response_mode_background_recovery_policy(
+    replay_summary: dict[str, object],
+    coverage_projection: dict[str, object] | None = None,
+) -> dict[str, object]:
+    mode_segments = dict(
+        dict(replay_summary["segments"])["expected_response_mode"]  # type: ignore[index]
+    )
+    target_modes = [
+        mode
+        for mode, segment in sorted(mode_segments.items())
+        if float(dict(segment)["prepared_hit_rate"]) == 0.0
+    ]
+    mode_variants: dict[str, str] = {}
+    if coverage_projection is not None:
+        projection_modes = dict(
+            dict(coverage_projection)["expected_response_mode"]  # type: ignore[index]
+        )
+        for mode in target_modes:
+            projection = dict(projection_modes.get(mode, {}))
+            if float(projection.get("best_top_3_gain", 0.0)) > 0:
+                mode_variants[mode] = str(projection["best_top_3_variant"])
+    return {
+        "target_modes": target_modes,
+        "mode_variants": mode_variants,
+        "preparation_role": "background_recovery",
+        "first_speech_locked": True,
+        "quality_floor": float(replay_summary["average_quality_score"]),
+    }
+
+
+def response_mode_background_recovery_evaluation(
+    baseline_replay: dict[str, object],
+    candidate_replay: dict[str, object],
+    recovery_policy: dict[str, object],
+) -> dict[str, object]:
+    baseline_segments = dict(
+        dict(baseline_replay["segments"])["expected_response_mode"]  # type: ignore[index]
+    )
+    candidate_segments = dict(
+        dict(candidate_replay["segments"])["expected_response_mode"]  # type: ignore[index]
+    )
+    target_modes = [str(mode) for mode in recovery_policy.get("target_modes", ())]
+    target_mode_results = {}
+    for mode in target_modes:
+        baseline_segment = dict(baseline_segments.get(mode, {}))
+        candidate_segment = dict(candidate_segments.get(mode, {}))
+        baseline_hit_rate = float(baseline_segment.get("prepared_hit_rate", 0.0))
+        candidate_hit_rate = float(candidate_segment.get("prepared_hit_rate", 0.0))
+        target_mode_results[mode] = {
+            "baseline_prepared_hit_rate": baseline_hit_rate,
+            "candidate_prepared_hit_rate": candidate_hit_rate,
+            "prepared_hit_gain": round(candidate_hit_rate - baseline_hit_rate, 3),
+        }
+
+    target_modes_improved = bool(target_mode_results) and all(
+        float(result["prepared_hit_gain"]) > 0
+        for result in target_mode_results.values()
+    )
+    first_speech_preserved = float(candidate_replay["first_speech_hit_rate"]) >= float(
+        baseline_replay["first_speech_hit_rate"]
+    )
+    quality_floor_met = float(candidate_replay["average_quality_score"]) >= float(
+        recovery_policy["quality_floor"]
+    )
+    promoted = target_modes_improved and first_speech_preserved and quality_floor_met
+    return {
+        "promoted": promoted,
+        "reason": (
+            "recovery passed target-mode, first-speech, and quality gates"
+            if promoted
+            else "recovery remains diagnostic because a promotion gate failed"
+        ),
+        "target_modes_improved": target_modes_improved,
+        "first_speech_preserved": first_speech_preserved,
+        "quality_floor_met": quality_floor_met,
+        "quality_floor": float(recovery_policy["quality_floor"]),
+        "baseline_average_quality_score": float(
+            baseline_replay["average_quality_score"]
+        ),
+        "candidate_average_quality_score": float(
+            candidate_replay["average_quality_score"]
+        ),
+        "target_mode_results": target_mode_results,
+    }
+
+
 def build_response_mode_probability_packs(
     turns: tuple[ConversationTurn, ...],
     policy: dict[str, object],
@@ -1114,6 +1223,7 @@ def build_response_mode_probability_packs(
     balanced_prior_ranker: ResponseModeRanker,
     specialists: dict[str, ResponseModeSpecialist],
     top_k: int,
+    recovery_policy: dict[str, object] | None = None,
 ) -> tuple[ConversationProbabilityPack, ...]:
     first_speech_variant = variants[str(policy["first_speech_variant"])]
     background_variant = variants[str(policy["background_readiness_variant"])]
@@ -1138,9 +1248,61 @@ def build_response_mode_probability_packs(
             ),
             policy=policy,
             top_k=top_k,
+            background_recovery_branches=response_mode_recovery_branches(
+                turn,
+                recovery_policy=recovery_policy,
+                variants=variants,
+                ranker=ranker,
+                balanced_prior_ranker=balanced_prior_ranker,
+                specialists=specialists,
+                top_k=top_k,
+            ),
         )
         for turn in turns
     )
+
+
+def response_mode_recovery_branches(
+    turn: ConversationTurn,
+    recovery_policy: dict[str, object] | None,
+    variants: dict[str, dict[str, object]],
+    ranker: ResponseModeRanker,
+    balanced_prior_ranker: ResponseModeRanker,
+    specialists: dict[str, ResponseModeSpecialist],
+    top_k: int,
+) -> tuple[dict[str, object], ...]:
+    if not recovery_policy:
+        return tuple()
+
+    branches: list[dict[str, object]] = []
+    mode_variants = {
+        str(mode): str(variant)
+        for mode, variant in dict(recovery_policy.get("mode_variants", {})).items()
+    }
+    for mode in recovery_policy.get("target_modes", ()):
+        target_mode = str(mode)
+        variant_name = mode_variants.get(target_mode)
+        if not variant_name or variant_name not in variants:
+            continue
+        candidate_branches = response_mode_variant_branches(
+            turn,
+            variant=variants[variant_name],
+            ranker=ranker,
+            balanced_prior_ranker=balanced_prior_ranker,
+            specialists=specialists,
+            top_k=top_k,
+        )
+        match = next(
+            (
+                branch
+                for branch in candidate_branches
+                if str(branch["response_mode"]) == target_mode
+            ),
+            None,
+        )
+        if match:
+            branches.append(match)
+    return tuple(branches)
 
 
 def response_mode_variant_branches(
@@ -2714,6 +2876,27 @@ def run_response_mode_ranker_bakeoff(
         first_speech_variant_name=selected_name,
     )
     probability_pack_policy = response_mode_probability_pack_policy(recommendations)
+    coverage_projection = response_mode_coverage_projection(
+        variant_rows=variant_rows,
+        test_turns=test_turns,
+    )
+    baseline_probability_packs = build_response_mode_probability_packs(
+        test_turns,
+        policy=probability_pack_policy,
+        variants=variants,
+        ranker=ranker,
+        balanced_prior_ranker=balanced_prior_ranker,
+        specialists=specialists,
+        top_k=top_k,
+    )
+    baseline_probability_pack_replay = score_response_mode_probability_pack_replay(
+        test_turns,
+        baseline_probability_packs,
+    )
+    background_recovery_policy = response_mode_background_recovery_policy(
+        baseline_probability_pack_replay,
+        coverage_projection=coverage_projection,
+    )
     probability_packs = build_response_mode_probability_packs(
         test_turns,
         policy=probability_pack_policy,
@@ -2722,6 +2905,21 @@ def run_response_mode_ranker_bakeoff(
         balanced_prior_ranker=balanced_prior_ranker,
         specialists=specialists,
         top_k=top_k,
+        recovery_policy=background_recovery_policy,
+    )
+    recovery_candidate_replay = score_response_mode_probability_pack_replay(
+        test_turns,
+        probability_packs,
+    )
+    background_recovery_evaluation = response_mode_background_recovery_evaluation(
+        baseline_probability_pack_replay,
+        recovery_candidate_replay,
+        background_recovery_policy,
+    )
+    promoted_probability_pack_replay = (
+        recovery_candidate_replay
+        if bool(background_recovery_evaluation["promoted"])
+        else baseline_probability_pack_replay
     )
 
     return {
@@ -2745,10 +2943,11 @@ def run_response_mode_ranker_bakeoff(
         },
         "recommendations": recommendations,
         "probability_pack_policy": probability_pack_policy,
-        "probability_pack_replay": score_response_mode_probability_pack_replay(
-            test_turns,
-            probability_packs,
-        ),
+        "background_recovery_policy": background_recovery_policy,
+        "background_recovery_evaluation": background_recovery_evaluation,
+        "probability_pack_replay_baseline": baseline_probability_pack_replay,
+        "probability_pack_replay_recovery_candidate": recovery_candidate_replay,
+        "probability_pack_replay": promoted_probability_pack_replay,
         "promotion": response_mode_promotion_summary(
             selected_name=selected_name,
             baseline=variants["heuristic_response_mode"]["test"],
@@ -2791,10 +2990,7 @@ def run_response_mode_ranker_bakeoff(
                 selected_rows,
             ),
         },
-        "coverage_projection": response_mode_coverage_projection(
-            variant_rows=variant_rows,
-            test_turns=test_turns,
-        ),
+        "coverage_projection": coverage_projection,
         "specialist_diagnostics": response_mode_specialist_diagnostics(
             variant_rows=variant_rows,
             baseline_rows=test_baseline_rows,

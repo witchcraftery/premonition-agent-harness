@@ -536,10 +536,17 @@ Prepared-hit rate is `1.000` for `reassure` and `validate`, `0.833` for
 is `1.000`, with average draft quality `0.997`. The weak modes are now equally
 clear: `disclose`, `inform`, and `other` remain at `0.000` prepared-hit rate.
 Overall average quality on prepared hits is `0.974`, and quality-ready coverage
-is `0.546` of all held-out turns. Next lever: targeted background specialists
-for `disclose`, `inform`, and `other`, promoted only when they improve per-mode
-prepared hits without lowering aggregate quality or protected first-speech
-behavior.
+is `0.546` of all held-out turns.
+
+The zero-hit recovery pass uses diagnostic top-3 evidence only for background
+preparation while locking first speech to the safer selector. The recovery
+candidate lifts prepared-hit rate from `0.577` to `0.843` and preserves
+first-speech hit rate at `0.217`. It recovers all three previously blank modes:
+`disclose` moves to `0.858`, `inform` to `0.812`, and `other` to `0.723`
+prepared-hit rate. The gate correctly keeps this candidate diagnostic, not
+promoted, because average quality drops from `0.974` to `0.955`. The next lever
+is per-mode recovery calibration, especially improving `disclose` draft quality
+from `0.768`, so the broader recovery pack can clear the quality floor.
 
 ## Replay Data Format
 

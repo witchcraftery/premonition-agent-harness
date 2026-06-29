@@ -683,3 +683,28 @@ Verification:
 - Strong prepared modes: `reassure` and `validate` at `1.000` prepared-hit rate, `ask_followup` at `0.833`, and `suggest` at `0.651`.
 - Weak prepared modes: `disclose`, `inform`, and `other` remain at `0.000` prepared-hit rate.
 - Next lever: targeted background specialists for `disclose`, `inform`, and `other`, promoted only when they improve per-mode prepared hits without lowering aggregate quality or protected first-speech behavior.
+
+## Zero-Hit Background Specialist Recovery
+
+- [x] Add a protected background recovery policy for `disclose`, `inform`, and `other`.
+- [x] Require recovery to improve zero-hit prepared modes while preserving first-speech selector behavior.
+- [x] Report recovered zero-hit modes and any quality/protection regressions in the ESConv bake-off artifact.
+- [x] Rerun the ESConv benchmark and document whether zero-hit response modes become prepared.
+- [x] Update README/catalog/tracker with exact held-out results and the next lever.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_targets_zero_hit_modes_only -v` failed because `response_mode_background_recovery_policy` did not exist.
+- Red routing check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_uses_best_top_3_variants tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v` failed because the policy did not accept `coverage_projection` and the report had no baseline/recovery fields.
+- Red metric check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_probability_pack_replay_counts_background_recovery_hits -v` failed because background recovery hits were not counted as background hits.
+- Red promotion-gate check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_evaluation_blocks_quality_drop -v` failed because `response_mode_background_recovery_evaluation` did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 62 passed.
+- `python3 -m pytest -v`: 127 passed.
+- `git diff --check`: passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Baseline active pack replay stays at `prepared_hit_rate=0.577`, `average_quality_score=0.974`, `quality_ready_rate=0.546`, and `first_speech_hit_rate=0.217`.
+- Diagnostic recovery candidate reaches `prepared_hit_rate=0.843`, `quality_ready_rate=0.765`, and preserves `first_speech_hit_rate=0.217`.
+- Recovered target-mode prepared-hit rates: `disclose=0.858`, `inform=0.812`, and `other=0.723`.
+- Recovery is not promoted because average quality drops from `0.974` to `0.955`, missing the quality floor.
+- Next lever: per-mode recovery calibration, especially improving `disclose` draft quality from `0.768`, so the broader recovery pack can clear the quality gate.
