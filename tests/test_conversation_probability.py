@@ -8,8 +8,11 @@ from foresight_harness.conversation_probability import (
     ConversationGuidance,
     ConversationTurn,
     conversation_bakeoff_variants,
+    conversation_turn_to_dict,
     cross_validate_conversation_variant,
     generate_conversation_branches,
+    generate_response_mode_branches,
+    load_esconv_export,
     load_empatheticdialogues_export,
     learn_conversation_guidance,
     load_dailydialog_split,
@@ -18,12 +21,14 @@ from foresight_harness.conversation_probability import (
     run_conversation_act_ranker_bakeoff,
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
+    run_response_mode_ranker_bakeoff,
     score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
     train_conversation_act_ranker,
     train_conversation_history_ranker,
     train_conversation_question_evidence_ranker,
     train_conversation_transition_ranker,
+    train_response_mode_ranker,
     write_conversation_turns,
 )
 from foresight_harness.models import Message
@@ -186,6 +191,175 @@ def test_load_empatheticdialogues_export_detects_common_commitment_phrases(tmp_p
 
     assert turns[0].expected_act == "commissive"
     assert turns[1].expected_act == "commissive"
+
+
+def test_conversation_turn_round_trips_response_mode_fields():
+    turn = ConversationTurn(
+        turn_id="mode-001",
+        conversation=(Message(role="speaker_a", content="I feel overwhelmed."),),
+        next_speaker="speaker_b",
+        actual_next_utterance="That sounds really heavy.",
+        expected_act="inform",
+        expected_emotion="sadness",
+        expected_response_mode="validate",
+        observed_acts=("inform",),
+        observed_response_modes=("ask_followup",),
+    )
+
+    saved = conversation_turn_to_dict(turn)
+    loaded = ConversationTurn.from_dict(saved)
+
+    assert saved["expected_response_mode"] == "validate"
+    assert saved["observed_response_modes"] == ["ask_followup"]
+    assert loaded.expected_response_mode == "validate"
+    assert loaded.observed_response_modes == ("ask_followup",)
+
+
+def test_load_esconv_export_creates_response_mode_examples(tmp_path):
+    input_path = tmp_path / "ESConv.json"
+    input_path.write_text(
+        json.dumps(
+            [
+                {
+                    "emotion_type": "anxiety",
+                    "problem_type": "job crisis",
+                    "dialog": [
+                        {
+                            "speaker": "seeker",
+                            "annotation": {},
+                            "content": "I hate my job.",
+                        },
+                        {
+                            "speaker": "supporter",
+                            "annotation": {"strategy": "Question"},
+                            "content": "What makes it so stressful?",
+                        },
+                        {
+                            "speaker": "seeker",
+                            "annotation": {},
+                            "content": "The clients are in hard situations.",
+                        },
+                        {
+                            "speaker": "supporter",
+                            "annotation": {
+                                "strategy": "Reflection of feelings"
+                            },
+                            "content": "That sounds emotionally draining.",
+                        },
+                    ],
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    turns = load_esconv_export(input_path, split="train")
+
+    assert len(turns) == 2
+    assert turns[0].turn_id == "esconv-train-0001-001"
+    assert turns[0].next_speaker == "supporter"
+    assert turns[0].expected_response_mode == "ask_followup"
+    assert turns[0].expected_act == "question"
+    assert turns[0].expected_emotion == "fear"
+    assert turns[1].expected_response_mode == "validate"
+    assert turns[1].observed_response_modes == ("ask_followup",)
+
+
+def test_learned_response_mode_ranker_predicts_repeated_support_mode():
+    train_turns = (
+        conversation_turn(
+            "train-validate-1",
+            "drainingcue emotionally heavy",
+            "inform",
+            expected_response_mode="validate",
+        ),
+        conversation_turn(
+            "train-validate-2",
+            "drainingcue feels overwhelming",
+            "inform",
+            expected_response_mode="validate",
+        ),
+        conversation_turn(
+            "train-ask",
+            "unclear details",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    ranker = train_response_mode_ranker(train_turns)
+    test_turn = conversation_turn(
+        "test-validate",
+        "drainingcue hard day",
+        "inform",
+        expected_response_mode="validate",
+    )
+
+    branches = generate_response_mode_branches(test_turn, top_k=3, ranker=ranker)
+
+    assert branches[0]["response_mode"] == "validate"
+    assert branches[0]["scoring_variant"] == "learned_response_mode"
+
+
+def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
+    train_turns = (
+        conversation_turn(
+            "train-validate-1",
+            "drainingcue emotionally heavy",
+            "inform",
+            expected_response_mode="validate",
+        ),
+        conversation_turn(
+            "train-validate-2",
+            "drainingcue feels overwhelming",
+            "inform",
+            expected_response_mode="validate",
+        ),
+        conversation_turn(
+            "train-ask-1",
+            "unclear details",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    dev_turns = (
+        conversation_turn(
+            "dev-validate",
+            "drainingcue hard day",
+            "inform",
+            expected_response_mode="validate",
+        ),
+        conversation_turn(
+            "dev-ask",
+            "unclear plan",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    test_turns = (
+        conversation_turn(
+            "test-validate",
+            "drainingcue difficult moment",
+            "inform",
+            expected_response_mode="validate",
+        ),
+        conversation_turn(
+            "test-ask",
+            "unclear situation",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+
+    report = run_response_mode_ranker_bakeoff(
+        train_turns=train_turns,
+        dev_turns=dev_turns,
+        test_turns=test_turns,
+        top_k=3,
+    )
+
+    assert report["selected_variant"]["name"] in report["variants"]
+    assert report["selected_variant"]["test"]["p_at_1"] == 1.0
+    assert "expected_response_mode" in report["analytics"]["test_segments"]
 
 
 def test_build_probability_pack_prepares_speakable_tts_drafts():
@@ -1397,6 +1571,8 @@ def conversation_turn(
     expected_act: str,
     expected_emotion: str = "no_emotion",
     observed_acts: tuple[str, ...] = (),
+    expected_response_mode: str = "inform",
+    observed_response_modes: tuple[str, ...] = (),
 ) -> ConversationTurn:
     return ConversationTurn(
         turn_id=turn_id,
@@ -1405,5 +1581,7 @@ def conversation_turn(
         actual_next_utterance="Okay.",
         expected_act=expected_act,
         expected_emotion=expected_emotion,
+        expected_response_mode=expected_response_mode,
         observed_acts=observed_acts,
+        observed_response_modes=observed_response_modes,
     )

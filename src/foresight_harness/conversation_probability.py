@@ -90,6 +90,74 @@ ACT_TEMPLATES = {
     "commissive": "I can confirm the helpful action I am ready to take.",
 }
 
+RESPONSE_MODES = (
+    "ask_followup",
+    "validate",
+    "reassure",
+    "disclose",
+    "suggest",
+    "encourage",
+    "inform",
+    "commit",
+    "apologize",
+    "redirect",
+    "other",
+)
+
+BASE_RESPONSE_MODE_PRIORS = {
+    "ask_followup": 0.24,
+    "validate": 0.22,
+    "reassure": 0.2,
+    "suggest": 0.18,
+    "inform": 0.16,
+    "disclose": 0.12,
+    "encourage": 0.1,
+    "commit": 0.08,
+    "redirect": 0.07,
+    "apologize": 0.05,
+    "other": 0.04,
+}
+
+RESPONSE_MODE_TEMPLATES = {
+    "ask_followup": "I can ask one warm follow-up question.",
+    "validate": "I can reflect the feeling back clearly and gently.",
+    "reassure": "I can offer grounded reassurance without overpromising.",
+    "disclose": "I can share a brief relatable disclosure when it is useful.",
+    "suggest": "I can offer one practical suggestion.",
+    "encourage": "I can encourage the next small step.",
+    "inform": "I can provide relevant information.",
+    "commit": "I can commit to a helpful next action.",
+    "apologize": "I can acknowledge harm or frustration with care.",
+    "redirect": "I can redirect toward a safer or more useful path.",
+    "other": "I can keep a neutral supportive response ready.",
+}
+
+ESCONV_STRATEGY_RESPONSE_MODES = {
+    "question": "ask_followup",
+    "affirmation and reassurance": "reassure",
+    "reflection of feelings": "validate",
+    "restatement or paraphrasing": "validate",
+    "self-disclosure": "disclose",
+    "providing suggestions": "suggest",
+    "information": "inform",
+    "others": "other",
+    "other": "other",
+}
+
+ESCONV_EMOTION_MAP = {
+    "anger": "anger",
+    "anxiety": "fear",
+    "depression": "sadness",
+    "disgust": "disgust",
+    "fear": "fear",
+    "guilt": "sadness",
+    "jealousy": "anger",
+    "nervousness": "fear",
+    "pain": "sadness",
+    "sadness": "sadness",
+    "shame": "sadness",
+}
+
 
 @dataclass(frozen=True)
 class ConversationTurn:
@@ -99,7 +167,9 @@ class ConversationTurn:
     actual_next_utterance: str
     expected_act: str
     expected_emotion: str
+    expected_response_mode: str = "inform"
     observed_acts: tuple[str, ...] = tuple()
+    observed_response_modes: tuple[str, ...] = tuple()
     latency_budget_ms: int = 650
 
     @classmethod
@@ -111,7 +181,16 @@ class ConversationTurn:
             actual_next_utterance=str(row["actual_next_utterance"]),
             expected_act=str(row["expected_act"]),
             expected_emotion=str(row.get("expected_emotion", "no_emotion")),
+            expected_response_mode=str(
+                row.get(
+                    "expected_response_mode",
+                    response_mode_from_act(str(row["expected_act"])),
+                )
+            ),
             observed_acts=tuple(str(act) for act in row.get("observed_acts", [])),
+            observed_response_modes=tuple(
+                str(mode) for mode in row.get("observed_response_modes", [])
+            ),
             latency_budget_ms=int(row.get("latency_budget_ms", 650)),
         )
 
@@ -225,6 +304,35 @@ class ConversationQuestionEvidenceRanker:
 
 
 @dataclass(frozen=True)
+class ResponseModeRanker:
+    mode_log_priors: dict[str, float]
+    feature_log_likelihoods: dict[str, dict[str, float]]
+    default_feature_log_likelihoods: dict[str, float]
+    vocabulary: tuple[str, ...]
+    mode_counts: dict[str, int]
+
+    def score(self, turn: ConversationTurn) -> dict[str, float]:
+        features = conversation_features(turn)
+        return {
+            mode: self.mode_log_priors[mode]
+            + sum(
+                self.feature_log_likelihoods.get(mode, {}).get(
+                    feature,
+                    self.default_feature_log_likelihoods[mode],
+                )
+                for feature in features
+            )
+            for mode in RESPONSE_MODES
+        }
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "mode_counts": dict(sorted(self.mode_counts.items())),
+            "vocabulary_size": len(self.vocabulary),
+        }
+
+
+@dataclass(frozen=True)
 class ConversationProbabilityPack:
     pack_id: str
     turn_id: str
@@ -253,6 +361,95 @@ def load_conversation_turns(path: Path) -> tuple[ConversationTurn, ...]:
             if line.strip():
                 rows.append(ConversationTurn.from_dict(json.loads(line)))
     return tuple(rows)
+
+
+def load_esconv_export(path: Path, split: str = "train") -> tuple[ConversationTurn, ...]:
+    if split not in {"train", "validation", "dev", "test", "all"}:
+        raise ValueError("split must be train, validation, dev, test, or all")
+
+    conversations = json.loads(path.read_text(encoding="utf-8"))
+    selected = select_esconv_conversations(conversations, split)
+    turns: list[ConversationTurn] = []
+    split_name = "validation" if split == "dev" else split
+
+    for conversation_index, conversation in selected:
+        dialog = conversation.get("dialog", [])
+        observed_modes: list[str] = []
+        observed_acts: list[str] = []
+        supporter_index = 0
+        emotion = esconv_emotion(conversation.get("emotion_type", ""))
+        for dialog_index, row in enumerate(dialog):
+            content = str(row.get("content", "")).strip()
+            if not content:
+                continue
+            speaker = str(row.get("speaker", "")).strip().lower()
+            annotation = row.get("annotation", {})
+            strategy = ""
+            if isinstance(annotation, dict):
+                strategy = str(annotation.get("strategy", "")).strip()
+            act = infer_conversation_act(content)
+
+            if speaker == "supporter" and strategy:
+                supporter_index += 1
+                mode = esconv_strategy_response_mode(strategy)
+                history = tuple(
+                    Message(
+                        role=str(prior.get("speaker", "unknown")).strip().lower()
+                        or "unknown",
+                        content=str(prior.get("content", "")).strip(),
+                    )
+                    for prior in dialog[:dialog_index]
+                    if str(prior.get("content", "")).strip()
+                )
+                if history:
+                    turns.append(
+                        ConversationTurn(
+                            turn_id=(
+                                f"esconv-{split_name}-{conversation_index + 1:04d}-"
+                                f"{supporter_index:03d}"
+                            ),
+                            conversation=history,
+                            next_speaker="supporter",
+                            actual_next_utterance=content,
+                            expected_act=act,
+                            expected_emotion=emotion,
+                            expected_response_mode=mode,
+                            observed_acts=tuple(observed_acts),
+                            observed_response_modes=tuple(observed_modes),
+                        )
+                    )
+                observed_modes.append(mode)
+
+            observed_acts.append(act)
+
+    return tuple(turns)
+
+
+def select_esconv_conversations(
+    conversations: list[dict[str, Any]],
+    split: str,
+) -> tuple[tuple[int, dict[str, Any]], ...]:
+    if split == "all":
+        return tuple(enumerate(conversations))
+    normalized_split = "validation" if split == "dev" else split
+    selected: list[tuple[int, dict[str, Any]]] = []
+    for index, conversation in enumerate(conversations):
+        bucket = index % 10
+        conversation_split = (
+            "train" if bucket < 8 else "validation" if bucket == 8 else "test"
+        )
+        if conversation_split == normalized_split:
+            selected.append((index, conversation))
+    return tuple(selected)
+
+
+def esconv_strategy_response_mode(strategy: str) -> str:
+    key = " ".join(strategy.strip().lower().split())
+    return ESCONV_STRATEGY_RESPONSE_MODES.get(key, "other")
+
+
+def esconv_emotion(emotion_type: str) -> str:
+    return ESCONV_EMOTION_MAP.get(emotion_type.strip().lower(), "no_emotion")
 
 
 def load_empatheticdialogues_export(path: Path) -> tuple[ConversationTurn, ...]:
@@ -299,7 +496,12 @@ def load_empatheticdialogues_export(path: Path) -> tuple[ConversationTurn, ...]:
                     expected_emotion=empathetic_emotion(
                         ordered[next_index].get("context", ""),
                     ),
+                    expected_response_mode=response_mode_from_act(acts[next_index]),
                     observed_acts=acts[:next_index],
+                    observed_response_modes=tuple(
+                        response_mode_from_act(act)
+                        for act in acts[:next_index]
+                    ),
                 )
             )
     return tuple(turns)
@@ -415,8 +617,15 @@ def load_dailydialog_export(
                         emotions[next_index],
                         "no_emotion",
                     ),
+                    expected_response_mode=response_mode_from_act(
+                        DAILYDIALOG_ACTS.get(acts[next_index], "inform")
+                    ),
                     observed_acts=tuple(
                         DAILYDIALOG_ACTS.get(act, "inform")
+                        for act in acts[:next_index]
+                    ),
+                    observed_response_modes=tuple(
+                        response_mode_from_act(DAILYDIALOG_ACTS.get(act, "inform"))
                         for act in acts[:next_index]
                     ),
                 )
@@ -440,7 +649,9 @@ def load_dailydialog_split(split_dir: Path) -> tuple[ConversationTurn, ...]:
             actual_next_utterance=turn.actual_next_utterance,
             expected_act=turn.expected_act,
             expected_emotion=turn.expected_emotion,
+            expected_response_mode=turn.expected_response_mode,
             observed_acts=turn.observed_acts,
+            observed_response_modes=turn.observed_response_modes,
             latency_budget_ms=turn.latency_budget_ms,
         )
         for turn in turns
@@ -470,9 +681,20 @@ def conversation_turn_to_dict(turn: ConversationTurn) -> dict[str, object]:
         "actual_next_utterance": turn.actual_next_utterance,
         "expected_act": turn.expected_act,
         "expected_emotion": turn.expected_emotion,
+        "expected_response_mode": turn.expected_response_mode,
         "observed_acts": list(turn.observed_acts),
+        "observed_response_modes": list(turn.observed_response_modes),
         "latency_budget_ms": turn.latency_budget_ms,
     }
+
+
+def response_mode_from_act(act: str) -> str:
+    return {
+        "question": "ask_followup",
+        "directive": "suggest",
+        "commissive": "commit",
+        "inform": "inform",
+    }.get(act, "other")
 
 
 def speaker_role(index: int) -> str:
@@ -918,6 +1140,58 @@ def train_conversation_question_evidence_ranker(
     )
 
 
+def train_response_mode_ranker(
+    turns: tuple[ConversationTurn, ...],
+) -> ResponseModeRanker:
+    if not turns:
+        raise ValueError("training turns are required")
+
+    mode_counts = {mode: 0 for mode in RESPONSE_MODES}
+    feature_counts = {mode: {} for mode in RESPONSE_MODES}
+    feature_totals = {mode: 0 for mode in RESPONSE_MODES}
+    vocabulary: set[str] = set()
+
+    for turn in turns:
+        mode = (
+            turn.expected_response_mode
+            if turn.expected_response_mode in RESPONSE_MODES
+            else "other"
+        )
+        mode_counts[mode] += 1
+        features = conversation_features(turn)
+        vocabulary.update(features)
+        for feature in features:
+            feature_counts[mode][feature] = feature_counts[mode].get(feature, 0) + 1
+            feature_totals[mode] += 1
+
+    total_turns = len(turns)
+    vocabulary_size = max(len(vocabulary), 1)
+    mode_log_priors = {
+        mode: math.log((mode_counts[mode] + 1) / (total_turns + len(RESPONSE_MODES)))
+        for mode in RESPONSE_MODES
+    }
+    default_feature_log_likelihoods = {
+        mode: math.log(1 / (feature_totals[mode] + vocabulary_size))
+        for mode in RESPONSE_MODES
+    }
+    feature_log_likelihoods = {
+        mode: {
+            feature: math.log(
+                (count + 1) / (feature_totals[mode] + vocabulary_size)
+            )
+            for feature, count in counts.items()
+        }
+        for mode, counts in feature_counts.items()
+    }
+    return ResponseModeRanker(
+        mode_log_priors=mode_log_priors,
+        feature_log_likelihoods=feature_log_likelihoods,
+        default_feature_log_likelihoods=default_feature_log_likelihoods,
+        vocabulary=tuple(sorted(vocabulary)),
+        mode_counts=mode_counts,
+    )
+
+
 def normalize_counts(counts: dict[str, int]) -> dict[str, float]:
     total = sum(counts.values())
     return {
@@ -936,7 +1210,96 @@ def conversation_features(turn: ConversationTurn) -> tuple[str, ...]:
             features.add(f"latest_starts_{wh_word}")
     features.add(f"history_turns_{min(len(turn.conversation), 4)}")
     features.add(f"next_speaker_{turn.next_speaker}")
+    if turn.observed_response_modes:
+        features.add(f"previous_mode_{turn.observed_response_modes[-1]}")
+        for mode in turn.observed_response_modes[-3:]:
+            features.add(f"recent_mode_{mode}")
     return tuple(sorted(features))
+
+
+def generate_response_mode_branches(
+    turn: ConversationTurn,
+    top_k: int = 3,
+    ranker: ResponseModeRanker | None = None,
+    learned_weight: float = 1.0,
+    scoring_variant: str = "heuristic_response_mode",
+) -> tuple[dict[str, object], ...]:
+    if top_k <= 0:
+        raise ValueError("top_k must be positive")
+    if learned_weight < 0 or learned_weight > 1:
+        raise ValueError("learned_weight must be between 0 and 1")
+    context_tokens = normalized_tokens(turn.context_text())
+    scores = heuristic_response_mode_scores(turn, context_tokens)
+    if ranker and learned_weight > 0:
+        scores = blended_label_scores(
+            baseline_scores=scores,
+            learned_scores=ranker.score(turn),
+            labels=RESPONSE_MODES,
+            learned_weight=learned_weight,
+        )
+        if scoring_variant == "heuristic_response_mode":
+            scoring_variant = "learned_response_mode"
+
+    ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)[:top_k]
+    return tuple(
+        {
+            "branch_id": f"{turn.turn_id}-mode-branch-{index}",
+            "rank": index,
+            "response_mode": mode,
+            "tts_text": RESPONSE_MODE_TEMPLATES[mode],
+            "probability": round(min(score, 0.95), 3),
+            "trigger_cues": sorted(context_tokens)[:8],
+            "scoring_variant": scoring_variant,
+        }
+        for index, (mode, score) in enumerate(ranked, start=1)
+    )
+
+
+def heuristic_response_mode_scores(
+    turn: ConversationTurn,
+    context_tokens: set[str],
+) -> dict[str, float]:
+    scores = dict(BASE_RESPONSE_MODE_PRIORS)
+    latest = turn.conversation[-1].content.lower() if turn.conversation else ""
+    if "?" in latest:
+        scores["ask_followup"] += 0.1
+    if {"sad", "hard", "overwhelmed", "upset", "stressful", "draining"} & context_tokens:
+        scores["validate"] += 0.12
+        scores["reassure"] += 0.08
+    if {"should", "try", "could", "maybe", "plan"} & context_tokens:
+        scores["suggest"] += 0.08
+    if {"sorry", "apologize", "fault"} & context_tokens:
+        scores["apologize"] += 0.1
+    return scores
+
+
+def blended_label_scores(
+    baseline_scores: dict[str, float],
+    learned_scores: dict[str, float],
+    labels: tuple[str, ...],
+    learned_weight: float,
+) -> dict[str, float]:
+    baseline = normalize_label_scores(baseline_scores, labels)
+    learned = normalize_label_scores(learned_scores, labels)
+    return {
+        label: (1 - learned_weight) * baseline[label] + learned_weight * learned[label]
+        for label in labels
+    }
+
+
+def normalize_label_scores(
+    scores: dict[str, float],
+    labels: tuple[str, ...],
+) -> dict[str, float]:
+    values = [scores[label] for label in labels]
+    low = min(values)
+    high = max(values)
+    if high == low:
+        return {label: 0.5 for label in labels}
+    return {
+        label: (scores[label] - low) / (high - low)
+        for label in labels
+    }
 
 
 def predict_emotion(turn: ConversationTurn, context_tokens: set[str]) -> str:
@@ -1590,6 +1953,225 @@ def run_conversation_act_ranker_bakeoff(
     }
 
 
+def run_response_mode_ranker_bakeoff(
+    train_turns: tuple[ConversationTurn, ...],
+    dev_turns: tuple[ConversationTurn, ...],
+    test_turns: tuple[ConversationTurn, ...],
+    top_k: int = 3,
+) -> dict[str, object]:
+    if not train_turns or not dev_turns or not test_turns:
+        raise ValueError("train, dev, and test turns are required")
+
+    ranker = train_response_mode_ranker(train_turns)
+    train_baseline_rows = score_response_mode_turns(train_turns, top_k=top_k)
+    dev_baseline_rows = score_response_mode_turns(dev_turns, top_k=top_k)
+    test_baseline_rows = score_response_mode_turns(test_turns, top_k=top_k)
+    variant_rows: dict[str, dict[str, tuple[dict[str, object], ...]]] = {}
+    variants: dict[str, dict[str, object]] = {}
+    for variant in response_mode_bakeoff_variants():
+        name = str(variant["name"])
+        learned_weight = float(variant["learned_weight"])
+        use_ranker = learned_weight > 0
+        train_rows = score_response_mode_turns(
+            train_turns,
+            top_k=top_k,
+            ranker=ranker if use_ranker else None,
+            learned_weight=learned_weight,
+            scoring_variant=name,
+        )
+        dev_rows = score_response_mode_turns(
+            dev_turns,
+            top_k=top_k,
+            ranker=ranker if use_ranker else None,
+            learned_weight=learned_weight,
+            scoring_variant=name,
+        )
+        test_rows = score_response_mode_turns(
+            test_turns,
+            top_k=top_k,
+            ranker=ranker if use_ranker else None,
+            learned_weight=learned_weight,
+            scoring_variant=name,
+        )
+        variant_rows[name] = {
+            "train": train_rows,
+            "dev": dev_rows,
+            "test": test_rows,
+        }
+        variants[name] = {
+            "learned_weight": learned_weight,
+            "train": summarize_response_mode_rows(train_rows, train_turns),
+            "dev": summarize_response_mode_rows(dev_rows, dev_turns),
+            "test": summarize_response_mode_rows(test_rows, test_turns),
+            "dev_segment_regressions": find_response_mode_segment_regressions(
+                baseline_rows=dev_baseline_rows,
+                candidate_rows=dev_rows,
+            ),
+            "test_segment_regressions": find_response_mode_segment_regressions(
+                baseline_rows=test_baseline_rows,
+                candidate_rows=test_rows,
+            ),
+        }
+    selected_name = select_response_mode_bakeoff_variant(variants)
+    selected_rows = variant_rows[selected_name]["test"]
+    selected_train_rows = variant_rows[selected_name]["train"]
+    selected_dev_rows = variant_rows[selected_name]["dev"]
+
+    return {
+        "summary": {
+            "train_turns": len(train_turns),
+            "dev_turns": len(dev_turns),
+            "test_turns": len(test_turns),
+            "top_k": top_k,
+        },
+        "ranker": ranker.to_dict(),
+        "variants": variants,
+        "selected_variant": {
+            "name": selected_name,
+            **variants[selected_name],
+        },
+        "promotion": response_mode_promotion_summary(
+            selected_name=selected_name,
+            baseline=variants["heuristic_response_mode"]["test"],
+            selected=summarize_response_mode_rows(selected_rows, test_turns),
+            test_segment_regressions=variants[selected_name][
+                "test_segment_regressions"
+            ],
+        ),
+        "train": {
+            "baseline": variants["heuristic_response_mode"]["train"],
+            "guided": summarize_response_mode_rows(selected_train_rows, train_turns),
+        },
+        "dev": {
+            "baseline": variants["heuristic_response_mode"]["dev"],
+            "guided": summarize_response_mode_rows(selected_dev_rows, dev_turns),
+        },
+        "test": {
+            "baseline": variants["heuristic_response_mode"]["test"],
+            "guided": summarize_response_mode_rows(selected_rows, test_turns),
+        },
+        "efficacy": compare_conversation_efficacy(
+            train_baseline=variants["heuristic_response_mode"]["train"],
+            train_guided=summarize_response_mode_rows(selected_train_rows, train_turns),
+            dev_baseline=variants["heuristic_response_mode"]["dev"],
+            dev_guided=summarize_response_mode_rows(selected_dev_rows, dev_turns),
+            test_baseline=variants["heuristic_response_mode"]["test"],
+            test_guided=summarize_response_mode_rows(selected_rows, test_turns),
+        ),
+        "analytics": {
+            "train_segments": summarize_response_mode_segments(
+                train_baseline_rows,
+                selected_train_rows,
+            ),
+            "dev_segments": summarize_response_mode_segments(
+                dev_baseline_rows,
+                selected_dev_rows,
+            ),
+            "test_segments": summarize_response_mode_segments(
+                test_baseline_rows,
+                selected_rows,
+            ),
+        },
+        "guidance_delta": compare_response_mode_guidance_delta(
+            test_baseline_rows,
+            selected_rows,
+        ),
+    }
+
+
+def response_mode_promotion_summary(
+    selected_name: str,
+    baseline: dict[str, float | int],
+    selected: dict[str, float | int],
+    test_segment_regressions: list[dict[str, object]],
+) -> dict[str, object]:
+    return {
+        "dev_selected_variant": selected_name,
+        "heldout_promotable": (
+            not test_segment_regressions
+            and float(selected["p_at_1"]) >= float(baseline["p_at_1"])
+            and float(selected["top_3_recall"]) >= float(baseline["top_3_recall"])
+        ),
+        "reason": (
+            "held-out test passed top-line and segment checks"
+            if not test_segment_regressions
+            else "held-out test exposed response-mode segment regressions"
+        ),
+        "test_segment_regression_count": len(test_segment_regressions),
+    }
+
+
+def response_mode_bakeoff_variants() -> tuple[dict[str, object], ...]:
+    return (
+        {"name": "heuristic_response_mode", "learned_weight": 0.0},
+        {"name": "response_mode_hybrid_25", "learned_weight": 0.25},
+        {"name": "response_mode_hybrid_50", "learned_weight": 0.5},
+        {"name": "response_mode_hybrid_75", "learned_weight": 0.75},
+        {"name": "learned_response_mode", "learned_weight": 1.0},
+    )
+
+
+def score_response_mode_turns(
+    turns: tuple[ConversationTurn, ...],
+    top_k: int,
+    ranker: ResponseModeRanker | None = None,
+    learned_weight: float = 0.0,
+    scoring_variant: str = "heuristic_response_mode",
+) -> tuple[dict[str, object], ...]:
+    rows: list[dict[str, object]] = []
+    for turn in turns:
+        branches = generate_response_mode_branches(
+            turn,
+            top_k=top_k,
+            ranker=ranker,
+            learned_weight=learned_weight,
+            scoring_variant=scoring_variant,
+        )
+        rank_1 = branches[0]
+        rows.append(
+            {
+                "turn_id": turn.turn_id,
+                "expected_act": turn.expected_act,
+                "expected_emotion": turn.expected_emotion,
+                "expected_response_mode": turn.expected_response_mode,
+                "next_speaker": turn.next_speaker,
+                "rank_1_response_mode": rank_1["response_mode"],
+                "top_response_modes": [
+                    branch["response_mode"] for branch in branches
+                ],
+                "tts_ready": bool(branches),
+                "latency_ms": 90 if branches else turn.latency_budget_ms,
+            }
+        )
+    return tuple(rows)
+
+
+def select_response_mode_bakeoff_variant(
+    variants: dict[str, dict[str, object]],
+) -> str:
+    heuristic = variants["heuristic_response_mode"]
+    candidates = {
+        name: row
+        for name, row in variants.items()
+        if (
+            not row["dev_segment_regressions"]
+            and float(row["dev"]["p_at_1"]) >= float(heuristic["dev"]["p_at_1"])
+            and float(row["dev"]["top_3_recall"]) >= float(heuristic["dev"]["top_3_recall"])
+        )
+    }
+    if not candidates:
+        return "heuristic_response_mode"
+    return sorted(
+        candidates,
+        key=lambda name: (
+            float(candidates[name]["dev"]["p_at_1"]),
+            float(candidates[name]["dev"]["top_3_recall"]),
+            -float(candidates[name]["learned_weight"]),
+        ),
+        reverse=True,
+    )[0]
+
+
 def conversation_bakeoff_variants() -> tuple[dict[str, object], ...]:
     return (
         {"name": "heuristic", "learned_weight": 0.0, "transition_weight": 0.0},
@@ -2099,6 +2681,192 @@ def summarize_conversation_row_subset(
         "p_at_1": round(exact / total, 3),
         "top_3_recall": round(top_3 / total, 3),
         "tts_readiness_rate": round(tts_ready / total, 3),
+    }
+
+
+def summarize_response_mode_rows(
+    rows: tuple[dict[str, object], ...],
+    turns: tuple[ConversationTurn, ...],
+) -> dict[str, float | int]:
+    total = max(len(rows), 1)
+    exact = sum(
+        row["rank_1_response_mode"] == row["expected_response_mode"]
+        for row in rows
+    )
+    top_3 = sum(
+        row["expected_response_mode"] in row["top_response_modes"]
+        for row in rows
+    )
+    tts_ready = sum(bool(row["tts_ready"]) for row in rows)
+    return {
+        "total_turns": len(turns),
+        "p_at_1": round(exact / total, 3),
+        "top_3_recall": round(top_3 / total, 3),
+        "tts_readiness_rate": round(tts_ready / total, 3),
+        "median_latency_ms": int(median(row["latency_ms"] for row in rows)) if rows else 0,
+    }
+
+
+def find_response_mode_segment_regressions(
+    baseline_rows: tuple[dict[str, object], ...],
+    candidate_rows: tuple[dict[str, object], ...],
+) -> list[dict[str, object]]:
+    regressions: list[dict[str, object]] = []
+    modes = sorted({str(row["expected_response_mode"]) for row in baseline_rows})
+    for mode in modes:
+        baseline = summarize_response_mode_row_subset(
+            tuple(
+                row
+                for row in baseline_rows
+                if str(row["expected_response_mode"]) == mode
+            )
+        )
+        candidate = summarize_response_mode_row_subset(
+            tuple(
+                row
+                for row in candidate_rows
+                if str(row["expected_response_mode"]) == mode
+            )
+        )
+        delta = round(float(candidate["p_at_1"]) - float(baseline["p_at_1"]), 3)
+        if delta < 0:
+            regressions.append(
+                {
+                    "segment": "expected_response_mode",
+                    "name": mode,
+                    "baseline_p_at_1": baseline["p_at_1"],
+                    "candidate_p_at_1": candidate["p_at_1"],
+                    "p_at_1_delta": delta,
+                }
+            )
+    return regressions
+
+
+def summarize_response_mode_segments(
+    baseline_rows: tuple[dict[str, object], ...],
+    guided_rows: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    dimensions = {
+        "expected_response_mode": sorted(
+            {str(row["expected_response_mode"]) for row in baseline_rows}
+        ),
+        "expected_act": sorted({str(row["expected_act"]) for row in baseline_rows}),
+        "expected_emotion": sorted(
+            {str(row["expected_emotion"]) for row in baseline_rows}
+        ),
+        "next_speaker": sorted({str(row["next_speaker"]) for row in baseline_rows}),
+    }
+    summary: dict[str, object] = {
+        dimension: {
+            value: {
+                "baseline": summarize_response_mode_row_subset(
+                    tuple(row for row in baseline_rows if str(row[dimension]) == value)
+                ),
+                "guided": summarize_response_mode_row_subset(
+                    tuple(row for row in guided_rows if str(row[dimension]) == value)
+                ),
+            }
+            for value in values
+        }
+        for dimension, values in dimensions.items()
+    }
+    summary["focus_areas"] = response_mode_focus_areas(summary)
+    return summary
+
+
+def summarize_response_mode_row_subset(
+    rows: tuple[dict[str, object], ...],
+) -> dict[str, float | int]:
+    total = max(len(rows), 1)
+    exact = sum(
+        row["rank_1_response_mode"] == row["expected_response_mode"]
+        for row in rows
+    )
+    top_3 = sum(
+        row["expected_response_mode"] in row["top_response_modes"]
+        for row in rows
+    )
+    tts_ready = sum(bool(row["tts_ready"]) for row in rows)
+    return {
+        "total_turns": len(rows),
+        "p_at_1": round(exact / total, 3),
+        "top_3_recall": round(top_3 / total, 3),
+        "tts_readiness_rate": round(tts_ready / total, 3),
+    }
+
+
+def response_mode_focus_areas(summary: dict[str, object]) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for dimension, dimension_rows in summary.items():
+        if dimension == "focus_areas" or not isinstance(dimension_rows, dict):
+            continue
+        for value, metrics in dimension_rows.items():
+            if not isinstance(metrics, dict):
+                continue
+            baseline = metrics["baseline"]
+            guided = metrics["guided"]
+            if not isinstance(baseline, dict) or not isinstance(guided, dict):
+                continue
+            rows.append(
+                {
+                    "segment": dimension,
+                    "name": value,
+                    "guided_p_at_1": guided["p_at_1"],
+                    "p_at_1_gain": round(
+                        float(guided["p_at_1"]) - float(baseline["p_at_1"]),
+                        3,
+                    ),
+                    "guided_top_3_recall": guided["top_3_recall"],
+                }
+            )
+    return sorted(
+        rows,
+        key=lambda row: (
+            float(row["guided_p_at_1"]),
+            float(row["guided_top_3_recall"]),
+            float(row["p_at_1_gain"]),
+        ),
+    )[:10]
+
+
+def compare_response_mode_guidance_delta(
+    baseline_rows: tuple[dict[str, object], ...],
+    guided_rows: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    baseline = {
+        str(row["turn_id"]): (
+            row["rank_1_response_mode"] == row["expected_response_mode"]
+        )
+        for row in baseline_rows
+    }
+    guided = {
+        str(row["turn_id"]): (
+            row["rank_1_response_mode"] == row["expected_response_mode"]
+        )
+        for row in guided_rows
+    }
+    turn_ids = sorted(set(baseline) | set(guided))
+    improved = [
+        turn_id
+        for turn_id in turn_ids
+        if not baseline.get(turn_id, False) and guided.get(turn_id, False)
+    ]
+    regressed = [
+        turn_id
+        for turn_id in turn_ids
+        if baseline.get(turn_id, False) and not guided.get(turn_id, False)
+    ]
+    unchanged = [
+        turn_id
+        for turn_id in turn_ids
+        if baseline.get(turn_id, False) == guided.get(turn_id, False)
+    ]
+    return {
+        "improved_turns": improved,
+        "regressed_turns": regressed,
+        "unchanged_turns": unchanged,
+        "improved_turn_count": len(improved),
+        "regressed_turn_count": len(regressed),
     }
 
 

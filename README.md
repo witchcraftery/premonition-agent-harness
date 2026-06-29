@@ -421,6 +421,49 @@ useful generalization result. The stronger contextual variants reach roughly
 mode/act labeling or class-balanced protection, not loosening the promotion
 rules.
 
+Run the first ESConv response-mode benchmark:
+
+```bash
+foresight-replay \
+  --esconv-input data/external/esconv/ESConv.json \
+  --esconv-split train \
+  --conversation-output data/esconv_train_response_modes_sample.jsonl \
+  --conversation-limit 6740
+
+foresight-replay \
+  --esconv-input data/external/esconv/ESConv.json \
+  --esconv-split validation \
+  --conversation-output data/esconv_validation_response_modes_sample.jsonl \
+  --conversation-limit 6740
+
+foresight-replay \
+  --esconv-input data/external/esconv/ESConv.json \
+  --esconv-split test \
+  --conversation-output data/esconv_test_response_modes_sample.jsonl \
+  --conversation-limit 6740
+
+foresight-replay \
+  --conversation-train-input data/esconv_train_response_modes_sample.jsonl \
+  --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl \
+  --conversation-test-input data/esconv_test_response_modes_sample.jsonl \
+  --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json
+```
+
+ESConv gives the empathy loop real supporter strategy labels instead of inferred
+mode labels. The importer maps strategies into response modes such as
+`ask_followup`, `validate`, `reassure`, `disclose`, `suggest`, `inform`, and
+`other`. Source: https://github.com/thu-coai/Emotional-Support-Conversation
+
+The first held-out response-mode bake-off is useful but not yet promotable as a
+default. Validation selects `response_mode_hybrid_75`: dev `p_at_1` improves
+from `0.198` to `0.204`, and untouched test `p_at_1` improves from `0.206` to
+`0.217`. However, held-out test exposes a small `suggest` regression
+(`0.291 -> 0.284`), so the report marks `heldout_promotable=false`. The weak
+mode slices are now explicit: `disclose`, `inform`, and `other` are still at
+`0.0` top-1 and top-3 recall, while `reassure` has top-3 coverage but no top-1
+hits. The next lever is class-balanced response-mode coverage, not a looser
+promotion gate.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:

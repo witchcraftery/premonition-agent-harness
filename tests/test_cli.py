@@ -224,6 +224,127 @@ def test_cli_exports_empatheticdialogues_sample(tmp_path):
     assert exported["expected_emotion"] == "happiness"
 
 
+def test_cli_exports_esconv_sample(tmp_path):
+    input_path = tmp_path / "ESConv.json"
+    output = tmp_path / "esconv.jsonl"
+    input_path.write_text(
+        json.dumps(
+            [
+                {
+                    "emotion_type": "sadness",
+                    "problem_type": "family",
+                    "dialog": [
+                        {
+                            "speaker": "seeker",
+                            "annotation": {},
+                            "content": "I miss my sister.",
+                        },
+                        {
+                            "speaker": "supporter",
+                            "annotation": {
+                                "strategy": "Affirmation and Reassurance"
+                            },
+                            "content": "It makes sense that you miss her.",
+                        },
+                    ],
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--esconv-input",
+            str(input_path),
+            "--conversation-output",
+            str(output),
+            "--conversation-limit",
+            "1",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    exported = json.loads(output.read_text(encoding="utf-8"))
+
+    assert report["exported_turns"] == 1
+    assert exported["expected_response_mode"] == "reassure"
+
+
+def test_cli_runs_response_mode_ranker_bakeoff(tmp_path):
+    train_path = tmp_path / "train.jsonl"
+    dev_path = tmp_path / "dev.jsonl"
+    test_path = tmp_path / "test.jsonl"
+    output = tmp_path / "response-mode-bakeoff.json"
+    rows = {
+        train_path: [
+            ("train-validate-1", "drainingcue heavy", "validate"),
+            ("train-validate-2", "drainingcue overwhelming", "validate"),
+            ("train-ask", "unclear details", "ask_followup"),
+        ],
+        dev_path: [
+            ("dev-validate", "drainingcue difficult", "validate"),
+            ("dev-ask", "unclear plan", "ask_followup"),
+        ],
+        test_path: [
+            ("test-validate", "drainingcue hard", "validate"),
+            ("test-ask", "unclear situation", "ask_followup"),
+        ],
+    }
+    for path, split_rows in rows.items():
+        path.write_text(
+            "\n".join(
+                json.dumps(
+                    {
+                        "turn_id": turn_id,
+                        "conversation": [
+                            {"role": "speaker_a", "content": context}
+                        ],
+                        "next_speaker": "speaker_b",
+                        "actual_next_utterance": "Okay.",
+                        "expected_act": "inform",
+                        "expected_emotion": "no_emotion",
+                        "expected_response_mode": mode,
+                    }
+                )
+                for turn_id, context, mode in split_rows
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--conversation-train-input",
+            str(train_path),
+            "--conversation-dev-input",
+            str(dev_path),
+            "--conversation-test-input",
+            str(test_path),
+            "--response-mode-bakeoff-report",
+            str(output),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    saved = json.loads(output.read_text(encoding="utf-8"))
+
+    assert saved == report
+    assert report["selected_variant"]["test"]["p_at_1"] == 1.0
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

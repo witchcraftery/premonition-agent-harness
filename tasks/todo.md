@@ -505,3 +505,24 @@ Verification:
 - Selected EmpatheticDialogues variant: `heuristic`; held-out test `p_at_1` stayed at `0.608`, held-out top-3 recall stayed at `0.981`, and selected dev/test/cross-fold segment regressions stayed at `0`.
 - Diagnostic note: contextual variants reached about `0.69` held-out `p_at_1`, but regressed sparse protected act slices, especially `commissive`, so the strict gate correctly blocked promotion.
 - Result: deep protected rhythm did not generalize safely to EmpatheticDialogues under coarse inferred act labels. Next lever is richer empathy response-mode labeling or class-balanced protection before promoting emotional conversation gains.
+
+## ESConv Response-Mode Benchmark
+
+- [x] Add response-mode labels to conversation turns without breaking existing act/emotion samples.
+- [x] Import ESConv supporter strategy turns as response-mode probability examples.
+- [x] Add a response-mode ranker bake-off with validation selection and held-out test reporting.
+- [x] Export bounded ESConv train/dev/test samples from the ignored external source file.
+- [x] Run the held-out response-mode benchmark and document exact hits, weak modes, and next levers.
+- [x] Verify the full suite, commit, and push the reproducible scaffolding and artifacts.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_conversation_turn_round_trips_response_mode_fields tests/test_conversation_probability.py::test_load_esconv_export_creates_response_mode_examples tests/test_conversation_probability.py::test_learned_response_mode_ranker_predicts_repeated_support_mode tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_cli.py::test_cli_exports_esconv_sample tests/test_cli.py::test_cli_runs_response_mode_ranker_bakeoff -v` failed because `generate_response_mode_branches` and related response-mode functions did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py::test_conversation_turn_round_trips_response_mode_fields tests/test_conversation_probability.py::test_load_esconv_export_creates_response_mode_examples tests/test_conversation_probability.py::test_learned_response_mode_ranker_predicts_repeated_support_mode tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_cli.py::test_cli_exports_esconv_sample tests/test_cli.py::test_cli_runs_response_mode_ranker_bakeoff -v`: 6 passed.
+- Exported ESConv response-mode samples: `data/esconv_train_response_modes_sample.jsonl` with 6,740 turns, `data/esconv_validation_response_modes_sample.jsonl` with 1,800 turns, and `data/esconv_test_response_modes_sample.jsonl` with 1,748 turns.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Selected validation variant: `response_mode_hybrid_75`. Dev `p_at_1` improved from `0.198` to `0.204`, and dev `top_3_recall` improved from `0.532` to `0.540`.
+- Untouched test moved from `p_at_1=0.206` to `0.217` and from `top_3_recall=0.526` to `0.527`, but `heldout_promotable=false` because the `suggest` segment regressed from `0.291` to `0.284`.
+- Weak response-mode slices are explicit: `disclose`, `inform`, and `other` remain at `0.0` top-1 and top-3 recall; `reassure` has top-3 coverage but no top-1 hits. Next lever: class-balanced response-mode coverage/protection.
+- `python3 -m pytest -v`: 106 passed.
+- `git diff --check`: passed.

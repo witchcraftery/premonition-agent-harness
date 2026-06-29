@@ -74,6 +74,19 @@ repeatable benchmark.
 - Current result: on balanced 6740/6740/6740 samples, the selector stays at `heuristic`. Held-out test `p_at_1` remains `0.608`, `top_3_recall` remains `0.981`, and selected segment regressions stay at `0`. Higher-headline contextual variants reach roughly `0.69` held-out `p_at_1`, but they regress sparse `commissive` and other protected act slices, so the strict gate blocks promotion.
 - Limitation: inferred act labels are too coarse for empathy-mode work. The next lever is a richer response-mode taxonomy or class-balanced act protection before treating EmpatheticDialogues gains as real.
 
+### ESConv Response-Mode Samples
+
+- Status: derived samples included in this repository; raw source file is excluded under `data/external/`.
+- Files: `data/esconv_train_response_modes_sample.jsonl`, `data/esconv_validation_response_modes_sample.jsonl`, and `data/esconv_test_response_modes_sample.jsonl`.
+- Report: `runs/esconv_response_mode_bakeoff.json`.
+- Source used for import: `https://github.com/thu-coai/Emotional-Support-Conversation`.
+- Purpose: held-out benchmark for emotional-support response-mode prediction using source supporter strategy labels.
+- Current use: maps ESConv strategies into modes: `ask_followup`, `validate`, `reassure`, `disclose`, `suggest`, `inform`, and `other`; then compares heuristic, hybrid, and learned response-mode branchers.
+- Current result: validation selects `response_mode_hybrid_75`; dev `p_at_1` improves from `0.198` to `0.204`, and held-out test `p_at_1` improves from `0.206` to `0.217`.
+- Promotion result: not held-out promotable yet. The untouched test split has one response-mode segment regression: `suggest` top-1 slips from `0.291` to `0.284`.
+- Weak mode signal: `disclose`, `inform`, and `other` remain at `0.0` top-1 and top-3 recall; `reassure` has top-3 coverage but no top-1 hits. The next lever is class-balanced response-mode coverage and protected mode promotion.
+- Limitation: deterministic 80/10/10 split over ESConv's single JSON source; useful for iteration, but final comparisons should report the split rule and may need seed/fold repeats.
+
 ## Human Conversation Candidates
 
 ### DailyDialog
@@ -89,6 +102,13 @@ repeatable benchmark.
 - Why it matters: voice presence depends on emotional readiness, not only fast answers.
 - Link: https://github.com/facebookresearch/EmpatheticDialogues
 - Trial question: can the backend prepare emotionally appropriate response modes without sounding premature?
+
+### ESConv
+
+- Fit: emotional-support conversations with supporter strategy labels.
+- Why it matters: it directly labels the response mechanism the backend should prewarm for a voice agent.
+- Link: https://github.com/thu-coai/Emotional-Support-Conversation
+- Trial question: can probability packs predict whether the next support move should reassure, validate, ask a follow-up, disclose, suggest, inform, or hold a neutral fallback?
 
 ### Blended Skill Talk
 
