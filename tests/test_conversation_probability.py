@@ -22,6 +22,7 @@ from foresight_harness.conversation_probability import (
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
+    response_mode_bakeoff_variants,
     score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
     train_conversation_act_ranker,
@@ -300,6 +301,35 @@ def test_learned_response_mode_ranker_predicts_repeated_support_mode():
     assert branches[0]["scoring_variant"] == "learned_response_mode"
 
 
+def test_class_balanced_response_mode_ranker_uses_uniform_priors():
+    train_turns = (
+        conversation_turn(
+            "train-ask-1",
+            "unclear details",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+        conversation_turn(
+            "train-ask-2",
+            "what happened?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+        conversation_turn(
+            "train-disclose",
+            "storycue similar experience",
+            "inform",
+            expected_response_mode="disclose",
+        ),
+    )
+
+    standard = train_response_mode_ranker(train_turns)
+    balanced = train_response_mode_ranker(train_turns, class_balanced=True)
+
+    assert standard.mode_log_priors["ask_followup"] > standard.mode_log_priors["disclose"]
+    assert balanced.mode_log_priors["ask_followup"] == balanced.mode_log_priors["disclose"]
+
+
 def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     train_turns = (
         conversation_turn(
@@ -360,6 +390,108 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert report["selected_variant"]["name"] in report["variants"]
     assert report["selected_variant"]["test"]["p_at_1"] == 1.0
     assert "expected_response_mode" in report["analytics"]["test_segments"]
+    assert "coverage_projection" in report
+    assert "validate" in report["coverage_projection"]["expected_response_mode"]
+
+
+def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():
+    train_turns = (
+        conversation_turn(
+            "train-disclose-1",
+            "storycue similar experience",
+            "inform",
+            expected_response_mode="disclose",
+        ),
+        conversation_turn(
+            "train-disclose-2",
+            "storycue shared experience",
+            "inform",
+            expected_response_mode="disclose",
+        ),
+        conversation_turn(
+            "train-ask",
+            "unclear details",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    ranker = train_response_mode_ranker(train_turns)
+    turn = conversation_turn(
+        "test-disclose",
+        "storycue relatable moment",
+        "inform",
+        expected_response_mode="disclose",
+    )
+
+    branches = generate_response_mode_branches(
+        turn,
+        top_k=3,
+        ranker=ranker,
+        learned_weight=0.5,
+        coverage_modes=("disclose",),
+        coverage_min_score=0.0,
+        scoring_variant="balanced_response_mode_50",
+    )
+
+    assert "disclose" in [branch["response_mode"] for branch in branches]
+
+
+def test_balanced_response_mode_brancher_preserves_strong_top_mode():
+    train_turns = (
+        conversation_turn(
+            "train-disclose",
+            "storycue similar experience",
+            "inform",
+            expected_response_mode="disclose",
+        ),
+        conversation_turn(
+            "train-ask-1",
+            "unclear details?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+        conversation_turn(
+            "train-ask-2",
+            "what happened next?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    ranker = train_response_mode_ranker(train_turns)
+    turn = conversation_turn(
+        "test-ask",
+        "what happened next?",
+        "question",
+        expected_response_mode="ask_followup",
+    )
+
+    branches = generate_response_mode_branches(
+        turn,
+        top_k=3,
+        ranker=ranker,
+        learned_weight=0.5,
+        coverage_modes=("disclose",),
+        coverage_min_score=0.0,
+        scoring_variant="balanced_response_mode_50",
+    )
+
+    assert branches[0]["response_mode"] == "ask_followup"
+
+
+def test_response_mode_bakeoff_variants_include_balanced_coverage():
+    variants = {
+        str(variant["name"]): variant
+        for variant in response_mode_bakeoff_variants()
+    }
+
+    assert variants["balanced_response_mode_50"]["coverage_modes"] == (
+        "disclose",
+        "inform",
+        "other",
+        "reassure",
+    )
+    assert variants["balanced_response_mode_50"]["coverage_min_score"] > 0
+    assert variants["balanced_prior_response_mode_75"]["class_balanced_prior"] is True
 
 
 def test_build_probability_pack_prepares_speakable_tts_drafts():

@@ -1142,6 +1142,7 @@ def train_conversation_question_evidence_ranker(
 
 def train_response_mode_ranker(
     turns: tuple[ConversationTurn, ...],
+    class_balanced: bool = False,
 ) -> ResponseModeRanker:
     if not turns:
         raise ValueError("training turns are required")
@@ -1166,10 +1167,19 @@ def train_response_mode_ranker(
 
     total_turns = len(turns)
     vocabulary_size = max(len(vocabulary), 1)
-    mode_log_priors = {
-        mode: math.log((mode_counts[mode] + 1) / (total_turns + len(RESPONSE_MODES)))
-        for mode in RESPONSE_MODES
-    }
+    if class_balanced:
+        observed_modes = {mode for mode, count in mode_counts.items() if count > 0}
+        observed_prior = math.log(1 / max(len(observed_modes), 1))
+        unobserved_prior = math.log(1 / (total_turns + len(RESPONSE_MODES)))
+        mode_log_priors = {
+            mode: observed_prior if mode in observed_modes else unobserved_prior
+            for mode in RESPONSE_MODES
+        }
+    else:
+        mode_log_priors = {
+            mode: math.log((mode_counts[mode] + 1) / (total_turns + len(RESPONSE_MODES)))
+            for mode in RESPONSE_MODES
+        }
     default_feature_log_likelihoods = {
         mode: math.log(1 / (feature_totals[mode] + vocabulary_size))
         for mode in RESPONSE_MODES
@@ -1222,12 +1232,18 @@ def generate_response_mode_branches(
     top_k: int = 3,
     ranker: ResponseModeRanker | None = None,
     learned_weight: float = 1.0,
+    coverage_modes: tuple[str, ...] = tuple(),
+    coverage_min_score: float = 0.0,
     scoring_variant: str = "heuristic_response_mode",
 ) -> tuple[dict[str, object], ...]:
     if top_k <= 0:
         raise ValueError("top_k must be positive")
     if learned_weight < 0 or learned_weight > 1:
         raise ValueError("learned_weight must be between 0 and 1")
+    if coverage_min_score < 0:
+        raise ValueError("coverage_min_score must be non-negative")
+    if any(mode not in RESPONSE_MODES for mode in coverage_modes):
+        raise ValueError("coverage_modes must be known response modes")
     context_tokens = normalized_tokens(turn.context_text())
     scores = heuristic_response_mode_scores(turn, context_tokens)
     if ranker and learned_weight > 0:
@@ -1240,7 +1256,13 @@ def generate_response_mode_branches(
         if scoring_variant == "heuristic_response_mode":
             scoring_variant = "learned_response_mode"
 
-    ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)[:top_k]
+    ranked = apply_response_mode_coverage(
+        ranked=sorted(scores.items(), key=lambda item: item[1], reverse=True)[:top_k],
+        scores=scores,
+        coverage_modes=coverage_modes,
+        coverage_min_score=coverage_min_score,
+        top_k=top_k,
+    )
     return tuple(
         {
             "branch_id": f"{turn.turn_id}-mode-branch-{index}",
@@ -1252,6 +1274,41 @@ def generate_response_mode_branches(
             "scoring_variant": scoring_variant,
         }
         for index, (mode, score) in enumerate(ranked, start=1)
+    )
+
+
+def apply_response_mode_coverage(
+    ranked: list[tuple[str, float]],
+    scores: dict[str, float],
+    coverage_modes: tuple[str, ...],
+    coverage_min_score: float,
+    top_k: int,
+) -> list[tuple[str, float]]:
+    if not coverage_modes or top_k < 2 or len(ranked) < top_k:
+        return ranked
+
+    ranked_modes = {mode for mode, _score in ranked}
+    candidates = [
+        (mode, scores[mode])
+        for mode in coverage_modes
+        if mode not in ranked_modes and scores[mode] >= coverage_min_score
+    ]
+    if not candidates:
+        return ranked
+
+    coverage_mode, coverage_score = max(candidates, key=lambda item: item[1])
+    preserved_top = ranked[0]
+    replaceable = ranked[1:]
+    replace_index, _weakest = min(
+        enumerate(replaceable, start=1),
+        key=lambda item: item[1][1],
+    )
+    balanced = list(ranked)
+    balanced[replace_index] = (coverage_mode, min(coverage_score, preserved_top[1] - 0.001))
+    return sorted(
+        balanced,
+        key=lambda item: (item[1], item[0] == preserved_top[0]),
+        reverse=True,
     )
 
 
@@ -1963,6 +2020,10 @@ def run_response_mode_ranker_bakeoff(
         raise ValueError("train, dev, and test turns are required")
 
     ranker = train_response_mode_ranker(train_turns)
+    balanced_prior_ranker = train_response_mode_ranker(
+        train_turns,
+        class_balanced=True,
+    )
     train_baseline_rows = score_response_mode_turns(train_turns, top_k=top_k)
     dev_baseline_rows = score_response_mode_turns(dev_turns, top_k=top_k)
     test_baseline_rows = score_response_mode_turns(test_turns, top_k=top_k)
@@ -1971,26 +2032,36 @@ def run_response_mode_ranker_bakeoff(
     for variant in response_mode_bakeoff_variants():
         name = str(variant["name"])
         learned_weight = float(variant["learned_weight"])
+        coverage_modes = tuple(str(mode) for mode in variant.get("coverage_modes", ()))
+        coverage_min_score = float(variant.get("coverage_min_score", 0.0))
+        class_balanced_prior = bool(variant.get("class_balanced_prior", False))
+        variant_ranker = balanced_prior_ranker if class_balanced_prior else ranker
         use_ranker = learned_weight > 0
         train_rows = score_response_mode_turns(
             train_turns,
             top_k=top_k,
-            ranker=ranker if use_ranker else None,
+            ranker=variant_ranker if use_ranker else None,
             learned_weight=learned_weight,
+            coverage_modes=coverage_modes,
+            coverage_min_score=coverage_min_score,
             scoring_variant=name,
         )
         dev_rows = score_response_mode_turns(
             dev_turns,
             top_k=top_k,
-            ranker=ranker if use_ranker else None,
+            ranker=variant_ranker if use_ranker else None,
             learned_weight=learned_weight,
+            coverage_modes=coverage_modes,
+            coverage_min_score=coverage_min_score,
             scoring_variant=name,
         )
         test_rows = score_response_mode_turns(
             test_turns,
             top_k=top_k,
-            ranker=ranker if use_ranker else None,
+            ranker=variant_ranker if use_ranker else None,
             learned_weight=learned_weight,
+            coverage_modes=coverage_modes,
+            coverage_min_score=coverage_min_score,
             scoring_variant=name,
         )
         variant_rows[name] = {
@@ -2000,6 +2071,9 @@ def run_response_mode_ranker_bakeoff(
         }
         variants[name] = {
             "learned_weight": learned_weight,
+            "coverage_modes": coverage_modes,
+            "coverage_min_score": coverage_min_score,
+            "class_balanced_prior": class_balanced_prior,
             "train": summarize_response_mode_rows(train_rows, train_turns),
             "dev": summarize_response_mode_rows(dev_rows, dev_turns),
             "test": summarize_response_mode_rows(test_rows, test_turns),
@@ -2025,6 +2099,7 @@ def run_response_mode_ranker_bakeoff(
             "top_k": top_k,
         },
         "ranker": ranker.to_dict(),
+        "balanced_prior_ranker": balanced_prior_ranker.to_dict(),
         "variants": variants,
         "selected_variant": {
             "name": selected_name,
@@ -2072,6 +2147,10 @@ def run_response_mode_ranker_bakeoff(
                 selected_rows,
             ),
         },
+        "coverage_projection": response_mode_coverage_projection(
+            variant_rows=variant_rows,
+            test_turns=test_turns,
+        ),
         "guidance_delta": compare_response_mode_guidance_delta(
             test_baseline_rows,
             selected_rows,
@@ -2101,12 +2180,100 @@ def response_mode_promotion_summary(
     }
 
 
+def response_mode_coverage_projection(
+    variant_rows: dict[str, dict[str, tuple[dict[str, object], ...]]],
+    test_turns: tuple[ConversationTurn, ...],
+) -> dict[str, object]:
+    baseline_rows = variant_rows["heuristic_response_mode"]["test"]
+    modes = sorted({turn.expected_response_mode for turn in test_turns})
+    projection: dict[str, object] = {}
+    for mode in modes:
+        baseline = summarize_response_mode_row_subset(
+            tuple(
+                row
+                for row in baseline_rows
+                if str(row["expected_response_mode"]) == mode
+            )
+        )
+        variant_metrics = {
+            name: summarize_response_mode_row_subset(
+                tuple(
+                    row
+                    for row in rows["test"]
+                    if str(row["expected_response_mode"]) == mode
+                )
+            )
+            for name, rows in variant_rows.items()
+        }
+        best_top_1 = max(
+            variant_metrics,
+            key=lambda name: (
+                float(variant_metrics[name]["p_at_1"]),
+                float(variant_metrics[name]["top_3_recall"]),
+            ),
+        )
+        best_top_3 = max(
+            variant_metrics,
+            key=lambda name: (
+                float(variant_metrics[name]["top_3_recall"]),
+                float(variant_metrics[name]["p_at_1"]),
+            ),
+        )
+        projection[mode] = {
+            "baseline": baseline,
+            "best_top_1_variant": best_top_1,
+            "best_top_1": variant_metrics[best_top_1],
+            "best_top_1_gain": round(
+                float(variant_metrics[best_top_1]["p_at_1"])
+                - float(baseline["p_at_1"]),
+                3,
+            ),
+            "best_top_3_variant": best_top_3,
+            "best_top_3": variant_metrics[best_top_3],
+            "best_top_3_gain": round(
+                float(variant_metrics[best_top_3]["top_3_recall"])
+                - float(baseline["top_3_recall"]),
+                3,
+            ),
+        }
+    return {"expected_response_mode": projection}
+
+
 def response_mode_bakeoff_variants() -> tuple[dict[str, object], ...]:
     return (
         {"name": "heuristic_response_mode", "learned_weight": 0.0},
         {"name": "response_mode_hybrid_25", "learned_weight": 0.25},
         {"name": "response_mode_hybrid_50", "learned_weight": 0.5},
         {"name": "response_mode_hybrid_75", "learned_weight": 0.75},
+        {
+            "name": "balanced_response_mode_50",
+            "learned_weight": 0.5,
+            "coverage_modes": ("disclose", "inform", "other", "reassure"),
+            "coverage_min_score": 0.16,
+        },
+        {
+            "name": "balanced_response_mode_75",
+            "learned_weight": 0.75,
+            "coverage_modes": ("disclose", "inform", "other", "reassure"),
+            "coverage_min_score": 0.16,
+        },
+        {
+            "name": "balanced_prior_response_mode_50",
+            "learned_weight": 0.5,
+            "class_balanced_prior": True,
+        },
+        {
+            "name": "balanced_prior_response_mode_75",
+            "learned_weight": 0.75,
+            "class_balanced_prior": True,
+        },
+        {
+            "name": "balanced_prior_coverage_response_mode_50",
+            "learned_weight": 0.5,
+            "class_balanced_prior": True,
+            "coverage_modes": ("disclose", "inform", "other", "reassure"),
+            "coverage_min_score": 0.16,
+        },
         {"name": "learned_response_mode", "learned_weight": 1.0},
     )
 
@@ -2116,6 +2283,8 @@ def score_response_mode_turns(
     top_k: int,
     ranker: ResponseModeRanker | None = None,
     learned_weight: float = 0.0,
+    coverage_modes: tuple[str, ...] = tuple(),
+    coverage_min_score: float = 0.0,
     scoring_variant: str = "heuristic_response_mode",
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
@@ -2125,6 +2294,8 @@ def score_response_mode_turns(
             top_k=top_k,
             ranker=ranker,
             learned_weight=learned_weight,
+            coverage_modes=coverage_modes,
+            coverage_min_score=coverage_min_score,
             scoring_variant=scoring_variant,
         )
         rank_1 = branches[0]

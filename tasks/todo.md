@@ -526,3 +526,25 @@ Verification:
 - Weak response-mode slices are explicit: `disclose`, `inform`, and `other` remain at `0.0` top-1 and top-3 recall; `reassure` has top-3 coverage but no top-1 hits. Next lever: class-balanced response-mode coverage/protection.
 - `python3 -m pytest -v`: 106 passed.
 - `git diff --check`: passed.
+
+## Class-Balanced Response-Mode Coverage
+
+- [x] Add tests for minority-mode top-3 coverage that preserve stronger top-1 modes.
+- [x] Add a class-balanced response-mode brancher variant to improve coverage for `disclose`, `inform`, `other`, and `reassure`.
+- [x] Gate balanced variants through validation selection and held-out segment promotion.
+- [x] Rerun ESConv response-mode benchmark and compare coverage, top-1, and weak-mode movement.
+- [x] Update README/catalog/tracker with whether balanced coverage produces a promotable result.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_balanced_response_mode_brancher_adds_minority_mode_to_top_three tests/test_conversation_probability.py::test_balanced_response_mode_brancher_preserves_strong_top_mode tests/test_conversation_probability.py::test_response_mode_bakeoff_variants_include_balanced_coverage -v` failed because `generate_response_mode_branches` did not support `coverage_modes` and the bake-off had no balanced variants.
+- Balanced-prior red check: `python3 -m pytest tests/test_conversation_probability.py::test_class_balanced_response_mode_ranker_uses_uniform_priors tests/test_conversation_probability.py::test_response_mode_bakeoff_variants_include_balanced_coverage -v` failed because `train_response_mode_ranker` did not support `class_balanced=True` and the bake-off had no balanced-prior variant.
+- Coverage projection red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v` failed because the response-mode report had no `coverage_projection` section.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 45 passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Selected validation variant remains `response_mode_hybrid_75`; held-out test stays at `p_at_1=0.217`, `top_3_recall=0.527`, and `heldout_promotable=false` because `suggest` still regresses from `0.291` to `0.284`.
+- Balanced coverage is diagnostic, not promoted: `balanced_response_mode_50` lifts held-out `inform` top-3 to `0.739` and `reassure` top-3 to `0.751`, but it reduces aggregate top-3 and validation blocks it.
+- Coverage projection now shows the reachable weak-mode signal: learned-only reaches `disclose` at `0.091` top-1 / `0.449` top-3, `inform` at `0.152` top-1, `other` at `0.381` top-1 / `0.691` top-3, and `reassure` at `0.105` top-1. Next lever: protected minority-mode promotion with richer features.
+- `python3 -m pytest -v`: 110 passed.
+- `git diff --check`: passed.

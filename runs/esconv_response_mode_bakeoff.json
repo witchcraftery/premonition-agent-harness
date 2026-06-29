@@ -919,6 +919,194 @@
       }
     }
   },
+  "balanced_prior_ranker": {
+    "mode_counts": {
+      "apologize": 0,
+      "ask_followup": 1279,
+      "commit": 0,
+      "disclose": 671,
+      "encourage": 0,
+      "inform": 429,
+      "other": 1246,
+      "reassure": 1085,
+      "redirect": 0,
+      "suggest": 1094,
+      "validate": 936
+    },
+    "vocabulary_size": 7868
+  },
+  "coverage_projection": {
+    "expected_response_mode": {
+      "ask_followup": {
+        "baseline": {
+          "p_at_1": 0.567,
+          "top_3_recall": 0.833,
+          "total_turns": 335,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1": {
+          "p_at_1": 0.618,
+          "top_3_recall": 0.752,
+          "total_turns": 335,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1_gain": 0.051,
+        "best_top_1_variant": "learned_response_mode",
+        "best_top_3": {
+          "p_at_1": 0.612,
+          "top_3_recall": 0.839,
+          "total_turns": 335,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_3_gain": 0.006,
+        "best_top_3_variant": "response_mode_hybrid_75"
+      },
+      "disclose": {
+        "baseline": {
+          "p_at_1": 0.0,
+          "top_3_recall": 0.0,
+          "total_turns": 176,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1": {
+          "p_at_1": 0.091,
+          "top_3_recall": 0.449,
+          "total_turns": 176,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1_gain": 0.091,
+        "best_top_1_variant": "learned_response_mode",
+        "best_top_3": {
+          "p_at_1": 0.091,
+          "top_3_recall": 0.449,
+          "total_turns": 176,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_3_gain": 0.449,
+        "best_top_3_variant": "learned_response_mode"
+      },
+      "inform": {
+        "baseline": {
+          "p_at_1": 0.0,
+          "top_3_recall": 0.0,
+          "total_turns": 138,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1": {
+          "p_at_1": 0.152,
+          "top_3_recall": 0.326,
+          "total_turns": 138,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1_gain": 0.152,
+        "best_top_1_variant": "learned_response_mode",
+        "best_top_3": {
+          "p_at_1": 0.0,
+          "top_3_recall": 0.739,
+          "total_turns": 138,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_3_gain": 0.739,
+        "best_top_3_variant": "balanced_response_mode_50"
+      },
+      "other": {
+        "baseline": {
+          "p_at_1": 0.0,
+          "top_3_recall": 0.0,
+          "total_turns": 278,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1": {
+          "p_at_1": 0.381,
+          "top_3_recall": 0.691,
+          "total_turns": 278,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1_gain": 0.381,
+        "best_top_1_variant": "learned_response_mode",
+        "best_top_3": {
+          "p_at_1": 0.381,
+          "top_3_recall": 0.691,
+          "total_turns": 278,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_3_gain": 0.691,
+        "best_top_3_variant": "learned_response_mode"
+      },
+      "reassure": {
+        "baseline": {
+          "p_at_1": 0.0,
+          "top_3_recall": 0.688,
+          "total_turns": 285,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1": {
+          "p_at_1": 0.105,
+          "top_3_recall": 0.484,
+          "total_turns": 285,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1_gain": 0.105,
+        "best_top_1_variant": "learned_response_mode",
+        "best_top_3": {
+          "p_at_1": 0.0,
+          "top_3_recall": 0.751,
+          "total_turns": 285,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_3_gain": 0.063,
+        "best_top_3_variant": "balanced_response_mode_50"
+      },
+      "suggest": {
+        "baseline": {
+          "p_at_1": 0.291,
+          "top_3_recall": 0.651,
+          "total_turns": 261,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1": {
+          "p_at_1": 0.291,
+          "top_3_recall": 0.651,
+          "total_turns": 261,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1_gain": 0.0,
+        "best_top_1_variant": "heuristic_response_mode",
+        "best_top_3": {
+          "p_at_1": 0.264,
+          "top_3_recall": 0.739,
+          "total_turns": 261,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_3_gain": 0.088,
+        "best_top_3_variant": "learned_response_mode"
+      },
+      "validate": {
+        "baseline": {
+          "p_at_1": 0.342,
+          "top_3_recall": 1.0,
+          "total_turns": 275,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1": {
+          "p_at_1": 0.367,
+          "top_3_recall": 1.0,
+          "total_turns": 275,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_1_gain": 0.025,
+        "best_top_1_variant": "response_mode_hybrid_25",
+        "best_top_3": {
+          "p_at_1": 0.367,
+          "top_3_recall": 1.0,
+          "total_turns": 275,
+          "tts_readiness_rate": 1.0
+        },
+        "best_top_3_gain": 0.0,
+        "best_top_3_variant": "response_mode_hybrid_25"
+      }
+    }
+  },
   "dev": {
     "baseline": {
       "median_latency_ms": 90,
@@ -2729,6 +2917,9 @@
     "vocabulary_size": 7868
   },
   "selected_variant": {
+    "class_balanced_prior": false,
+    "coverage_min_score": 0.0,
+    "coverage_modes": [],
     "dev": {
       "median_latency_ms": 90,
       "p_at_1": 0.204,
@@ -2802,7 +2993,210 @@
     }
   },
   "variants": {
+    "balanced_prior_coverage_response_mode_50": {
+      "class_balanced_prior": true,
+      "coverage_min_score": 0.16,
+      "coverage_modes": [
+        "disclose",
+        "inform",
+        "other",
+        "reassure"
+      ],
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.199,
+        "top_3_recall": 0.439,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.501,
+          "candidate_p_at_1": 0.491,
+          "name": "ask_followup",
+          "p_at_1_delta": -0.01,
+          "segment": "expected_response_mode"
+        }
+      ],
+      "learned_weight": 0.5,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.212,
+        "top_3_recall": 0.502,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.203,
+        "top_3_recall": 0.457,
+        "total_turns": 6740,
+        "tts_readiness_rate": 1.0
+      }
+    },
+    "balanced_prior_response_mode_50": {
+      "class_balanced_prior": true,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.199,
+        "top_3_recall": 0.532,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.501,
+          "candidate_p_at_1": 0.491,
+          "name": "ask_followup",
+          "p_at_1_delta": -0.01,
+          "segment": "expected_response_mode"
+        }
+      ],
+      "learned_weight": 0.5,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.212,
+        "top_3_recall": 0.526,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.203,
+        "top_3_recall": 0.533,
+        "total_turns": 6740,
+        "tts_readiness_rate": 1.0
+      }
+    },
+    "balanced_prior_response_mode_75": {
+      "class_balanced_prior": true,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.203,
+        "top_3_recall": 0.54,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "learned_weight": 0.75,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.215,
+        "top_3_recall": 0.526,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.291,
+          "candidate_p_at_1": 0.284,
+          "name": "suggest",
+          "p_at_1_delta": -0.007,
+          "segment": "expected_response_mode"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.24,
+        "top_3_recall": 0.577,
+        "total_turns": 6740,
+        "tts_readiness_rate": 1.0
+      }
+    },
+    "balanced_response_mode_50": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.16,
+      "coverage_modes": [
+        "disclose",
+        "inform",
+        "other",
+        "reassure"
+      ],
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.199,
+        "top_3_recall": 0.439,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.501,
+          "candidate_p_at_1": 0.491,
+          "name": "ask_followup",
+          "p_at_1_delta": -0.01,
+          "segment": "expected_response_mode"
+        }
+      ],
+      "learned_weight": 0.5,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.212,
+        "top_3_recall": 0.502,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.203,
+        "top_3_recall": 0.457,
+        "total_turns": 6740,
+        "tts_readiness_rate": 1.0
+      }
+    },
+    "balanced_response_mode_75": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.16,
+      "coverage_modes": [
+        "disclose",
+        "inform",
+        "other",
+        "reassure"
+      ],
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.204,
+        "top_3_recall": 0.453,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "learned_weight": 0.75,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.217,
+        "top_3_recall": 0.507,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.291,
+          "candidate_p_at_1": 0.284,
+          "name": "suggest",
+          "p_at_1_delta": -0.007,
+          "segment": "expected_response_mode"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.24,
+        "top_3_recall": 0.528,
+        "total_turns": 6740,
+        "tts_readiness_rate": 1.0
+      }
+    },
     "heuristic_response_mode": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.198,
@@ -2829,6 +3223,9 @@
       }
     },
     "learned_response_mode": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.27,
@@ -2878,6 +3275,9 @@
       }
     },
     "response_mode_hybrid_25": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.198,
@@ -2920,6 +3320,9 @@
       }
     },
     "response_mode_hybrid_50": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.199,
@@ -2954,6 +3357,9 @@
       }
     },
     "response_mode_hybrid_75": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
       "dev": {
         "median_latency_ms": 90,
         "p_at_1": 0.204,

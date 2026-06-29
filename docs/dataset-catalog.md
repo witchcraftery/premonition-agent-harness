@@ -84,7 +84,9 @@ repeatable benchmark.
 - Current use: maps ESConv strategies into modes: `ask_followup`, `validate`, `reassure`, `disclose`, `suggest`, `inform`, and `other`; then compares heuristic, hybrid, and learned response-mode branchers.
 - Current result: validation selects `response_mode_hybrid_75`; dev `p_at_1` improves from `0.198` to `0.204`, and held-out test `p_at_1` improves from `0.206` to `0.217`.
 - Promotion result: not held-out promotable yet. The untouched test split has one response-mode segment regression: `suggest` top-1 slips from `0.291` to `0.284`.
-- Weak mode signal: `disclose`, `inform`, and `other` remain at `0.0` top-1 and top-3 recall; `reassure` has top-3 coverage but no top-1 hits. The next lever is class-balanced response-mode coverage and protected mode promotion.
+- Weak mode signal: selected behavior still leaves `disclose`, `inform`, and `other` at `0.0` top-1 and top-3 recall; `reassure` has top-3 coverage but no top-1 hits.
+- Class-balanced coverage result: balanced-prior and balanced-coverage variants were added, plus `coverage_projection` reporting. They did not displace `response_mode_hybrid_75`, but they exposed useful reachable signal. Learned-only reaches `disclose` at `0.091` top-1 / `0.449` top-3, `inform` at `0.152` top-1, `other` at `0.381` top-1 / `0.691` top-3, and `reassure` at `0.105` top-1. Balanced coverage raises `inform` top-3 to `0.739` and `reassure` top-3 to `0.751`, but remains diagnostic because it disturbs stronger protected modes.
+- Next lever: protected minority-mode promotion with richer strategy/context features, so rare-mode signal can be used without weakening `suggest`, `validate`, or `ask_followup`.
 - Limitation: deterministic 80/10/10 split over ESConv's single JSON source; useful for iteration, but final comparisons should report the split rule and may need seed/fold repeats.
 
 ## Human Conversation Candidates

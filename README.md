@@ -461,8 +461,18 @@ from `0.198` to `0.204`, and untouched test `p_at_1` improves from `0.206` to
 (`0.291 -> 0.284`), so the report marks `heldout_promotable=false`. The weak
 mode slices are now explicit: `disclose`, `inform`, and `other` are still at
 `0.0` top-1 and top-3 recall, while `reassure` has top-3 coverage but no top-1
-hits. The next lever is class-balanced response-mode coverage, not a looser
-promotion gate.
+hits.
+
+The class-balanced pass adds balanced-prior and balanced-coverage variants plus
+a `coverage_projection` section to the report. The selected variant remains
+`response_mode_hybrid_75`, and it remains non-promotable because of the held-out
+`suggest` regression. The projection is the useful new signal: learned-only can
+reach `disclose` (`0.091` top-1, `0.449` top-3), `inform` (`0.152` top-1),
+`other` (`0.381` top-1, `0.691` top-3), and `reassure` (`0.105` top-1), while
+balanced coverage can lift `inform` top-3 to `0.739` and `reassure` top-3 to
+`0.751`. Those variants are diagnostic because they still disturb protected
+modes. The next lever is protected minority-mode promotion with richer features,
+not a looser promotion gate.
 
 ## Replay Data Format
 
