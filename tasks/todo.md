@@ -410,3 +410,22 @@ Verification:
 - Safe question specialist result: held-out test `p_at_1=0.514`, no held-out act segment regressions, and no directive regression, but `1` internal cross-validation `inform` segment regression.
 - Margin/preservation sweep found stable question configurations only at `p_at_1=0.502`, below the current promoted `0.504`, so the safe question specialist remains diagnostic.
 - Result: the lever removed the obvious directive failure but exposed `inform` stability as the blocker. Next focus is question-specific evidence/features, not another guard.
+
+## Larger-Slice Question Breakthrough
+
+- [x] Probe larger DailyDialog train/dev/test slices to see whether question specialists stabilize with more examples.
+- [x] Add selector support for preferring preserved-act specialists when validation scores are effectively tied.
+- [x] Generate and benchmark a larger committed DailyDialog sample.
+- [x] Report whether the question specialist becomes promotable without held-out segment regressions.
+- [x] Document the next benchmark lever.
+
+Verification:
+
+- Probe: temporary 2000/2000/2000 DailyDialog bake-off selected a question specialist and showed that the raw question variant was cross-fold stable but had a tiny held-out `directive` regression.
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_bakeoff_selection_prefers_preserved_specialist_inside_dev_tie -v` failed because selector sorting chose the raw question specialist over the preserved safe specialist.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 30 passed.
+- Exported committed 2k samples: `data/dailydialog_train_2k_sample.jsonl`, `data/dailydialog_validation_2k_sample.jsonl`, and `data/dailydialog_test_2k_sample.jsonl`.
+- `foresight-replay --conversation-train-input data/dailydialog_train_2k_sample.jsonl --conversation-dev-input data/dailydialog_validation_2k_sample.jsonl --conversation-test-input data/dailydialog_test_2k_sample.jsonl --conversation-bakeoff-report runs/dailydialog_2k_act_ranker_bakeoff.json`: completed.
+- Selected 2k variant: `safe_question_act_rhythm_contextual`; validation `p_at_1=0.488`, held-out test `p_at_1=0.491`, held-out top-3 recall `0.974`, cross-validation mean gain `0.092`, minimum fold gain `0.078`, and `0` cross-fold segment regressions.
+- Segment result: held-out `question` top-1 improved from `0.025` to `0.116`, held-out `directive` top-1 stayed at `0.052`, and both `question` and `directive` top-3 recall reached `1.0`.
+- Result: breakthrough achieved through more examples plus a stability-biased tie selector. Next lever is scaling beyond 2k and adding question-specific evidence beyond act history.

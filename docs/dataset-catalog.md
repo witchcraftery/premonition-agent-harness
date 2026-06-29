@@ -45,8 +45,8 @@ repeatable benchmark.
 ### DailyDialog Held-Out Samples
 
 - Status: derived samples included in this repository; raw source files are excluded under `data/external/`.
-- Files: `data/dailydialog_train_sample.jsonl`, `data/dailydialog_validation_sample.jsonl`, and `data/dailydialog_test_sample.jsonl`.
-- Reports: `runs/dailydialog_heldout_probability_loop.json` and `runs/dailydialog_act_ranker_bakeoff.json`.
+- Files: `data/dailydialog_train_sample.jsonl`, `data/dailydialog_validation_sample.jsonl`, `data/dailydialog_test_sample.jsonl`, plus larger `data/dailydialog_train_2k_sample.jsonl`, `data/dailydialog_validation_2k_sample.jsonl`, and `data/dailydialog_test_2k_sample.jsonl`.
+- Reports: `runs/dailydialog_heldout_probability_loop.json`, `runs/dailydialog_act_ranker_bakeoff.json`, and `runs/dailydialog_2k_act_ranker_bakeoff.json`.
 - Source mirror used for import: `https://github.com/snakeztc/NeuralDialog-LAED/tree/master/data/daily_dialog`.
 - Purpose: true train/dev/test efficacy loop for ordinary conversational act prediction and TTS-ready branch preparation.
 - Current use: train learns candidate guidance, validation gates promotion, and untouched test measures generalization.
@@ -58,7 +58,8 @@ repeatable benchmark.
 - Raw transition signal: full contextual transition reached test `p_at_1=0.534` and `top_3_recall=0.970`, but regressed `directive` and `question` top-1 accuracy to `0.0`, so it remains diagnostic rather than promoted behavior.
 - Diagnostic signal: `act_rhythm_contextual_strict` reached held-out test `p_at_1=0.508`, cross-validation mean gain `0.112`, and minimum fold gain `0.100`, but it showed `1` internal act-segment regression, so it remains diagnostic rather than promoted behavior.
 - Specialist signal: the combined protected-act specialist reached held-out test `p_at_1=0.514`, and the question-only specialist reached `0.512`, but both showed `1` internal cross-validation segment regression. A safer question-only variant that preserves current `directive` reads reached held-out test `p_at_1=0.514` with no held-out act segment regressions, but it still regressed `inform` in one internal fold, so it remains diagnostic.
-- Limitation: first 500 turns from each split; the next lever is adding question-specific evidence that improves question top-1 without regressing `inform` or `directive`.
+- Larger-slice result: on the 2000/2000/2000 samples, `safe_question_act_rhythm_contextual` is selected. Held-out test `p_at_1` improves from `0.335` to `0.491`, `top_3_recall` improves from `0.850` to `0.974`, cross-validation mean gain is `0.092`, minimum fold gain is `0.078`, and cross-fold segment regressions stay at `0`. Held-out `question` top-1 improves from `0.025` to `0.116`, while `directive` top-1 is preserved at `0.052`.
+- Limitation: first 2,000 turns from each split; the next lever is scaling further and adding question-specific evidence that improves question top-1 without relying only on act history.
 
 ## Human Conversation Candidates
 

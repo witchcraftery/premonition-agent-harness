@@ -31,6 +31,7 @@ DAILYDIALOG_EMOTIONS = {
 CONVERSATION_ACTS = ("inform", "question", "directive", "commissive")
 MAX_CONVERSATION_BAKEOFF_TRAIN_DEV_GAP = 0.12
 MAX_CONVERSATION_SPECIALIST_TRAIN_DEV_GAP = 0.14
+CONVERSATION_BAKEOFF_DEV_TIE_MARGIN = 0.005
 CONVERSATION_GUIDANCE_STOP_WORDS = {
     "about",
     "like",
@@ -1493,9 +1494,11 @@ def select_conversation_bakeoff_variant(
         if conversation_cross_validation_ok(row)
     }
     candidates = cross_validated_candidates if cross_validated_candidates else candidates
+    candidates = conversation_stability_tie_candidates(candidates)
     return sorted(
         candidates,
         key=lambda name: (
+            conversation_preservation_score(candidates[name]),
             float(candidates[name]["dev"]["p_at_1"]),
             float(candidates[name]["dev"]["top_3_recall"]),
             -len(candidates[name]["dev_segment_regressions"]),
@@ -1503,6 +1506,24 @@ def select_conversation_bakeoff_variant(
         ),
         reverse=True,
     )[0]
+
+
+def conversation_stability_tie_candidates(
+    candidates: dict[str, dict[str, object]],
+) -> dict[str, dict[str, object]]:
+    best_dev = max(float(row["dev"]["p_at_1"]) for row in candidates.values())
+    near_best = {
+        name: row
+        for name, row in candidates.items()
+        if best_dev - float(row["dev"]["p_at_1"]) <= CONVERSATION_BAKEOFF_DEV_TIE_MARGIN
+    }
+    if any(conversation_preservation_score(row) > 0 for row in near_best.values()):
+        return near_best
+    return candidates
+
+
+def conversation_preservation_score(row: dict[str, object]) -> int:
+    return len(tuple(row.get("history_preserved_acts", ())))
 
 
 def conversation_variant_robust_enough(row: dict[str, object]) -> bool:

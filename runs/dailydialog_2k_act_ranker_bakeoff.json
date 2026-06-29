@@ -1,0 +1,6055 @@
+{
+  "analytics": {
+    "dev_segments": {
+      "expected_act": {
+        "commissive": {
+          "baseline": {
+            "p_at_1": 0.289,
+            "top_3_recall": 0.293,
+            "total_turns": 242,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.798,
+            "top_3_recall": 0.934,
+            "total_turns": 242,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "directive": {
+          "baseline": {
+            "p_at_1": 0.112,
+            "top_3_recall": 0.796,
+            "total_turns": 393,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.112,
+            "top_3_recall": 1.0,
+            "total_turns": 393,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "inform": {
+          "baseline": {
+            "p_at_1": 0.679,
+            "top_3_recall": 0.995,
+            "total_turns": 860,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.799,
+            "top_3_recall": 0.955,
+            "total_turns": 860,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "question": {
+          "baseline": {
+            "p_at_1": 0.02,
+            "top_3_recall": 0.994,
+            "total_turns": 505,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.103,
+            "top_3_recall": 1.0,
+            "total_turns": 505,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      },
+      "expected_emotion": {
+        "anger": {
+          "baseline": {
+            "p_at_1": 0.381,
+            "top_3_recall": 0.905,
+            "total_turns": 21,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.619,
+            "top_3_recall": 1.0,
+            "total_turns": 21,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "disgust": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "top_3_recall": 1.0,
+            "total_turns": 1,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "top_3_recall": 1.0,
+            "total_turns": 1,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "fear": {
+          "baseline": {
+            "p_at_1": 1.0,
+            "top_3_recall": 1.0,
+            "total_turns": 2,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "top_3_recall": 1.0,
+            "total_turns": 2,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "happiness": {
+          "baseline": {
+            "p_at_1": 0.522,
+            "top_3_recall": 0.849,
+            "total_turns": 159,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.692,
+            "top_3_recall": 0.956,
+            "total_turns": 159,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "no_emotion": {
+          "baseline": {
+            "p_at_1": 0.339,
+            "top_3_recall": 0.872,
+            "total_turns": 1778,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.469,
+            "top_3_recall": 0.974,
+            "total_turns": 1778,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "sadness": {
+          "baseline": {
+            "p_at_1": 0.643,
+            "top_3_recall": 0.714,
+            "total_turns": 14,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.857,
+            "top_3_recall": 0.857,
+            "total_turns": 14,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "surprise": {
+          "baseline": {
+            "p_at_1": 0.12,
+            "top_3_recall": 1.0,
+            "total_turns": 25,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.16,
+            "top_3_recall": 1.0,
+            "total_turns": 25,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      },
+      "focus_areas": [
+        {
+          "guided_p_at_1": 0.103,
+          "guided_top_3_recall": 1.0,
+          "name": "question",
+          "p_at_1_gain": 0.083,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.112,
+          "guided_top_3_recall": 1.0,
+          "name": "directive",
+          "p_at_1_gain": 0.0,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.16,
+          "guided_top_3_recall": 1.0,
+          "name": "surprise",
+          "p_at_1_gain": 0.04,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.449,
+          "guided_top_3_recall": 0.975,
+          "name": "speaker_a",
+          "p_at_1_gain": 0.143,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.469,
+          "guided_top_3_recall": 0.974,
+          "name": "no_emotion",
+          "p_at_1_gain": 0.13,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.521,
+          "guided_top_3_recall": 0.971,
+          "name": "speaker_b",
+          "p_at_1_gain": 0.127,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.619,
+          "guided_top_3_recall": 1.0,
+          "name": "anger",
+          "p_at_1_gain": 0.238,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.692,
+          "guided_top_3_recall": 0.956,
+          "name": "happiness",
+          "p_at_1_gain": 0.17,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.798,
+          "guided_top_3_recall": 0.934,
+          "name": "commissive",
+          "p_at_1_gain": 0.509,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.799,
+          "guided_top_3_recall": 0.955,
+          "name": "inform",
+          "p_at_1_gain": 0.12,
+          "segment": "expected_act"
+        }
+      ],
+      "next_speaker": {
+        "speaker_a": {
+          "baseline": {
+            "p_at_1": 0.306,
+            "top_3_recall": 0.88,
+            "total_turns": 915,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.449,
+            "top_3_recall": 0.975,
+            "total_turns": 915,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "speaker_b": {
+          "baseline": {
+            "p_at_1": 0.394,
+            "top_3_recall": 0.864,
+            "total_turns": 1085,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.521,
+            "top_3_recall": 0.971,
+            "total_turns": 1085,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      }
+    },
+    "test_segments": {
+      "expected_act": {
+        "commissive": {
+          "baseline": {
+            "p_at_1": 0.38,
+            "top_3_recall": 0.403,
+            "total_turns": 263,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.844,
+            "top_3_recall": 0.92,
+            "total_turns": 263,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "directive": {
+          "baseline": {
+            "p_at_1": 0.052,
+            "top_3_recall": 0.673,
+            "total_turns": 388,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.052,
+            "top_3_recall": 1.0,
+            "total_turns": 388,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "inform": {
+          "baseline": {
+            "p_at_1": 0.645,
+            "top_3_recall": 1.0,
+            "total_turns": 832,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.817,
+            "top_3_recall": 0.963,
+            "total_turns": 832,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "question": {
+          "baseline": {
+            "p_at_1": 0.025,
+            "top_3_recall": 0.967,
+            "total_turns": 517,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.116,
+            "top_3_recall": 1.0,
+            "total_turns": 517,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      },
+      "expected_emotion": {
+        "anger": {
+          "baseline": {
+            "p_at_1": 0.294,
+            "top_3_recall": 0.765,
+            "total_turns": 17,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.529,
+            "top_3_recall": 0.941,
+            "total_turns": 17,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "disgust": {
+          "baseline": {
+            "p_at_1": 0.333,
+            "top_3_recall": 0.667,
+            "total_turns": 3,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.333,
+            "top_3_recall": 0.667,
+            "total_turns": 3,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "fear": {
+          "baseline": {
+            "p_at_1": 0.25,
+            "top_3_recall": 1.0,
+            "total_turns": 4,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.25,
+            "top_3_recall": 1.0,
+            "total_turns": 4,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "happiness": {
+          "baseline": {
+            "p_at_1": 0.424,
+            "top_3_recall": 0.803,
+            "total_turns": 203,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.645,
+            "top_3_recall": 0.966,
+            "total_turns": 203,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "no_emotion": {
+          "baseline": {
+            "p_at_1": 0.327,
+            "top_3_recall": 0.855,
+            "total_turns": 1721,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.475,
+            "top_3_recall": 0.976,
+            "total_turns": 1721,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "sadness": {
+          "baseline": {
+            "p_at_1": 0.5,
+            "top_3_recall": 0.769,
+            "total_turns": 26,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.654,
+            "top_3_recall": 0.962,
+            "total_turns": 26,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "surprise": {
+          "baseline": {
+            "p_at_1": 0.077,
+            "top_3_recall": 0.962,
+            "total_turns": 26,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.231,
+            "top_3_recall": 0.962,
+            "total_turns": 26,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      },
+      "focus_areas": [
+        {
+          "guided_p_at_1": 0.052,
+          "guided_top_3_recall": 1.0,
+          "name": "directive",
+          "p_at_1_gain": 0.0,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.116,
+          "guided_top_3_recall": 1.0,
+          "name": "question",
+          "p_at_1_gain": 0.091,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.231,
+          "guided_top_3_recall": 0.962,
+          "name": "surprise",
+          "p_at_1_gain": 0.154,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.25,
+          "guided_top_3_recall": 1.0,
+          "name": "fear",
+          "p_at_1_gain": 0.0,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.333,
+          "guided_top_3_recall": 0.667,
+          "name": "disgust",
+          "p_at_1_gain": 0.0,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.475,
+          "guided_top_3_recall": 0.976,
+          "name": "no_emotion",
+          "p_at_1_gain": 0.148,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.478,
+          "guided_top_3_recall": 0.976,
+          "name": "speaker_a",
+          "p_at_1_gain": 0.177,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.502,
+          "guided_top_3_recall": 0.973,
+          "name": "speaker_b",
+          "p_at_1_gain": 0.139,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.529,
+          "guided_top_3_recall": 0.941,
+          "name": "anger",
+          "p_at_1_gain": 0.235,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.645,
+          "guided_top_3_recall": 0.966,
+          "name": "happiness",
+          "p_at_1_gain": 0.221,
+          "segment": "expected_emotion"
+        }
+      ],
+      "next_speaker": {
+        "speaker_a": {
+          "baseline": {
+            "p_at_1": 0.301,
+            "top_3_recall": 0.854,
+            "total_turns": 906,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.478,
+            "top_3_recall": 0.976,
+            "total_turns": 906,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "speaker_b": {
+          "baseline": {
+            "p_at_1": 0.363,
+            "top_3_recall": 0.846,
+            "total_turns": 1094,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.502,
+            "top_3_recall": 0.973,
+            "total_turns": 1094,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      }
+    },
+    "train_segments": {
+      "expected_act": {
+        "commissive": {
+          "baseline": {
+            "p_at_1": 0.197,
+            "top_3_recall": 0.211,
+            "total_turns": 147,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.83,
+            "top_3_recall": 0.918,
+            "total_turns": 147,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "directive": {
+          "baseline": {
+            "p_at_1": 0.055,
+            "top_3_recall": 0.829,
+            "total_turns": 164,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.055,
+            "top_3_recall": 1.0,
+            "total_turns": 164,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "inform": {
+          "baseline": {
+            "p_at_1": 0.817,
+            "top_3_recall": 0.999,
+            "total_turns": 1160,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.847,
+            "top_3_recall": 0.992,
+            "total_turns": 1160,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "question": {
+          "baseline": {
+            "p_at_1": 0.032,
+            "top_3_recall": 0.989,
+            "total_turns": 529,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.163,
+            "top_3_recall": 1.0,
+            "total_turns": 529,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      },
+      "expected_emotion": {
+        "anger": {
+          "baseline": {
+            "p_at_1": 0.667,
+            "top_3_recall": 0.958,
+            "total_turns": 24,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.625,
+            "top_3_recall": 0.917,
+            "total_turns": 24,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "disgust": {
+          "baseline": {
+            "p_at_1": 0.7,
+            "top_3_recall": 0.9,
+            "total_turns": 20,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.75,
+            "top_3_recall": 1.0,
+            "total_turns": 20,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "fear": {
+          "baseline": {
+            "p_at_1": 0.5,
+            "top_3_recall": 1.0,
+            "total_turns": 6,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.5,
+            "top_3_recall": 1.0,
+            "total_turns": 6,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "happiness": {
+          "baseline": {
+            "p_at_1": 0.553,
+            "top_3_recall": 0.88,
+            "total_turns": 416,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.644,
+            "top_3_recall": 0.978,
+            "total_turns": 416,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "no_emotion": {
+          "baseline": {
+            "p_at_1": 0.492,
+            "top_3_recall": 0.935,
+            "total_turns": 1458,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.595,
+            "top_3_recall": 0.993,
+            "total_turns": 1458,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "sadness": {
+          "baseline": {
+            "p_at_1": 0.833,
+            "top_3_recall": 0.917,
+            "total_turns": 12,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 1.0,
+            "top_3_recall": 1.0,
+            "total_turns": 12,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "surprise": {
+          "baseline": {
+            "p_at_1": 0.203,
+            "top_3_recall": 0.969,
+            "total_turns": 64,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.281,
+            "top_3_recall": 1.0,
+            "total_turns": 64,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      },
+      "focus_areas": [
+        {
+          "guided_p_at_1": 0.055,
+          "guided_top_3_recall": 1.0,
+          "name": "directive",
+          "p_at_1_gain": 0.0,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.163,
+          "guided_top_3_recall": 1.0,
+          "name": "question",
+          "p_at_1_gain": 0.131,
+          "segment": "expected_act"
+        },
+        {
+          "guided_p_at_1": 0.281,
+          "guided_top_3_recall": 1.0,
+          "name": "surprise",
+          "p_at_1_gain": 0.078,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.5,
+          "guided_top_3_recall": 1.0,
+          "name": "fear",
+          "p_at_1_gain": 0.0,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.561,
+          "guided_top_3_recall": 0.994,
+          "name": "speaker_a",
+          "p_at_1_gain": 0.116,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.595,
+          "guided_top_3_recall": 0.993,
+          "name": "no_emotion",
+          "p_at_1_gain": 0.103,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.625,
+          "guided_top_3_recall": 0.917,
+          "name": "anger",
+          "p_at_1_gain": -0.042,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.631,
+          "guided_top_3_recall": 0.985,
+          "name": "speaker_b",
+          "p_at_1_gain": 0.083,
+          "segment": "next_speaker"
+        },
+        {
+          "guided_p_at_1": 0.644,
+          "guided_top_3_recall": 0.978,
+          "name": "happiness",
+          "p_at_1_gain": 0.091,
+          "segment": "expected_emotion"
+        },
+        {
+          "guided_p_at_1": 0.75,
+          "guided_top_3_recall": 1.0,
+          "name": "disgust",
+          "p_at_1_gain": 0.05,
+          "segment": "expected_emotion"
+        }
+      ],
+      "next_speaker": {
+        "speaker_a": {
+          "baseline": {
+            "p_at_1": 0.445,
+            "top_3_recall": 0.931,
+            "total_turns": 897,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.561,
+            "top_3_recall": 0.994,
+            "total_turns": 897,
+            "tts_readiness_rate": 1.0
+          }
+        },
+        "speaker_b": {
+          "baseline": {
+            "p_at_1": 0.548,
+            "top_3_recall": 0.919,
+            "total_turns": 1103,
+            "tts_readiness_rate": 1.0
+          },
+          "guided": {
+            "p_at_1": 0.631,
+            "top_3_recall": 0.985,
+            "total_turns": 1103,
+            "tts_readiness_rate": 1.0
+          }
+        }
+      }
+    }
+  },
+  "dev": {
+    "baseline": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.354,
+      "top_3_recall": 0.871,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    },
+    "guided": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.488,
+      "top_3_recall": 0.973,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    }
+  },
+  "efficacy": {
+    "dev_p_at_1_gain": 0.134,
+    "dev_test_p_at_1_gap": -0.022,
+    "dev_top_3_recall_gain": 0.102,
+    "dev_tts_readiness_gain": 0.0,
+    "test_p_at_1_gain": 0.156,
+    "test_top_3_recall_gain": 0.124,
+    "test_tts_readiness_gain": 0.0,
+    "train_p_at_1_gain": 0.099,
+    "train_test_p_at_1_gap": -0.057,
+    "train_top_3_recall_gain": 0.066,
+    "train_tts_readiness_gain": 0.0
+  },
+  "guidance_delta": {
+    "improved_turn_count": 349,
+    "improved_turns": [
+      "dailydialog-test-0001-003",
+      "dailydialog-test-0001-005",
+      "dailydialog-test-0001-009",
+      "dailydialog-test-0004-012",
+      "dailydialog-test-0005-002",
+      "dailydialog-test-0006-003",
+      "dailydialog-test-0006-007",
+      "dailydialog-test-0007-011",
+      "dailydialog-test-0008-002",
+      "dailydialog-test-0008-005",
+      "dailydialog-test-0008-009",
+      "dailydialog-test-0009-002",
+      "dailydialog-test-0009-007",
+      "dailydialog-test-0009-008",
+      "dailydialog-test-0010-005",
+      "dailydialog-test-0011-001",
+      "dailydialog-test-0012-003",
+      "dailydialog-test-0013-004",
+      "dailydialog-test-0014-002",
+      "dailydialog-test-0015-002",
+      "dailydialog-test-0016-004",
+      "dailydialog-test-0016-007",
+      "dailydialog-test-0016-015",
+      "dailydialog-test-0017-002",
+      "dailydialog-test-0018-001",
+      "dailydialog-test-0018-002",
+      "dailydialog-test-0018-003",
+      "dailydialog-test-0018-008",
+      "dailydialog-test-0020-004",
+      "dailydialog-test-0021-010",
+      "dailydialog-test-0022-001",
+      "dailydialog-test-0022-003",
+      "dailydialog-test-0025-008",
+      "dailydialog-test-0025-010",
+      "dailydialog-test-0025-012",
+      "dailydialog-test-0026-002",
+      "dailydialog-test-0026-006",
+      "dailydialog-test-0026-010",
+      "dailydialog-test-0026-011",
+      "dailydialog-test-0028-003",
+      "dailydialog-test-0028-008",
+      "dailydialog-test-0028-009",
+      "dailydialog-test-0028-010",
+      "dailydialog-test-0029-002",
+      "dailydialog-test-0029-015",
+      "dailydialog-test-0031-003",
+      "dailydialog-test-0031-007",
+      "dailydialog-test-0033-002",
+      "dailydialog-test-0034-002",
+      "dailydialog-test-0037-001",
+      "dailydialog-test-0037-002",
+      "dailydialog-test-0037-003",
+      "dailydialog-test-0037-005",
+      "dailydialog-test-0037-010",
+      "dailydialog-test-0037-011",
+      "dailydialog-test-0038-002",
+      "dailydialog-test-0041-002",
+      "dailydialog-test-0045-002",
+      "dailydialog-test-0045-003",
+      "dailydialog-test-0046-003",
+      "dailydialog-test-0046-006",
+      "dailydialog-test-0046-008",
+      "dailydialog-test-0046-010",
+      "dailydialog-test-0046-011",
+      "dailydialog-test-0046-013",
+      "dailydialog-test-0046-014",
+      "dailydialog-test-0047-002",
+      "dailydialog-test-0047-010",
+      "dailydialog-test-0047-015",
+      "dailydialog-test-0048-005",
+      "dailydialog-test-0049-003",
+      "dailydialog-test-0050-003",
+      "dailydialog-test-0051-004",
+      "dailydialog-test-0051-006",
+      "dailydialog-test-0053-004",
+      "dailydialog-test-0055-002",
+      "dailydialog-test-0055-004",
+      "dailydialog-test-0055-008",
+      "dailydialog-test-0059-008",
+      "dailydialog-test-0059-010",
+      "dailydialog-test-0060-004",
+      "dailydialog-test-0061-004",
+      "dailydialog-test-0062-002",
+      "dailydialog-test-0063-002",
+      "dailydialog-test-0063-005",
+      "dailydialog-test-0066-003",
+      "dailydialog-test-0068-003",
+      "dailydialog-test-0069-004",
+      "dailydialog-test-0070-011",
+      "dailydialog-test-0071-002",
+      "dailydialog-test-0071-005",
+      "dailydialog-test-0072-001",
+      "dailydialog-test-0072-004",
+      "dailydialog-test-0072-006",
+      "dailydialog-test-0074-018",
+      "dailydialog-test-0075-002",
+      "dailydialog-test-0076-005",
+      "dailydialog-test-0078-002",
+      "dailydialog-test-0078-004",
+      "dailydialog-test-0078-005",
+      "dailydialog-test-0078-006",
+      "dailydialog-test-0078-008",
+      "dailydialog-test-0078-009",
+      "dailydialog-test-0078-010",
+      "dailydialog-test-0078-013",
+      "dailydialog-test-0079-004",
+      "dailydialog-test-0081-002",
+      "dailydialog-test-0082-005",
+      "dailydialog-test-0082-006",
+      "dailydialog-test-0082-007",
+      "dailydialog-test-0082-009",
+      "dailydialog-test-0082-010",
+      "dailydialog-test-0082-011",
+      "dailydialog-test-0083-005",
+      "dailydialog-test-0083-009",
+      "dailydialog-test-0083-012",
+      "dailydialog-test-0084-002",
+      "dailydialog-test-0084-005",
+      "dailydialog-test-0085-002",
+      "dailydialog-test-0085-004",
+      "dailydialog-test-0086-001",
+      "dailydialog-test-0087-004",
+      "dailydialog-test-0092-002",
+      "dailydialog-test-0093-003",
+      "dailydialog-test-0095-002",
+      "dailydialog-test-0096-002",
+      "dailydialog-test-0097-002",
+      "dailydialog-test-0099-002",
+      "dailydialog-test-0102-001",
+      "dailydialog-test-0102-004",
+      "dailydialog-test-0102-005",
+      "dailydialog-test-0102-006",
+      "dailydialog-test-0102-007",
+      "dailydialog-test-0102-008",
+      "dailydialog-test-0102-009",
+      "dailydialog-test-0103-001",
+      "dailydialog-test-0103-005",
+      "dailydialog-test-0104-006",
+      "dailydialog-test-0104-008",
+      "dailydialog-test-0104-009",
+      "dailydialog-test-0106-004",
+      "dailydialog-test-0107-001",
+      "dailydialog-test-0108-002",
+      "dailydialog-test-0110-001",
+      "dailydialog-test-0111-004",
+      "dailydialog-test-0112-007",
+      "dailydialog-test-0114-003",
+      "dailydialog-test-0114-006",
+      "dailydialog-test-0114-009",
+      "dailydialog-test-0114-011",
+      "dailydialog-test-0114-014",
+      "dailydialog-test-0114-019",
+      "dailydialog-test-0117-001",
+      "dailydialog-test-0118-002",
+      "dailydialog-test-0118-004",
+      "dailydialog-test-0118-007",
+      "dailydialog-test-0119-003",
+      "dailydialog-test-0120-008",
+      "dailydialog-test-0121-002",
+      "dailydialog-test-0122-003",
+      "dailydialog-test-0122-007",
+      "dailydialog-test-0126-001",
+      "dailydialog-test-0127-002",
+      "dailydialog-test-0127-008",
+      "dailydialog-test-0129-003",
+      "dailydialog-test-0129-005",
+      "dailydialog-test-0129-008",
+      "dailydialog-test-0129-009",
+      "dailydialog-test-0129-010",
+      "dailydialog-test-0129-011",
+      "dailydialog-test-0129-013",
+      "dailydialog-test-0132-011",
+      "dailydialog-test-0134-003",
+      "dailydialog-test-0135-004",
+      "dailydialog-test-0135-006",
+      "dailydialog-test-0135-008",
+      "dailydialog-test-0136-007",
+      "dailydialog-test-0137-004",
+      "dailydialog-test-0137-005",
+      "dailydialog-test-0137-007",
+      "dailydialog-test-0137-009",
+      "dailydialog-test-0137-010",
+      "dailydialog-test-0140-001",
+      "dailydialog-test-0140-006",
+      "dailydialog-test-0140-008",
+      "dailydialog-test-0140-010",
+      "dailydialog-test-0142-009",
+      "dailydialog-test-0143-002",
+      "dailydialog-test-0145-002",
+      "dailydialog-test-0146-002",
+      "dailydialog-test-0148-002",
+      "dailydialog-test-0151-002",
+      "dailydialog-test-0153-002",
+      "dailydialog-test-0153-004",
+      "dailydialog-test-0153-007",
+      "dailydialog-test-0155-002",
+      "dailydialog-test-0157-006",
+      "dailydialog-test-0157-007",
+      "dailydialog-test-0157-008",
+      "dailydialog-test-0157-009",
+      "dailydialog-test-0160-001",
+      "dailydialog-test-0161-001",
+      "dailydialog-test-0162-003",
+      "dailydialog-test-0162-005",
+      "dailydialog-test-0162-007",
+      "dailydialog-test-0162-008",
+      "dailydialog-test-0162-013",
+      "dailydialog-test-0164-002",
+      "dailydialog-test-0165-009",
+      "dailydialog-test-0166-002",
+      "dailydialog-test-0167-003",
+      "dailydialog-test-0168-005",
+      "dailydialog-test-0169-002",
+      "dailydialog-test-0170-003",
+      "dailydialog-test-0171-002",
+      "dailydialog-test-0176-001",
+      "dailydialog-test-0176-002",
+      "dailydialog-test-0176-003",
+      "dailydialog-test-0178-006",
+      "dailydialog-test-0179-005",
+      "dailydialog-test-0179-006",
+      "dailydialog-test-0181-002",
+      "dailydialog-test-0182-007",
+      "dailydialog-test-0182-010",
+      "dailydialog-test-0184-003",
+      "dailydialog-test-0185-001",
+      "dailydialog-test-0185-006",
+      "dailydialog-test-0186-004",
+      "dailydialog-test-0187-001",
+      "dailydialog-test-0190-003",
+      "dailydialog-test-0190-014",
+      "dailydialog-test-0190-015",
+      "dailydialog-test-0190-018",
+      "dailydialog-test-0192-003",
+      "dailydialog-test-0195-002",
+      "dailydialog-test-0195-009",
+      "dailydialog-test-0195-010",
+      "dailydialog-test-0196-002",
+      "dailydialog-test-0197-003",
+      "dailydialog-test-0198-001",
+      "dailydialog-test-0199-004",
+      "dailydialog-test-0199-006",
+      "dailydialog-test-0199-008",
+      "dailydialog-test-0200-004",
+      "dailydialog-test-0200-005",
+      "dailydialog-test-0201-003",
+      "dailydialog-test-0202-001",
+      "dailydialog-test-0202-007",
+      "dailydialog-test-0205-011",
+      "dailydialog-test-0206-001",
+      "dailydialog-test-0207-004",
+      "dailydialog-test-0210-002",
+      "dailydialog-test-0211-003",
+      "dailydialog-test-0212-001",
+      "dailydialog-test-0212-002",
+      "dailydialog-test-0212-003",
+      "dailydialog-test-0212-005",
+      "dailydialog-test-0212-007",
+      "dailydialog-test-0212-009",
+      "dailydialog-test-0213-003",
+      "dailydialog-test-0213-006",
+      "dailydialog-test-0215-004",
+      "dailydialog-test-0215-005",
+      "dailydialog-test-0215-008",
+      "dailydialog-test-0215-010",
+      "dailydialog-test-0215-012",
+      "dailydialog-test-0218-007",
+      "dailydialog-test-0222-001",
+      "dailydialog-test-0223-002",
+      "dailydialog-test-0224-002",
+      "dailydialog-test-0224-004",
+      "dailydialog-test-0226-002",
+      "dailydialog-test-0227-002",
+      "dailydialog-test-0228-001",
+      "dailydialog-test-0230-007",
+      "dailydialog-test-0231-002",
+      "dailydialog-test-0233-002",
+      "dailydialog-test-0234-011",
+      "dailydialog-test-0235-001",
+      "dailydialog-test-0235-011",
+      "dailydialog-test-0237-001",
+      "dailydialog-test-0238-002",
+      "dailydialog-test-0239-003",
+      "dailydialog-test-0240-005",
+      "dailydialog-test-0240-008",
+      "dailydialog-test-0240-009",
+      "dailydialog-test-0242-002",
+      "dailydialog-test-0242-005",
+      "dailydialog-test-0245-002",
+      "dailydialog-test-0245-010",
+      "dailydialog-test-0248-002",
+      "dailydialog-test-0248-005",
+      "dailydialog-test-0248-007",
+      "dailydialog-test-0249-008",
+      "dailydialog-test-0249-010",
+      "dailydialog-test-0249-012",
+      "dailydialog-test-0249-016",
+      "dailydialog-test-0250-006",
+      "dailydialog-test-0252-002",
+      "dailydialog-test-0253-001",
+      "dailydialog-test-0254-001",
+      "dailydialog-test-0254-009",
+      "dailydialog-test-0254-010",
+      "dailydialog-test-0254-011",
+      "dailydialog-test-0255-002",
+      "dailydialog-test-0255-014",
+      "dailydialog-test-0256-002",
+      "dailydialog-test-0258-002",
+      "dailydialog-test-0260-002",
+      "dailydialog-test-0261-005",
+      "dailydialog-test-0261-007",
+      "dailydialog-test-0263-002",
+      "dailydialog-test-0265-008",
+      "dailydialog-test-0266-002",
+      "dailydialog-test-0266-004",
+      "dailydialog-test-0266-006",
+      "dailydialog-test-0267-002",
+      "dailydialog-test-0267-006",
+      "dailydialog-test-0267-008",
+      "dailydialog-test-0268-006",
+      "dailydialog-test-0268-009",
+      "dailydialog-test-0268-011",
+      "dailydialog-test-0270-001",
+      "dailydialog-test-0270-002",
+      "dailydialog-test-0270-003",
+      "dailydialog-test-0270-005",
+      "dailydialog-test-0270-007",
+      "dailydialog-test-0270-009",
+      "dailydialog-test-0270-013",
+      "dailydialog-test-0270-017",
+      "dailydialog-test-0272-004",
+      "dailydialog-test-0274-003",
+      "dailydialog-test-0276-004",
+      "dailydialog-test-0276-005",
+      "dailydialog-test-0276-007",
+      "dailydialog-test-0277-005",
+      "dailydialog-test-0279-005",
+      "dailydialog-test-0280-002",
+      "dailydialog-test-0283-003",
+      "dailydialog-test-0283-013",
+      "dailydialog-test-0284-003",
+      "dailydialog-test-0284-006",
+      "dailydialog-test-0285-002",
+      "dailydialog-test-0285-005",
+      "dailydialog-test-0286-002",
+      "dailydialog-test-0287-001",
+      "dailydialog-test-0287-005",
+      "dailydialog-test-0287-007",
+      "dailydialog-test-0287-009"
+    ],
+    "regressed_turn_count": 37,
+    "regressed_turns": [
+      "dailydialog-test-0016-008",
+      "dailydialog-test-0023-001",
+      "dailydialog-test-0023-003",
+      "dailydialog-test-0027-002",
+      "dailydialog-test-0040-002",
+      "dailydialog-test-0050-004",
+      "dailydialog-test-0051-001",
+      "dailydialog-test-0052-002",
+      "dailydialog-test-0053-002",
+      "dailydialog-test-0065-002",
+      "dailydialog-test-0066-001",
+      "dailydialog-test-0074-006",
+      "dailydialog-test-0104-001",
+      "dailydialog-test-0112-001",
+      "dailydialog-test-0112-003",
+      "dailydialog-test-0114-007",
+      "dailydialog-test-0114-017",
+      "dailydialog-test-0115-001",
+      "dailydialog-test-0116-001",
+      "dailydialog-test-0125-002",
+      "dailydialog-test-0133-001",
+      "dailydialog-test-0136-004",
+      "dailydialog-test-0144-009",
+      "dailydialog-test-0178-002",
+      "dailydialog-test-0190-007",
+      "dailydialog-test-0198-003",
+      "dailydialog-test-0204-002",
+      "dailydialog-test-0208-002",
+      "dailydialog-test-0209-002",
+      "dailydialog-test-0215-013",
+      "dailydialog-test-0217-002",
+      "dailydialog-test-0232-002",
+      "dailydialog-test-0234-003",
+      "dailydialog-test-0243-002",
+      "dailydialog-test-0250-002",
+      "dailydialog-test-0272-011",
+      "dailydialog-test-0281-004"
+    ],
+    "unchanged_turns": [
+      "dailydialog-test-0001-001",
+      "dailydialog-test-0001-002",
+      "dailydialog-test-0001-004",
+      "dailydialog-test-0001-006",
+      "dailydialog-test-0001-007",
+      "dailydialog-test-0001-008",
+      "dailydialog-test-0001-010",
+      "dailydialog-test-0001-011",
+      "dailydialog-test-0002-001",
+      "dailydialog-test-0002-002",
+      "dailydialog-test-0002-003",
+      "dailydialog-test-0003-001",
+      "dailydialog-test-0003-002",
+      "dailydialog-test-0003-003",
+      "dailydialog-test-0003-004",
+      "dailydialog-test-0003-005",
+      "dailydialog-test-0003-006",
+      "dailydialog-test-0004-001",
+      "dailydialog-test-0004-002",
+      "dailydialog-test-0004-003",
+      "dailydialog-test-0004-004",
+      "dailydialog-test-0004-005",
+      "dailydialog-test-0004-006",
+      "dailydialog-test-0004-007",
+      "dailydialog-test-0004-008",
+      "dailydialog-test-0004-009",
+      "dailydialog-test-0004-010",
+      "dailydialog-test-0004-011",
+      "dailydialog-test-0004-013",
+      "dailydialog-test-0005-001",
+      "dailydialog-test-0005-003",
+      "dailydialog-test-0005-004",
+      "dailydialog-test-0005-005",
+      "dailydialog-test-0005-006",
+      "dailydialog-test-0005-007",
+      "dailydialog-test-0006-001",
+      "dailydialog-test-0006-002",
+      "dailydialog-test-0006-004",
+      "dailydialog-test-0006-005",
+      "dailydialog-test-0006-006",
+      "dailydialog-test-0006-008",
+      "dailydialog-test-0006-009",
+      "dailydialog-test-0007-001",
+      "dailydialog-test-0007-002",
+      "dailydialog-test-0007-003",
+      "dailydialog-test-0007-004",
+      "dailydialog-test-0007-005",
+      "dailydialog-test-0007-006",
+      "dailydialog-test-0007-007",
+      "dailydialog-test-0007-008",
+      "dailydialog-test-0007-009",
+      "dailydialog-test-0007-010",
+      "dailydialog-test-0008-001",
+      "dailydialog-test-0008-003",
+      "dailydialog-test-0008-004",
+      "dailydialog-test-0008-006",
+      "dailydialog-test-0008-007",
+      "dailydialog-test-0008-008",
+      "dailydialog-test-0009-001",
+      "dailydialog-test-0009-003",
+      "dailydialog-test-0009-004",
+      "dailydialog-test-0009-005",
+      "dailydialog-test-0009-006",
+      "dailydialog-test-0009-009",
+      "dailydialog-test-0009-010",
+      "dailydialog-test-0010-001",
+      "dailydialog-test-0010-002",
+      "dailydialog-test-0010-003",
+      "dailydialog-test-0010-004",
+      "dailydialog-test-0010-006",
+      "dailydialog-test-0010-007",
+      "dailydialog-test-0011-002",
+      "dailydialog-test-0011-003",
+      "dailydialog-test-0011-004",
+      "dailydialog-test-0012-001",
+      "dailydialog-test-0012-002",
+      "dailydialog-test-0013-001",
+      "dailydialog-test-0013-002",
+      "dailydialog-test-0013-003",
+      "dailydialog-test-0014-001",
+      "dailydialog-test-0014-003",
+      "dailydialog-test-0015-001",
+      "dailydialog-test-0015-003",
+      "dailydialog-test-0015-004",
+      "dailydialog-test-0016-001",
+      "dailydialog-test-0016-002",
+      "dailydialog-test-0016-003",
+      "dailydialog-test-0016-005",
+      "dailydialog-test-0016-006",
+      "dailydialog-test-0016-009",
+      "dailydialog-test-0016-010",
+      "dailydialog-test-0016-011",
+      "dailydialog-test-0016-012",
+      "dailydialog-test-0016-013",
+      "dailydialog-test-0016-014",
+      "dailydialog-test-0017-001",
+      "dailydialog-test-0017-003",
+      "dailydialog-test-0017-004",
+      "dailydialog-test-0017-005",
+      "dailydialog-test-0018-004",
+      "dailydialog-test-0018-005",
+      "dailydialog-test-0018-006",
+      "dailydialog-test-0018-007",
+      "dailydialog-test-0019-001",
+      "dailydialog-test-0019-002",
+      "dailydialog-test-0019-003",
+      "dailydialog-test-0019-004",
+      "dailydialog-test-0019-005",
+      "dailydialog-test-0019-006",
+      "dailydialog-test-0019-007",
+      "dailydialog-test-0019-008",
+      "dailydialog-test-0019-009",
+      "dailydialog-test-0020-001",
+      "dailydialog-test-0020-002",
+      "dailydialog-test-0020-003",
+      "dailydialog-test-0021-001",
+      "dailydialog-test-0021-002",
+      "dailydialog-test-0021-003",
+      "dailydialog-test-0021-004",
+      "dailydialog-test-0021-005",
+      "dailydialog-test-0021-006",
+      "dailydialog-test-0021-007",
+      "dailydialog-test-0021-008",
+      "dailydialog-test-0021-009",
+      "dailydialog-test-0021-011",
+      "dailydialog-test-0022-002",
+      "dailydialog-test-0022-004",
+      "dailydialog-test-0023-002",
+      "dailydialog-test-0024-001",
+      "dailydialog-test-0024-002",
+      "dailydialog-test-0024-003",
+      "dailydialog-test-0024-004",
+      "dailydialog-test-0024-005",
+      "dailydialog-test-0024-006",
+      "dailydialog-test-0024-007",
+      "dailydialog-test-0024-008",
+      "dailydialog-test-0024-009",
+      "dailydialog-test-0024-010",
+      "dailydialog-test-0024-011",
+      "dailydialog-test-0025-001",
+      "dailydialog-test-0025-002",
+      "dailydialog-test-0025-003",
+      "dailydialog-test-0025-004",
+      "dailydialog-test-0025-005",
+      "dailydialog-test-0025-006",
+      "dailydialog-test-0025-007",
+      "dailydialog-test-0025-009",
+      "dailydialog-test-0025-011",
+      "dailydialog-test-0026-001",
+      "dailydialog-test-0026-003",
+      "dailydialog-test-0026-004",
+      "dailydialog-test-0026-005",
+      "dailydialog-test-0026-007",
+      "dailydialog-test-0026-008",
+      "dailydialog-test-0026-009",
+      "dailydialog-test-0027-001",
+      "dailydialog-test-0027-003",
+      "dailydialog-test-0027-004",
+      "dailydialog-test-0028-001",
+      "dailydialog-test-0028-002",
+      "dailydialog-test-0028-004",
+      "dailydialog-test-0028-005",
+      "dailydialog-test-0028-006",
+      "dailydialog-test-0028-007",
+      "dailydialog-test-0029-001",
+      "dailydialog-test-0029-003",
+      "dailydialog-test-0029-004",
+      "dailydialog-test-0029-005",
+      "dailydialog-test-0029-006",
+      "dailydialog-test-0029-007",
+      "dailydialog-test-0029-008",
+      "dailydialog-test-0029-009",
+      "dailydialog-test-0029-010",
+      "dailydialog-test-0029-011",
+      "dailydialog-test-0029-012",
+      "dailydialog-test-0029-013",
+      "dailydialog-test-0029-014",
+      "dailydialog-test-0029-016",
+      "dailydialog-test-0029-017",
+      "dailydialog-test-0030-001",
+      "dailydialog-test-0031-001",
+      "dailydialog-test-0031-002",
+      "dailydialog-test-0031-004",
+      "dailydialog-test-0031-005",
+      "dailydialog-test-0031-006",
+      "dailydialog-test-0032-001",
+      "dailydialog-test-0032-002",
+      "dailydialog-test-0032-003",
+      "dailydialog-test-0033-001",
+      "dailydialog-test-0033-003",
+      "dailydialog-test-0033-004",
+      "dailydialog-test-0034-001",
+      "dailydialog-test-0034-003",
+      "dailydialog-test-0034-004",
+      "dailydialog-test-0034-005",
+      "dailydialog-test-0034-006",
+      "dailydialog-test-0034-007",
+      "dailydialog-test-0034-008",
+      "dailydialog-test-0034-009",
+      "dailydialog-test-0034-010",
+      "dailydialog-test-0034-011",
+      "dailydialog-test-0034-012",
+      "dailydialog-test-0035-001",
+      "dailydialog-test-0035-002",
+      "dailydialog-test-0035-003",
+      "dailydialog-test-0035-004",
+      "dailydialog-test-0035-005",
+      "dailydialog-test-0035-006",
+      "dailydialog-test-0035-007",
+      "dailydialog-test-0035-008",
+      "dailydialog-test-0035-009",
+      "dailydialog-test-0035-010",
+      "dailydialog-test-0035-011",
+      "dailydialog-test-0036-001",
+      "dailydialog-test-0036-002",
+      "dailydialog-test-0036-003",
+      "dailydialog-test-0036-004",
+      "dailydialog-test-0036-005",
+      "dailydialog-test-0036-006",
+      "dailydialog-test-0036-007",
+      "dailydialog-test-0036-008",
+      "dailydialog-test-0036-009",
+      "dailydialog-test-0036-010",
+      "dailydialog-test-0036-011",
+      "dailydialog-test-0037-004",
+      "dailydialog-test-0037-006",
+      "dailydialog-test-0037-007",
+      "dailydialog-test-0037-008",
+      "dailydialog-test-0037-009",
+      "dailydialog-test-0038-001",
+      "dailydialog-test-0038-003",
+      "dailydialog-test-0038-004",
+      "dailydialog-test-0038-005",
+      "dailydialog-test-0038-006",
+      "dailydialog-test-0039-001",
+      "dailydialog-test-0039-002",
+      "dailydialog-test-0039-003",
+      "dailydialog-test-0039-004",
+      "dailydialog-test-0039-005",
+      "dailydialog-test-0039-006",
+      "dailydialog-test-0040-001",
+      "dailydialog-test-0040-003",
+      "dailydialog-test-0040-004",
+      "dailydialog-test-0040-005",
+      "dailydialog-test-0040-006",
+      "dailydialog-test-0040-007",
+      "dailydialog-test-0040-008",
+      "dailydialog-test-0040-009",
+      "dailydialog-test-0041-001",
+      "dailydialog-test-0041-003",
+      "dailydialog-test-0041-004",
+      "dailydialog-test-0041-005",
+      "dailydialog-test-0041-006",
+      "dailydialog-test-0042-001",
+      "dailydialog-test-0042-002",
+      "dailydialog-test-0042-003",
+      "dailydialog-test-0042-004",
+      "dailydialog-test-0042-005",
+      "dailydialog-test-0042-006",
+      "dailydialog-test-0042-007",
+      "dailydialog-test-0042-008",
+      "dailydialog-test-0042-009",
+      "dailydialog-test-0042-010",
+      "dailydialog-test-0042-011",
+      "dailydialog-test-0042-012",
+      "dailydialog-test-0042-013",
+      "dailydialog-test-0042-014",
+      "dailydialog-test-0042-015",
+      "dailydialog-test-0042-016",
+      "dailydialog-test-0043-001",
+      "dailydialog-test-0043-002",
+      "dailydialog-test-0043-003",
+      "dailydialog-test-0043-004",
+      "dailydialog-test-0043-005",
+      "dailydialog-test-0043-006",
+      "dailydialog-test-0044-001",
+      "dailydialog-test-0044-002",
+      "dailydialog-test-0044-003",
+      "dailydialog-test-0044-004",
+      "dailydialog-test-0044-005",
+      "dailydialog-test-0044-006",
+      "dailydialog-test-0045-001",
+      "dailydialog-test-0046-001",
+      "dailydialog-test-0046-002",
+      "dailydialog-test-0046-004",
+      "dailydialog-test-0046-005",
+      "dailydialog-test-0046-007",
+      "dailydialog-test-0046-009",
+      "dailydialog-test-0046-012",
+      "dailydialog-test-0047-001",
+      "dailydialog-test-0047-003",
+      "dailydialog-test-0047-004",
+      "dailydialog-test-0047-005",
+      "dailydialog-test-0047-006",
+      "dailydialog-test-0047-007",
+      "dailydialog-test-0047-008",
+      "dailydialog-test-0047-009",
+      "dailydialog-test-0047-011",
+      "dailydialog-test-0047-012",
+      "dailydialog-test-0047-013",
+      "dailydialog-test-0047-014",
+      "dailydialog-test-0047-016",
+      "dailydialog-test-0047-017",
+      "dailydialog-test-0048-001",
+      "dailydialog-test-0048-002",
+      "dailydialog-test-0048-003",
+      "dailydialog-test-0048-004",
+      "dailydialog-test-0049-001",
+      "dailydialog-test-0049-002",
+      "dailydialog-test-0050-001",
+      "dailydialog-test-0050-002",
+      "dailydialog-test-0051-002",
+      "dailydialog-test-0051-003",
+      "dailydialog-test-0051-005",
+      "dailydialog-test-0051-007",
+      "dailydialog-test-0052-001",
+      "dailydialog-test-0052-003",
+      "dailydialog-test-0052-004",
+      "dailydialog-test-0052-005",
+      "dailydialog-test-0052-006",
+      "dailydialog-test-0052-007",
+      "dailydialog-test-0052-008",
+      "dailydialog-test-0052-009",
+      "dailydialog-test-0052-010",
+      "dailydialog-test-0052-011",
+      "dailydialog-test-0053-001",
+      "dailydialog-test-0053-003",
+      "dailydialog-test-0053-005",
+      "dailydialog-test-0053-006",
+      "dailydialog-test-0053-007",
+      "dailydialog-test-0053-008",
+      "dailydialog-test-0053-009",
+      "dailydialog-test-0053-010",
+      "dailydialog-test-0053-011",
+      "dailydialog-test-0053-012",
+      "dailydialog-test-0054-001",
+      "dailydialog-test-0055-001",
+      "dailydialog-test-0055-003",
+      "dailydialog-test-0055-005",
+      "dailydialog-test-0055-006",
+      "dailydialog-test-0055-007",
+      "dailydialog-test-0055-009",
+      "dailydialog-test-0055-010",
+      "dailydialog-test-0056-001",
+      "dailydialog-test-0056-002",
+      "dailydialog-test-0056-003",
+      "dailydialog-test-0056-004",
+      "dailydialog-test-0056-005",
+      "dailydialog-test-0056-006",
+      "dailydialog-test-0056-007",
+      "dailydialog-test-0056-008",
+      "dailydialog-test-0057-001",
+      "dailydialog-test-0057-002",
+      "dailydialog-test-0057-003",
+      "dailydialog-test-0057-004",
+      "dailydialog-test-0057-005",
+      "dailydialog-test-0057-006",
+      "dailydialog-test-0057-007",
+      "dailydialog-test-0057-008",
+      "dailydialog-test-0058-001",
+      "dailydialog-test-0058-002",
+      "dailydialog-test-0058-003",
+      "dailydialog-test-0058-004",
+      "dailydialog-test-0058-005",
+      "dailydialog-test-0058-006",
+      "dailydialog-test-0058-007",
+      "dailydialog-test-0058-008",
+      "dailydialog-test-0058-009",
+      "dailydialog-test-0059-001",
+      "dailydialog-test-0059-002",
+      "dailydialog-test-0059-003",
+      "dailydialog-test-0059-004",
+      "dailydialog-test-0059-005",
+      "dailydialog-test-0059-006",
+      "dailydialog-test-0059-007",
+      "dailydialog-test-0059-009",
+      "dailydialog-test-0060-001",
+      "dailydialog-test-0060-002",
+      "dailydialog-test-0060-003",
+      "dailydialog-test-0060-005",
+      "dailydialog-test-0060-006",
+      "dailydialog-test-0060-007",
+      "dailydialog-test-0060-008",
+      "dailydialog-test-0060-009",
+      "dailydialog-test-0060-010",
+      "dailydialog-test-0061-001",
+      "dailydialog-test-0061-002",
+      "dailydialog-test-0061-003",
+      "dailydialog-test-0062-001",
+      "dailydialog-test-0062-003",
+      "dailydialog-test-0062-004",
+      "dailydialog-test-0062-005",
+      "dailydialog-test-0063-001",
+      "dailydialog-test-0063-003",
+      "dailydialog-test-0063-004",
+      "dailydialog-test-0063-006",
+      "dailydialog-test-0063-007",
+      "dailydialog-test-0063-008",
+      "dailydialog-test-0063-009",
+      "dailydialog-test-0064-001",
+      "dailydialog-test-0064-002",
+      "dailydialog-test-0064-003",
+      "dailydialog-test-0064-004",
+      "dailydialog-test-0064-005",
+      "dailydialog-test-0064-006",
+      "dailydialog-test-0064-007",
+      "dailydialog-test-0064-008",
+      "dailydialog-test-0064-009",
+      "dailydialog-test-0064-010",
+      "dailydialog-test-0064-011",
+      "dailydialog-test-0064-012",
+      "dailydialog-test-0064-013",
+      "dailydialog-test-0064-014",
+      "dailydialog-test-0064-015",
+      "dailydialog-test-0065-001",
+      "dailydialog-test-0065-003",
+      "dailydialog-test-0066-002",
+      "dailydialog-test-0067-001",
+      "dailydialog-test-0067-002",
+      "dailydialog-test-0067-003",
+      "dailydialog-test-0067-004",
+      "dailydialog-test-0067-005",
+      "dailydialog-test-0067-006",
+      "dailydialog-test-0068-001",
+      "dailydialog-test-0068-002",
+      "dailydialog-test-0068-004",
+      "dailydialog-test-0069-001",
+      "dailydialog-test-0069-002",
+      "dailydialog-test-0069-003",
+      "dailydialog-test-0069-005",
+      "dailydialog-test-0070-001",
+      "dailydialog-test-0070-002",
+      "dailydialog-test-0070-003",
+      "dailydialog-test-0070-004",
+      "dailydialog-test-0070-005",
+      "dailydialog-test-0070-006",
+      "dailydialog-test-0070-007",
+      "dailydialog-test-0070-008",
+      "dailydialog-test-0070-009",
+      "dailydialog-test-0070-010",
+      "dailydialog-test-0071-001",
+      "dailydialog-test-0071-003",
+      "dailydialog-test-0071-004",
+      "dailydialog-test-0072-002",
+      "dailydialog-test-0072-003",
+      "dailydialog-test-0072-005",
+      "dailydialog-test-0073-001",
+      "dailydialog-test-0073-002",
+      "dailydialog-test-0074-001",
+      "dailydialog-test-0074-002",
+      "dailydialog-test-0074-003",
+      "dailydialog-test-0074-004",
+      "dailydialog-test-0074-005",
+      "dailydialog-test-0074-007",
+      "dailydialog-test-0074-008",
+      "dailydialog-test-0074-009",
+      "dailydialog-test-0074-010",
+      "dailydialog-test-0074-011",
+      "dailydialog-test-0074-012",
+      "dailydialog-test-0074-013",
+      "dailydialog-test-0074-014",
+      "dailydialog-test-0074-015",
+      "dailydialog-test-0074-016",
+      "dailydialog-test-0074-017",
+      "dailydialog-test-0075-001",
+      "dailydialog-test-0075-003",
+      "dailydialog-test-0075-004",
+      "dailydialog-test-0075-005",
+      "dailydialog-test-0076-001",
+      "dailydialog-test-0076-002",
+      "dailydialog-test-0076-003",
+      "dailydialog-test-0076-004",
+      "dailydialog-test-0077-001",
+      "dailydialog-test-0077-002",
+      "dailydialog-test-0077-003",
+      "dailydialog-test-0077-004",
+      "dailydialog-test-0077-005",
+      "dailydialog-test-0077-006",
+      "dailydialog-test-0077-007",
+      "dailydialog-test-0077-008",
+      "dailydialog-test-0077-009",
+      "dailydialog-test-0077-010",
+      "dailydialog-test-0078-001",
+      "dailydialog-test-0078-003",
+      "dailydialog-test-0078-007",
+      "dailydialog-test-0078-011",
+      "dailydialog-test-0078-012",
+      "dailydialog-test-0079-001",
+      "dailydialog-test-0079-002",
+      "dailydialog-test-0079-003",
+      "dailydialog-test-0080-001",
+      "dailydialog-test-0080-002",
+      "dailydialog-test-0080-003",
+      "dailydialog-test-0081-001",
+      "dailydialog-test-0082-001",
+      "dailydialog-test-0082-002",
+      "dailydialog-test-0082-003",
+      "dailydialog-test-0082-004",
+      "dailydialog-test-0082-008",
+      "dailydialog-test-0083-001",
+      "dailydialog-test-0083-002",
+      "dailydialog-test-0083-003",
+      "dailydialog-test-0083-004",
+      "dailydialog-test-0083-006",
+      "dailydialog-test-0083-007",
+      "dailydialog-test-0083-008",
+      "dailydialog-test-0083-010",
+      "dailydialog-test-0083-011",
+      "dailydialog-test-0083-013",
+      "dailydialog-test-0084-001",
+      "dailydialog-test-0084-003",
+      "dailydialog-test-0084-004",
+      "dailydialog-test-0085-001",
+      "dailydialog-test-0085-003",
+      "dailydialog-test-0087-001",
+      "dailydialog-test-0087-002",
+      "dailydialog-test-0087-003",
+      "dailydialog-test-0087-005",
+      "dailydialog-test-0088-001",
+      "dailydialog-test-0089-001",
+      "dailydialog-test-0089-002",
+      "dailydialog-test-0089-003",
+      "dailydialog-test-0089-004",
+      "dailydialog-test-0089-005",
+      "dailydialog-test-0090-001",
+      "dailydialog-test-0090-002",
+      "dailydialog-test-0090-003",
+      "dailydialog-test-0090-004",
+      "dailydialog-test-0090-005",
+      "dailydialog-test-0090-006",
+      "dailydialog-test-0090-007",
+      "dailydialog-test-0090-008",
+      "dailydialog-test-0091-001",
+      "dailydialog-test-0091-002",
+      "dailydialog-test-0091-003",
+      "dailydialog-test-0092-001",
+      "dailydialog-test-0092-003",
+      "dailydialog-test-0093-001",
+      "dailydialog-test-0093-002",
+      "dailydialog-test-0094-001",
+      "dailydialog-test-0094-002",
+      "dailydialog-test-0094-003",
+      "dailydialog-test-0095-001",
+      "dailydialog-test-0095-003",
+      "dailydialog-test-0095-004",
+      "dailydialog-test-0095-005",
+      "dailydialog-test-0095-006",
+      "dailydialog-test-0095-007",
+      "dailydialog-test-0095-008",
+      "dailydialog-test-0095-009",
+      "dailydialog-test-0095-010",
+      "dailydialog-test-0095-011",
+      "dailydialog-test-0096-001",
+      "dailydialog-test-0096-003",
+      "dailydialog-test-0097-001",
+      "dailydialog-test-0097-003",
+      "dailydialog-test-0097-004",
+      "dailydialog-test-0097-005",
+      "dailydialog-test-0097-006",
+      "dailydialog-test-0097-007",
+      "dailydialog-test-0097-008",
+      "dailydialog-test-0097-009",
+      "dailydialog-test-0098-001",
+      "dailydialog-test-0099-001",
+      "dailydialog-test-0099-003",
+      "dailydialog-test-0100-001",
+      "dailydialog-test-0101-001",
+      "dailydialog-test-0101-002",
+      "dailydialog-test-0101-003",
+      "dailydialog-test-0101-004",
+      "dailydialog-test-0101-005",
+      "dailydialog-test-0101-006",
+      "dailydialog-test-0102-002",
+      "dailydialog-test-0102-003",
+      "dailydialog-test-0103-002",
+      "dailydialog-test-0103-003",
+      "dailydialog-test-0103-004",
+      "dailydialog-test-0104-002",
+      "dailydialog-test-0104-003",
+      "dailydialog-test-0104-004",
+      "dailydialog-test-0104-005",
+      "dailydialog-test-0104-007",
+      "dailydialog-test-0105-001",
+      "dailydialog-test-0105-002",
+      "dailydialog-test-0105-003",
+      "dailydialog-test-0105-004",
+      "dailydialog-test-0106-001",
+      "dailydialog-test-0106-002",
+      "dailydialog-test-0106-003",
+      "dailydialog-test-0107-002",
+      "dailydialog-test-0107-003",
+      "dailydialog-test-0107-004",
+      "dailydialog-test-0107-005",
+      "dailydialog-test-0108-001",
+      "dailydialog-test-0108-003",
+      "dailydialog-test-0108-004",
+      "dailydialog-test-0108-005",
+      "dailydialog-test-0108-006",
+      "dailydialog-test-0108-007",
+      "dailydialog-test-0108-008",
+      "dailydialog-test-0108-009",
+      "dailydialog-test-0109-001",
+      "dailydialog-test-0109-002",
+      "dailydialog-test-0109-003",
+      "dailydialog-test-0109-004",
+      "dailydialog-test-0109-005",
+      "dailydialog-test-0109-006",
+      "dailydialog-test-0109-007",
+      "dailydialog-test-0109-008",
+      "dailydialog-test-0109-009",
+      "dailydialog-test-0109-010",
+      "dailydialog-test-0109-011",
+      "dailydialog-test-0111-001",
+      "dailydialog-test-0111-002",
+      "dailydialog-test-0111-003",
+      "dailydialog-test-0111-005",
+      "dailydialog-test-0111-006",
+      "dailydialog-test-0111-007",
+      "dailydialog-test-0111-008",
+      "dailydialog-test-0111-009",
+      "dailydialog-test-0112-002",
+      "dailydialog-test-0112-004",
+      "dailydialog-test-0112-005",
+      "dailydialog-test-0112-006",
+      "dailydialog-test-0112-008",
+      "dailydialog-test-0113-001",
+      "dailydialog-test-0113-002",
+      "dailydialog-test-0113-003",
+      "dailydialog-test-0113-004",
+      "dailydialog-test-0113-005",
+      "dailydialog-test-0113-006",
+      "dailydialog-test-0113-007",
+      "dailydialog-test-0113-008",
+      "dailydialog-test-0114-001",
+      "dailydialog-test-0114-002",
+      "dailydialog-test-0114-004",
+      "dailydialog-test-0114-005",
+      "dailydialog-test-0114-008",
+      "dailydialog-test-0114-010",
+      "dailydialog-test-0114-012",
+      "dailydialog-test-0114-013",
+      "dailydialog-test-0114-015",
+      "dailydialog-test-0114-016",
+      "dailydialog-test-0114-018",
+      "dailydialog-test-0115-002",
+      "dailydialog-test-0115-003",
+      "dailydialog-test-0115-004",
+      "dailydialog-test-0115-005",
+      "dailydialog-test-0115-006",
+      "dailydialog-test-0115-007",
+      "dailydialog-test-0115-008",
+      "dailydialog-test-0115-009",
+      "dailydialog-test-0115-010",
+      "dailydialog-test-0115-011",
+      "dailydialog-test-0115-012",
+      "dailydialog-test-0115-013",
+      "dailydialog-test-0115-014",
+      "dailydialog-test-0115-015",
+      "dailydialog-test-0116-002",
+      "dailydialog-test-0116-003",
+      "dailydialog-test-0116-004",
+      "dailydialog-test-0116-005",
+      "dailydialog-test-0117-002",
+      "dailydialog-test-0117-003",
+      "dailydialog-test-0118-001",
+      "dailydialog-test-0118-003",
+      "dailydialog-test-0118-005",
+      "dailydialog-test-0118-006",
+      "dailydialog-test-0118-008",
+      "dailydialog-test-0118-009",
+      "dailydialog-test-0119-001",
+      "dailydialog-test-0119-002",
+      "dailydialog-test-0119-004",
+      "dailydialog-test-0120-001",
+      "dailydialog-test-0120-002",
+      "dailydialog-test-0120-003",
+      "dailydialog-test-0120-004",
+      "dailydialog-test-0120-005",
+      "dailydialog-test-0120-006",
+      "dailydialog-test-0120-007",
+      "dailydialog-test-0121-001",
+      "dailydialog-test-0121-003",
+      "dailydialog-test-0122-001",
+      "dailydialog-test-0122-002",
+      "dailydialog-test-0122-004",
+      "dailydialog-test-0122-005",
+      "dailydialog-test-0122-006",
+      "dailydialog-test-0123-001",
+      "dailydialog-test-0124-001",
+      "dailydialog-test-0124-002",
+      "dailydialog-test-0124-003",
+      "dailydialog-test-0125-001",
+      "dailydialog-test-0125-003",
+      "dailydialog-test-0125-004",
+      "dailydialog-test-0125-005",
+      "dailydialog-test-0126-002",
+      "dailydialog-test-0126-003",
+      "dailydialog-test-0126-004",
+      "dailydialog-test-0126-005",
+      "dailydialog-test-0126-006",
+      "dailydialog-test-0127-001",
+      "dailydialog-test-0127-003",
+      "dailydialog-test-0127-004",
+      "dailydialog-test-0127-005",
+      "dailydialog-test-0127-006",
+      "dailydialog-test-0127-007",
+      "dailydialog-test-0128-001",
+      "dailydialog-test-0128-002",
+      "dailydialog-test-0128-003",
+      "dailydialog-test-0128-004",
+      "dailydialog-test-0129-001",
+      "dailydialog-test-0129-002",
+      "dailydialog-test-0129-004",
+      "dailydialog-test-0129-006",
+      "dailydialog-test-0129-007",
+      "dailydialog-test-0129-012",
+      "dailydialog-test-0130-001",
+      "dailydialog-test-0130-002",
+      "dailydialog-test-0130-003",
+      "dailydialog-test-0131-001",
+      "dailydialog-test-0131-002",
+      "dailydialog-test-0131-003",
+      "dailydialog-test-0131-004",
+      "dailydialog-test-0131-005",
+      "dailydialog-test-0131-006",
+      "dailydialog-test-0131-007",
+      "dailydialog-test-0131-008",
+      "dailydialog-test-0132-001",
+      "dailydialog-test-0132-002",
+      "dailydialog-test-0132-003",
+      "dailydialog-test-0132-004",
+      "dailydialog-test-0132-005",
+      "dailydialog-test-0132-006",
+      "dailydialog-test-0132-007",
+      "dailydialog-test-0132-008",
+      "dailydialog-test-0132-009",
+      "dailydialog-test-0132-010",
+      "dailydialog-test-0133-002",
+      "dailydialog-test-0133-003",
+      "dailydialog-test-0133-004",
+      "dailydialog-test-0133-005",
+      "dailydialog-test-0133-006",
+      "dailydialog-test-0133-007",
+      "dailydialog-test-0134-001",
+      "dailydialog-test-0134-002",
+      "dailydialog-test-0134-004",
+      "dailydialog-test-0134-005",
+      "dailydialog-test-0135-001",
+      "dailydialog-test-0135-002",
+      "dailydialog-test-0135-003",
+      "dailydialog-test-0135-005",
+      "dailydialog-test-0135-007",
+      "dailydialog-test-0136-001",
+      "dailydialog-test-0136-002",
+      "dailydialog-test-0136-003",
+      "dailydialog-test-0136-005",
+      "dailydialog-test-0136-006",
+      "dailydialog-test-0137-001",
+      "dailydialog-test-0137-002",
+      "dailydialog-test-0137-003",
+      "dailydialog-test-0137-006",
+      "dailydialog-test-0137-008",
+      "dailydialog-test-0137-011",
+      "dailydialog-test-0138-001",
+      "dailydialog-test-0138-002",
+      "dailydialog-test-0138-003",
+      "dailydialog-test-0138-004",
+      "dailydialog-test-0138-005",
+      "dailydialog-test-0138-006",
+      "dailydialog-test-0138-007",
+      "dailydialog-test-0139-001",
+      "dailydialog-test-0139-002",
+      "dailydialog-test-0139-003",
+      "dailydialog-test-0139-004",
+      "dailydialog-test-0139-005",
+      "dailydialog-test-0139-006",
+      "dailydialog-test-0139-007",
+      "dailydialog-test-0139-008",
+      "dailydialog-test-0139-009",
+      "dailydialog-test-0139-010",
+      "dailydialog-test-0139-011",
+      "dailydialog-test-0140-002",
+      "dailydialog-test-0140-003",
+      "dailydialog-test-0140-004",
+      "dailydialog-test-0140-005",
+      "dailydialog-test-0140-007",
+      "dailydialog-test-0140-009",
+      "dailydialog-test-0141-001",
+      "dailydialog-test-0141-002",
+      "dailydialog-test-0141-003",
+      "dailydialog-test-0141-004",
+      "dailydialog-test-0142-001",
+      "dailydialog-test-0142-002",
+      "dailydialog-test-0142-003",
+      "dailydialog-test-0142-004",
+      "dailydialog-test-0142-005",
+      "dailydialog-test-0142-006",
+      "dailydialog-test-0142-007",
+      "dailydialog-test-0142-008",
+      "dailydialog-test-0142-010",
+      "dailydialog-test-0143-001",
+      "dailydialog-test-0143-003",
+      "dailydialog-test-0144-001",
+      "dailydialog-test-0144-002",
+      "dailydialog-test-0144-003",
+      "dailydialog-test-0144-004",
+      "dailydialog-test-0144-005",
+      "dailydialog-test-0144-006",
+      "dailydialog-test-0144-007",
+      "dailydialog-test-0144-008",
+      "dailydialog-test-0144-010",
+      "dailydialog-test-0144-011",
+      "dailydialog-test-0144-012",
+      "dailydialog-test-0145-001",
+      "dailydialog-test-0146-001",
+      "dailydialog-test-0146-003",
+      "dailydialog-test-0146-004",
+      "dailydialog-test-0146-005",
+      "dailydialog-test-0146-006",
+      "dailydialog-test-0146-007",
+      "dailydialog-test-0147-001",
+      "dailydialog-test-0148-001",
+      "dailydialog-test-0148-003",
+      "dailydialog-test-0148-004",
+      "dailydialog-test-0148-005",
+      "dailydialog-test-0148-006",
+      "dailydialog-test-0148-007",
+      "dailydialog-test-0149-001",
+      "dailydialog-test-0149-002",
+      "dailydialog-test-0150-001",
+      "dailydialog-test-0150-002",
+      "dailydialog-test-0150-003",
+      "dailydialog-test-0150-004",
+      "dailydialog-test-0150-005",
+      "dailydialog-test-0151-001",
+      "dailydialog-test-0151-003",
+      "dailydialog-test-0152-001",
+      "dailydialog-test-0152-002",
+      "dailydialog-test-0152-003",
+      "dailydialog-test-0152-004",
+      "dailydialog-test-0153-001",
+      "dailydialog-test-0153-003",
+      "dailydialog-test-0153-005",
+      "dailydialog-test-0153-006",
+      "dailydialog-test-0154-001",
+      "dailydialog-test-0154-002",
+      "dailydialog-test-0154-003",
+      "dailydialog-test-0154-004",
+      "dailydialog-test-0154-005",
+      "dailydialog-test-0154-006",
+      "dailydialog-test-0154-007",
+      "dailydialog-test-0154-008",
+      "dailydialog-test-0155-001",
+      "dailydialog-test-0155-003",
+      "dailydialog-test-0155-004",
+      "dailydialog-test-0156-001",
+      "dailydialog-test-0156-002",
+      "dailydialog-test-0156-003",
+      "dailydialog-test-0156-004",
+      "dailydialog-test-0156-005",
+      "dailydialog-test-0156-006",
+      "dailydialog-test-0157-001",
+      "dailydialog-test-0157-002",
+      "dailydialog-test-0157-003",
+      "dailydialog-test-0157-004",
+      "dailydialog-test-0157-005",
+      "dailydialog-test-0158-001",
+      "dailydialog-test-0158-002",
+      "dailydialog-test-0158-003",
+      "dailydialog-test-0158-004",
+      "dailydialog-test-0158-005",
+      "dailydialog-test-0159-001",
+      "dailydialog-test-0159-002",
+      "dailydialog-test-0162-001",
+      "dailydialog-test-0162-002",
+      "dailydialog-test-0162-004",
+      "dailydialog-test-0162-006",
+      "dailydialog-test-0162-009",
+      "dailydialog-test-0162-010",
+      "dailydialog-test-0162-011",
+      "dailydialog-test-0162-012",
+      "dailydialog-test-0162-014",
+      "dailydialog-test-0163-001",
+      "dailydialog-test-0163-002",
+      "dailydialog-test-0163-003",
+      "dailydialog-test-0164-001",
+      "dailydialog-test-0164-003",
+      "dailydialog-test-0164-004",
+      "dailydialog-test-0164-005",
+      "dailydialog-test-0164-006",
+      "dailydialog-test-0165-001",
+      "dailydialog-test-0165-002",
+      "dailydialog-test-0165-003",
+      "dailydialog-test-0165-004",
+      "dailydialog-test-0165-005",
+      "dailydialog-test-0165-006",
+      "dailydialog-test-0165-007",
+      "dailydialog-test-0165-008",
+      "dailydialog-test-0166-001",
+      "dailydialog-test-0166-003",
+      "dailydialog-test-0166-004",
+      "dailydialog-test-0166-005",
+      "dailydialog-test-0166-006",
+      "dailydialog-test-0166-007",
+      "dailydialog-test-0166-008",
+      "dailydialog-test-0166-009",
+      "dailydialog-test-0167-001",
+      "dailydialog-test-0167-002",
+      "dailydialog-test-0167-004",
+      "dailydialog-test-0167-005",
+      "dailydialog-test-0167-006",
+      "dailydialog-test-0167-007",
+      "dailydialog-test-0168-001",
+      "dailydialog-test-0168-002",
+      "dailydialog-test-0168-003",
+      "dailydialog-test-0168-004",
+      "dailydialog-test-0169-001",
+      "dailydialog-test-0169-003",
+      "dailydialog-test-0170-001",
+      "dailydialog-test-0170-002",
+      "dailydialog-test-0170-004",
+      "dailydialog-test-0170-005",
+      "dailydialog-test-0170-006",
+      "dailydialog-test-0170-007",
+      "dailydialog-test-0170-008",
+      "dailydialog-test-0171-001",
+      "dailydialog-test-0171-003",
+      "dailydialog-test-0171-004",
+      "dailydialog-test-0171-005",
+      "dailydialog-test-0171-006",
+      "dailydialog-test-0171-007",
+      "dailydialog-test-0172-001",
+      "dailydialog-test-0173-001",
+      "dailydialog-test-0173-002",
+      "dailydialog-test-0173-003",
+      "dailydialog-test-0173-004",
+      "dailydialog-test-0173-005",
+      "dailydialog-test-0174-001",
+      "dailydialog-test-0174-002",
+      "dailydialog-test-0174-003",
+      "dailydialog-test-0174-004",
+      "dailydialog-test-0174-005",
+      "dailydialog-test-0175-001",
+      "dailydialog-test-0175-002",
+      "dailydialog-test-0175-003",
+      "dailydialog-test-0175-004",
+      "dailydialog-test-0175-005",
+      "dailydialog-test-0175-006",
+      "dailydialog-test-0175-007",
+      "dailydialog-test-0175-008",
+      "dailydialog-test-0175-009",
+      "dailydialog-test-0175-010",
+      "dailydialog-test-0175-011",
+      "dailydialog-test-0176-004",
+      "dailydialog-test-0176-005",
+      "dailydialog-test-0177-001",
+      "dailydialog-test-0177-002",
+      "dailydialog-test-0177-003",
+      "dailydialog-test-0177-004",
+      "dailydialog-test-0177-005",
+      "dailydialog-test-0178-001",
+      "dailydialog-test-0178-003",
+      "dailydialog-test-0178-004",
+      "dailydialog-test-0178-005",
+      "dailydialog-test-0179-001",
+      "dailydialog-test-0179-002",
+      "dailydialog-test-0179-003",
+      "dailydialog-test-0179-004",
+      "dailydialog-test-0180-001",
+      "dailydialog-test-0181-001",
+      "dailydialog-test-0181-003",
+      "dailydialog-test-0182-001",
+      "dailydialog-test-0182-002",
+      "dailydialog-test-0182-003",
+      "dailydialog-test-0182-004",
+      "dailydialog-test-0182-005",
+      "dailydialog-test-0182-006",
+      "dailydialog-test-0182-008",
+      "dailydialog-test-0182-009",
+      "dailydialog-test-0183-001",
+      "dailydialog-test-0183-002",
+      "dailydialog-test-0183-003",
+      "dailydialog-test-0183-004",
+      "dailydialog-test-0183-005",
+      "dailydialog-test-0183-006",
+      "dailydialog-test-0183-007",
+      "dailydialog-test-0183-008",
+      "dailydialog-test-0183-009",
+      "dailydialog-test-0183-010",
+      "dailydialog-test-0184-001",
+      "dailydialog-test-0184-002",
+      "dailydialog-test-0184-004",
+      "dailydialog-test-0184-005",
+      "dailydialog-test-0184-006",
+      "dailydialog-test-0184-007",
+      "dailydialog-test-0185-002",
+      "dailydialog-test-0185-003",
+      "dailydialog-test-0185-004",
+      "dailydialog-test-0185-005",
+      "dailydialog-test-0185-007",
+      "dailydialog-test-0185-008",
+      "dailydialog-test-0186-001",
+      "dailydialog-test-0186-002",
+      "dailydialog-test-0186-003",
+      "dailydialog-test-0186-005",
+      "dailydialog-test-0187-002",
+      "dailydialog-test-0188-001",
+      "dailydialog-test-0188-002",
+      "dailydialog-test-0188-003",
+      "dailydialog-test-0188-004",
+      "dailydialog-test-0188-005",
+      "dailydialog-test-0188-006",
+      "dailydialog-test-0188-007",
+      "dailydialog-test-0188-008",
+      "dailydialog-test-0188-009",
+      "dailydialog-test-0189-001",
+      "dailydialog-test-0189-002",
+      "dailydialog-test-0189-003",
+      "dailydialog-test-0190-001",
+      "dailydialog-test-0190-002",
+      "dailydialog-test-0190-004",
+      "dailydialog-test-0190-005",
+      "dailydialog-test-0190-006",
+      "dailydialog-test-0190-008",
+      "dailydialog-test-0190-009",
+      "dailydialog-test-0190-010",
+      "dailydialog-test-0190-011",
+      "dailydialog-test-0190-012",
+      "dailydialog-test-0190-013",
+      "dailydialog-test-0190-016",
+      "dailydialog-test-0190-017",
+      "dailydialog-test-0191-001",
+      "dailydialog-test-0191-002",
+      "dailydialog-test-0191-003",
+      "dailydialog-test-0191-004",
+      "dailydialog-test-0191-005",
+      "dailydialog-test-0192-001",
+      "dailydialog-test-0192-002",
+      "dailydialog-test-0193-001",
+      "dailydialog-test-0193-002",
+      "dailydialog-test-0193-003",
+      "dailydialog-test-0193-004",
+      "dailydialog-test-0193-005",
+      "dailydialog-test-0193-006",
+      "dailydialog-test-0194-001",
+      "dailydialog-test-0195-001",
+      "dailydialog-test-0195-003",
+      "dailydialog-test-0195-004",
+      "dailydialog-test-0195-005",
+      "dailydialog-test-0195-006",
+      "dailydialog-test-0195-007",
+      "dailydialog-test-0195-008",
+      "dailydialog-test-0196-001",
+      "dailydialog-test-0196-003",
+      "dailydialog-test-0196-004",
+      "dailydialog-test-0196-005",
+      "dailydialog-test-0196-006",
+      "dailydialog-test-0196-007",
+      "dailydialog-test-0196-008",
+      "dailydialog-test-0196-009",
+      "dailydialog-test-0196-010",
+      "dailydialog-test-0197-001",
+      "dailydialog-test-0197-002",
+      "dailydialog-test-0197-004",
+      "dailydialog-test-0198-002",
+      "dailydialog-test-0198-004",
+      "dailydialog-test-0199-001",
+      "dailydialog-test-0199-002",
+      "dailydialog-test-0199-003",
+      "dailydialog-test-0199-005",
+      "dailydialog-test-0199-007",
+      "dailydialog-test-0199-009",
+      "dailydialog-test-0200-001",
+      "dailydialog-test-0200-002",
+      "dailydialog-test-0200-003",
+      "dailydialog-test-0201-001",
+      "dailydialog-test-0201-002",
+      "dailydialog-test-0202-002",
+      "dailydialog-test-0202-003",
+      "dailydialog-test-0202-004",
+      "dailydialog-test-0202-005",
+      "dailydialog-test-0202-006",
+      "dailydialog-test-0202-008",
+      "dailydialog-test-0202-009",
+      "dailydialog-test-0202-010",
+      "dailydialog-test-0202-011",
+      "dailydialog-test-0202-012",
+      "dailydialog-test-0202-013",
+      "dailydialog-test-0203-001",
+      "dailydialog-test-0203-002",
+      "dailydialog-test-0203-003",
+      "dailydialog-test-0203-004",
+      "dailydialog-test-0203-005",
+      "dailydialog-test-0203-006",
+      "dailydialog-test-0203-007",
+      "dailydialog-test-0204-001",
+      "dailydialog-test-0204-003",
+      "dailydialog-test-0205-001",
+      "dailydialog-test-0205-002",
+      "dailydialog-test-0205-003",
+      "dailydialog-test-0205-004",
+      "dailydialog-test-0205-005",
+      "dailydialog-test-0205-006",
+      "dailydialog-test-0205-007",
+      "dailydialog-test-0205-008",
+      "dailydialog-test-0205-009",
+      "dailydialog-test-0205-010",
+      "dailydialog-test-0206-002",
+      "dailydialog-test-0206-003",
+      "dailydialog-test-0207-001",
+      "dailydialog-test-0207-002",
+      "dailydialog-test-0207-003",
+      "dailydialog-test-0208-001",
+      "dailydialog-test-0208-003",
+      "dailydialog-test-0208-004",
+      "dailydialog-test-0208-005",
+      "dailydialog-test-0208-006",
+      "dailydialog-test-0208-007",
+      "dailydialog-test-0208-008",
+      "dailydialog-test-0208-009",
+      "dailydialog-test-0208-010",
+      "dailydialog-test-0208-011",
+      "dailydialog-test-0209-001",
+      "dailydialog-test-0209-003",
+      "dailydialog-test-0209-004",
+      "dailydialog-test-0209-005",
+      "dailydialog-test-0209-006",
+      "dailydialog-test-0209-007",
+      "dailydialog-test-0209-008",
+      "dailydialog-test-0209-009",
+      "dailydialog-test-0210-001",
+      "dailydialog-test-0210-003",
+      "dailydialog-test-0210-004",
+      "dailydialog-test-0210-005",
+      "dailydialog-test-0210-006",
+      "dailydialog-test-0210-007",
+      "dailydialog-test-0211-001",
+      "dailydialog-test-0211-002",
+      "dailydialog-test-0211-004",
+      "dailydialog-test-0211-005",
+      "dailydialog-test-0211-006",
+      "dailydialog-test-0211-007",
+      "dailydialog-test-0211-008",
+      "dailydialog-test-0211-009",
+      "dailydialog-test-0212-004",
+      "dailydialog-test-0212-006",
+      "dailydialog-test-0212-008",
+      "dailydialog-test-0212-010",
+      "dailydialog-test-0212-011",
+      "dailydialog-test-0213-001",
+      "dailydialog-test-0213-002",
+      "dailydialog-test-0213-004",
+      "dailydialog-test-0213-005",
+      "dailydialog-test-0213-007",
+      "dailydialog-test-0213-008",
+      "dailydialog-test-0214-001",
+      "dailydialog-test-0214-002",
+      "dailydialog-test-0214-003",
+      "dailydialog-test-0215-001",
+      "dailydialog-test-0215-002",
+      "dailydialog-test-0215-003",
+      "dailydialog-test-0215-006",
+      "dailydialog-test-0215-007",
+      "dailydialog-test-0215-009",
+      "dailydialog-test-0215-011",
+      "dailydialog-test-0215-014",
+      "dailydialog-test-0216-001",
+      "dailydialog-test-0216-002",
+      "dailydialog-test-0216-003",
+      "dailydialog-test-0217-001",
+      "dailydialog-test-0217-003",
+      "dailydialog-test-0218-001",
+      "dailydialog-test-0218-002",
+      "dailydialog-test-0218-003",
+      "dailydialog-test-0218-004",
+      "dailydialog-test-0218-005",
+      "dailydialog-test-0218-006",
+      "dailydialog-test-0219-001",
+      "dailydialog-test-0219-002",
+      "dailydialog-test-0219-003",
+      "dailydialog-test-0220-001",
+      "dailydialog-test-0220-002",
+      "dailydialog-test-0220-003",
+      "dailydialog-test-0220-004",
+      "dailydialog-test-0220-005",
+      "dailydialog-test-0220-006",
+      "dailydialog-test-0220-007",
+      "dailydialog-test-0220-008",
+      "dailydialog-test-0220-009",
+      "dailydialog-test-0221-001",
+      "dailydialog-test-0221-002",
+      "dailydialog-test-0221-003",
+      "dailydialog-test-0221-004",
+      "dailydialog-test-0221-005",
+      "dailydialog-test-0221-006",
+      "dailydialog-test-0221-007",
+      "dailydialog-test-0221-008",
+      "dailydialog-test-0221-009",
+      "dailydialog-test-0222-002",
+      "dailydialog-test-0222-003",
+      "dailydialog-test-0223-001",
+      "dailydialog-test-0223-003",
+      "dailydialog-test-0223-004",
+      "dailydialog-test-0224-001",
+      "dailydialog-test-0224-003",
+      "dailydialog-test-0224-005",
+      "dailydialog-test-0224-006",
+      "dailydialog-test-0224-007",
+      "dailydialog-test-0224-008",
+      "dailydialog-test-0224-009",
+      "dailydialog-test-0225-001",
+      "dailydialog-test-0225-002",
+      "dailydialog-test-0225-003",
+      "dailydialog-test-0226-001",
+      "dailydialog-test-0226-003",
+      "dailydialog-test-0227-001",
+      "dailydialog-test-0227-003",
+      "dailydialog-test-0227-004",
+      "dailydialog-test-0228-002",
+      "dailydialog-test-0228-003",
+      "dailydialog-test-0228-004",
+      "dailydialog-test-0228-005",
+      "dailydialog-test-0228-006",
+      "dailydialog-test-0229-001",
+      "dailydialog-test-0229-002",
+      "dailydialog-test-0229-003",
+      "dailydialog-test-0229-004",
+      "dailydialog-test-0229-005",
+      "dailydialog-test-0229-006",
+      "dailydialog-test-0229-007",
+      "dailydialog-test-0230-001",
+      "dailydialog-test-0230-002",
+      "dailydialog-test-0230-003",
+      "dailydialog-test-0230-004",
+      "dailydialog-test-0230-005",
+      "dailydialog-test-0230-006",
+      "dailydialog-test-0230-008",
+      "dailydialog-test-0231-001",
+      "dailydialog-test-0231-003",
+      "dailydialog-test-0232-001",
+      "dailydialog-test-0232-003",
+      "dailydialog-test-0232-004",
+      "dailydialog-test-0232-005",
+      "dailydialog-test-0233-001",
+      "dailydialog-test-0233-003",
+      "dailydialog-test-0234-001",
+      "dailydialog-test-0234-002",
+      "dailydialog-test-0234-004",
+      "dailydialog-test-0234-005",
+      "dailydialog-test-0234-006",
+      "dailydialog-test-0234-007",
+      "dailydialog-test-0234-008",
+      "dailydialog-test-0234-009",
+      "dailydialog-test-0234-010",
+      "dailydialog-test-0235-002",
+      "dailydialog-test-0235-003",
+      "dailydialog-test-0235-004",
+      "dailydialog-test-0235-005",
+      "dailydialog-test-0235-006",
+      "dailydialog-test-0235-007",
+      "dailydialog-test-0235-008",
+      "dailydialog-test-0235-009",
+      "dailydialog-test-0235-010",
+      "dailydialog-test-0235-012",
+      "dailydialog-test-0235-013",
+      "dailydialog-test-0236-001",
+      "dailydialog-test-0236-002",
+      "dailydialog-test-0236-003",
+      "dailydialog-test-0237-002",
+      "dailydialog-test-0237-003",
+      "dailydialog-test-0237-004",
+      "dailydialog-test-0237-005",
+      "dailydialog-test-0237-006",
+      "dailydialog-test-0237-007",
+      "dailydialog-test-0237-008",
+      "dailydialog-test-0237-009",
+      "dailydialog-test-0237-010",
+      "dailydialog-test-0237-011",
+      "dailydialog-test-0237-012",
+      "dailydialog-test-0237-013",
+      "dailydialog-test-0238-001",
+      "dailydialog-test-0238-003",
+      "dailydialog-test-0238-004",
+      "dailydialog-test-0238-005",
+      "dailydialog-test-0238-006",
+      "dailydialog-test-0239-001",
+      "dailydialog-test-0239-002",
+      "dailydialog-test-0240-001",
+      "dailydialog-test-0240-002",
+      "dailydialog-test-0240-003",
+      "dailydialog-test-0240-004",
+      "dailydialog-test-0240-006",
+      "dailydialog-test-0240-007",
+      "dailydialog-test-0241-001",
+      "dailydialog-test-0241-002",
+      "dailydialog-test-0241-003",
+      "dailydialog-test-0241-004",
+      "dailydialog-test-0241-005",
+      "dailydialog-test-0242-001",
+      "dailydialog-test-0242-003",
+      "dailydialog-test-0242-004",
+      "dailydialog-test-0243-001",
+      "dailydialog-test-0243-003",
+      "dailydialog-test-0244-001",
+      "dailydialog-test-0244-002",
+      "dailydialog-test-0245-001",
+      "dailydialog-test-0245-003",
+      "dailydialog-test-0245-004",
+      "dailydialog-test-0245-005",
+      "dailydialog-test-0245-006",
+      "dailydialog-test-0245-007",
+      "dailydialog-test-0245-008",
+      "dailydialog-test-0245-009",
+      "dailydialog-test-0246-001",
+      "dailydialog-test-0246-002",
+      "dailydialog-test-0246-003",
+      "dailydialog-test-0246-004",
+      "dailydialog-test-0246-005",
+      "dailydialog-test-0246-006",
+      "dailydialog-test-0246-007",
+      "dailydialog-test-0247-001",
+      "dailydialog-test-0247-002",
+      "dailydialog-test-0247-003",
+      "dailydialog-test-0247-004",
+      "dailydialog-test-0247-005",
+      "dailydialog-test-0247-006",
+      "dailydialog-test-0247-007",
+      "dailydialog-test-0247-008",
+      "dailydialog-test-0247-009",
+      "dailydialog-test-0247-010",
+      "dailydialog-test-0247-011",
+      "dailydialog-test-0247-012",
+      "dailydialog-test-0247-013",
+      "dailydialog-test-0247-014",
+      "dailydialog-test-0247-015",
+      "dailydialog-test-0248-001",
+      "dailydialog-test-0248-003",
+      "dailydialog-test-0248-004",
+      "dailydialog-test-0248-006",
+      "dailydialog-test-0249-001",
+      "dailydialog-test-0249-002",
+      "dailydialog-test-0249-003",
+      "dailydialog-test-0249-004",
+      "dailydialog-test-0249-005",
+      "dailydialog-test-0249-006",
+      "dailydialog-test-0249-007",
+      "dailydialog-test-0249-009",
+      "dailydialog-test-0249-011",
+      "dailydialog-test-0249-013",
+      "dailydialog-test-0249-014",
+      "dailydialog-test-0249-015",
+      "dailydialog-test-0250-001",
+      "dailydialog-test-0250-003",
+      "dailydialog-test-0250-004",
+      "dailydialog-test-0250-005",
+      "dailydialog-test-0250-007",
+      "dailydialog-test-0250-008",
+      "dailydialog-test-0250-009",
+      "dailydialog-test-0250-010",
+      "dailydialog-test-0250-011",
+      "dailydialog-test-0250-012",
+      "dailydialog-test-0250-013",
+      "dailydialog-test-0251-001",
+      "dailydialog-test-0251-002",
+      "dailydialog-test-0251-003",
+      "dailydialog-test-0251-004",
+      "dailydialog-test-0251-005",
+      "dailydialog-test-0252-001",
+      "dailydialog-test-0252-003",
+      "dailydialog-test-0252-004",
+      "dailydialog-test-0252-005",
+      "dailydialog-test-0252-006",
+      "dailydialog-test-0252-007",
+      "dailydialog-test-0252-008",
+      "dailydialog-test-0252-009",
+      "dailydialog-test-0252-010",
+      "dailydialog-test-0254-002",
+      "dailydialog-test-0254-003",
+      "dailydialog-test-0254-004",
+      "dailydialog-test-0254-005",
+      "dailydialog-test-0254-006",
+      "dailydialog-test-0254-007",
+      "dailydialog-test-0254-008",
+      "dailydialog-test-0255-001",
+      "dailydialog-test-0255-003",
+      "dailydialog-test-0255-004",
+      "dailydialog-test-0255-005",
+      "dailydialog-test-0255-006",
+      "dailydialog-test-0255-007",
+      "dailydialog-test-0255-008",
+      "dailydialog-test-0255-009",
+      "dailydialog-test-0255-010",
+      "dailydialog-test-0255-011",
+      "dailydialog-test-0255-012",
+      "dailydialog-test-0255-013",
+      "dailydialog-test-0256-001",
+      "dailydialog-test-0256-003",
+      "dailydialog-test-0256-004",
+      "dailydialog-test-0256-005",
+      "dailydialog-test-0256-006",
+      "dailydialog-test-0256-007",
+      "dailydialog-test-0256-008",
+      "dailydialog-test-0257-001",
+      "dailydialog-test-0257-002",
+      "dailydialog-test-0257-003",
+      "dailydialog-test-0258-001",
+      "dailydialog-test-0258-003",
+      "dailydialog-test-0258-004",
+      "dailydialog-test-0258-005",
+      "dailydialog-test-0258-006",
+      "dailydialog-test-0258-007",
+      "dailydialog-test-0258-008",
+      "dailydialog-test-0258-009",
+      "dailydialog-test-0258-010",
+      "dailydialog-test-0258-011",
+      "dailydialog-test-0259-001",
+      "dailydialog-test-0259-002",
+      "dailydialog-test-0259-003",
+      "dailydialog-test-0259-004",
+      "dailydialog-test-0259-005",
+      "dailydialog-test-0259-006",
+      "dailydialog-test-0259-007",
+      "dailydialog-test-0259-008",
+      "dailydialog-test-0259-009",
+      "dailydialog-test-0259-010",
+      "dailydialog-test-0260-001",
+      "dailydialog-test-0260-003",
+      "dailydialog-test-0261-001",
+      "dailydialog-test-0261-002",
+      "dailydialog-test-0261-003",
+      "dailydialog-test-0261-004",
+      "dailydialog-test-0261-006",
+      "dailydialog-test-0261-008",
+      "dailydialog-test-0262-001",
+      "dailydialog-test-0262-002",
+      "dailydialog-test-0262-003",
+      "dailydialog-test-0262-004",
+      "dailydialog-test-0262-005",
+      "dailydialog-test-0262-006",
+      "dailydialog-test-0262-007",
+      "dailydialog-test-0263-001",
+      "dailydialog-test-0263-003",
+      "dailydialog-test-0264-001",
+      "dailydialog-test-0264-002",
+      "dailydialog-test-0264-003",
+      "dailydialog-test-0265-001",
+      "dailydialog-test-0265-002",
+      "dailydialog-test-0265-003",
+      "dailydialog-test-0265-004",
+      "dailydialog-test-0265-005",
+      "dailydialog-test-0265-006",
+      "dailydialog-test-0265-007",
+      "dailydialog-test-0266-001",
+      "dailydialog-test-0266-003",
+      "dailydialog-test-0266-005",
+      "dailydialog-test-0266-007",
+      "dailydialog-test-0266-008",
+      "dailydialog-test-0266-009",
+      "dailydialog-test-0267-001",
+      "dailydialog-test-0267-003",
+      "dailydialog-test-0267-004",
+      "dailydialog-test-0267-005",
+      "dailydialog-test-0267-007",
+      "dailydialog-test-0267-009",
+      "dailydialog-test-0267-010",
+      "dailydialog-test-0268-001",
+      "dailydialog-test-0268-002",
+      "dailydialog-test-0268-003",
+      "dailydialog-test-0268-004",
+      "dailydialog-test-0268-005",
+      "dailydialog-test-0268-007",
+      "dailydialog-test-0268-008",
+      "dailydialog-test-0268-010",
+      "dailydialog-test-0268-012",
+      "dailydialog-test-0268-013",
+      "dailydialog-test-0269-001",
+      "dailydialog-test-0269-002",
+      "dailydialog-test-0269-003",
+      "dailydialog-test-0269-004",
+      "dailydialog-test-0269-005",
+      "dailydialog-test-0269-006",
+      "dailydialog-test-0269-007",
+      "dailydialog-test-0269-008",
+      "dailydialog-test-0269-009",
+      "dailydialog-test-0269-010",
+      "dailydialog-test-0269-011",
+      "dailydialog-test-0269-012",
+      "dailydialog-test-0269-013",
+      "dailydialog-test-0269-014",
+      "dailydialog-test-0269-015",
+      "dailydialog-test-0270-004",
+      "dailydialog-test-0270-006",
+      "dailydialog-test-0270-008",
+      "dailydialog-test-0270-010",
+      "dailydialog-test-0270-011",
+      "dailydialog-test-0270-012",
+      "dailydialog-test-0270-014",
+      "dailydialog-test-0270-015",
+      "dailydialog-test-0270-016",
+      "dailydialog-test-0271-001",
+      "dailydialog-test-0271-002",
+      "dailydialog-test-0271-003",
+      "dailydialog-test-0271-004",
+      "dailydialog-test-0271-005",
+      "dailydialog-test-0272-001",
+      "dailydialog-test-0272-002",
+      "dailydialog-test-0272-003",
+      "dailydialog-test-0272-005",
+      "dailydialog-test-0272-006",
+      "dailydialog-test-0272-007",
+      "dailydialog-test-0272-008",
+      "dailydialog-test-0272-009",
+      "dailydialog-test-0272-010",
+      "dailydialog-test-0273-001",
+      "dailydialog-test-0273-002",
+      "dailydialog-test-0273-003",
+      "dailydialog-test-0273-004",
+      "dailydialog-test-0273-005",
+      "dailydialog-test-0273-006",
+      "dailydialog-test-0274-001",
+      "dailydialog-test-0274-002",
+      "dailydialog-test-0274-004",
+      "dailydialog-test-0274-005",
+      "dailydialog-test-0274-006",
+      "dailydialog-test-0274-007",
+      "dailydialog-test-0274-008",
+      "dailydialog-test-0274-009",
+      "dailydialog-test-0275-001",
+      "dailydialog-test-0275-002",
+      "dailydialog-test-0275-003",
+      "dailydialog-test-0275-004",
+      "dailydialog-test-0275-005",
+      "dailydialog-test-0276-001",
+      "dailydialog-test-0276-002",
+      "dailydialog-test-0276-003",
+      "dailydialog-test-0276-006",
+      "dailydialog-test-0276-008",
+      "dailydialog-test-0276-009",
+      "dailydialog-test-0276-010",
+      "dailydialog-test-0277-001",
+      "dailydialog-test-0277-002",
+      "dailydialog-test-0277-003",
+      "dailydialog-test-0277-004",
+      "dailydialog-test-0278-001",
+      "dailydialog-test-0278-002",
+      "dailydialog-test-0278-003",
+      "dailydialog-test-0278-004",
+      "dailydialog-test-0278-005",
+      "dailydialog-test-0278-006",
+      "dailydialog-test-0278-007",
+      "dailydialog-test-0278-008",
+      "dailydialog-test-0278-009",
+      "dailydialog-test-0278-010",
+      "dailydialog-test-0278-011",
+      "dailydialog-test-0278-012",
+      "dailydialog-test-0278-013",
+      "dailydialog-test-0279-001",
+      "dailydialog-test-0279-002",
+      "dailydialog-test-0279-003",
+      "dailydialog-test-0279-004",
+      "dailydialog-test-0280-001",
+      "dailydialog-test-0280-003",
+      "dailydialog-test-0280-004",
+      "dailydialog-test-0281-001",
+      "dailydialog-test-0281-002",
+      "dailydialog-test-0281-003",
+      "dailydialog-test-0281-005",
+      "dailydialog-test-0281-006",
+      "dailydialog-test-0282-001",
+      "dailydialog-test-0282-002",
+      "dailydialog-test-0282-003",
+      "dailydialog-test-0282-004",
+      "dailydialog-test-0282-005",
+      "dailydialog-test-0282-006",
+      "dailydialog-test-0282-007",
+      "dailydialog-test-0282-008",
+      "dailydialog-test-0282-009",
+      "dailydialog-test-0282-010",
+      "dailydialog-test-0282-011",
+      "dailydialog-test-0282-012",
+      "dailydialog-test-0283-001",
+      "dailydialog-test-0283-002",
+      "dailydialog-test-0283-004",
+      "dailydialog-test-0283-005",
+      "dailydialog-test-0283-006",
+      "dailydialog-test-0283-007",
+      "dailydialog-test-0283-008",
+      "dailydialog-test-0283-009",
+      "dailydialog-test-0283-010",
+      "dailydialog-test-0283-011",
+      "dailydialog-test-0283-012",
+      "dailydialog-test-0284-001",
+      "dailydialog-test-0284-002",
+      "dailydialog-test-0284-004",
+      "dailydialog-test-0284-005",
+      "dailydialog-test-0284-007",
+      "dailydialog-test-0284-008",
+      "dailydialog-test-0284-009",
+      "dailydialog-test-0285-001",
+      "dailydialog-test-0285-003",
+      "dailydialog-test-0285-004",
+      "dailydialog-test-0286-001",
+      "dailydialog-test-0286-003",
+      "dailydialog-test-0286-004",
+      "dailydialog-test-0286-005",
+      "dailydialog-test-0286-006",
+      "dailydialog-test-0287-002",
+      "dailydialog-test-0287-003",
+      "dailydialog-test-0287-004",
+      "dailydialog-test-0287-006",
+      "dailydialog-test-0287-008",
+      "dailydialog-test-0287-010",
+      "dailydialog-test-0287-011",
+      "dailydialog-test-0288-001"
+    ]
+  },
+  "history_ranker": {
+    "observed_history_lengths": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "transition_count": 136,
+    "window_size": 4
+  },
+  "ranker": {
+    "act_counts": {
+      "commissive": 147,
+      "directive": 164,
+      "inform": 1160,
+      "question": 529
+    },
+    "vocabulary_size": 3038
+  },
+  "selected_variant": {
+    "cross_validation": {
+      "fold_count": 5,
+      "folds": [
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.497,
+            "top_3_recall": 0.912,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.598,
+            "top_3_recall": 0.978,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 1,
+          "p_at_1_gain": 0.101,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.066,
+          "validation_turns": 400
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.5,
+            "top_3_recall": 0.92,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.59,
+            "top_3_recall": 0.995,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 2,
+          "p_at_1_gain": 0.09,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.075,
+          "validation_turns": 400
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.51,
+            "top_3_recall": 0.927,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.588,
+            "top_3_recall": 0.985,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 3,
+          "p_at_1_gain": 0.078,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.058,
+          "validation_turns": 400
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.482,
+            "top_3_recall": 0.917,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.57,
+            "top_3_recall": 0.99,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 4,
+          "p_at_1_gain": 0.088,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.073,
+          "validation_turns": 400
+        },
+        {
+          "baseline": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.517,
+            "top_3_recall": 0.945,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "candidate": {
+            "median_latency_ms": 90,
+            "p_at_1": 0.62,
+            "top_3_recall": 1.0,
+            "total_turns": 400,
+            "tts_readiness_rate": 1.0
+          },
+          "fold": 5,
+          "p_at_1_gain": 0.103,
+          "segment_regressions": [],
+          "top_3_recall_gain": 0.055,
+          "validation_turns": 400
+        }
+      ],
+      "mean_p_at_1_gain": 0.092,
+      "mean_top_3_recall_gain": 0.065,
+      "min_p_at_1_gain": 0.078,
+      "min_top_3_recall_gain": 0.055,
+      "segment_regression_count": 0
+    },
+    "dev": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.488,
+      "top_3_recall": 0.973,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    },
+    "dev_segment_regressions": [],
+    "history_margin": 0.25,
+    "history_overlay_acts": [
+      "question"
+    ],
+    "history_preserved_acts": [
+      "directive"
+    ],
+    "learned_weight": 0.0,
+    "name": "safe_question_act_rhythm_contextual",
+    "test": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.491,
+      "top_3_recall": 0.974,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    },
+    "test_segment_regressions": [],
+    "train": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.6,
+      "top_3_recall": 0.99,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    },
+    "transition_overlay_act": null,
+    "transition_overlay_margin": 0.0,
+    "transition_protected_acts": [
+      "directive",
+      "question"
+    ],
+    "transition_weight": 1.0,
+    "use_history_ranker": true
+  },
+  "summary": {
+    "dev_turns": 2000,
+    "test_turns": 2000,
+    "top_k": 3,
+    "train_turns": 2000
+  },
+  "test": {
+    "baseline": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.335,
+      "top_3_recall": 0.85,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    },
+    "guided": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.491,
+      "top_3_recall": 0.974,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    }
+  },
+  "train": {
+    "baseline": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.501,
+      "top_3_recall": 0.924,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    },
+    "guided": {
+      "median_latency_ms": 90,
+      "p_at_1": 0.6,
+      "top_3_recall": 0.99,
+      "total_turns": 2000,
+      "tts_readiness_rate": 1.0
+    }
+  },
+  "transition_ranker": {
+    "observed_previous_acts": [
+      "commissive",
+      "directive",
+      "inform",
+      "question"
+    ],
+    "transition_count": 4
+  },
+  "variants": {
+    "act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.637,
+              "top_3_recall": 0.98,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.14,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.068,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.635,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.135,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.097,
+                "candidate_p_at_1": 0.065,
+                "name": "directive",
+                "p_at_1_delta": -0.032,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.642,
+              "top_3_recall": 0.98,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.132,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.053,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.618,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.136,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.009,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.009,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.657,
+              "top_3_recall": 0.998,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.14,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.053,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.137,
+        "mean_top_3_recall_gain": 0.064,
+        "min_p_at_1_gain": 0.132,
+        "min_top_3_recall_gain": 0.053,
+        "segment_regression_count": 2
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.522,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.112,
+          "candidate_p_at_1": 0.081,
+          "name": "directive",
+          "p_at_1_delta": -0.031,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.25,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.52,
+        "top_3_recall": 0.972,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.656,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    },
+    "act_rhythm_contextual_strict": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.578,
+              "top_3_recall": 0.978,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.081,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.044,
+                "candidate_p_at_1": 0.035,
+                "name": "question",
+                "p_at_1_delta": -0.009,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.066,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.595,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.095,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.061,
+                "candidate_p_at_1": 0.053,
+                "name": "question",
+                "p_at_1_delta": -0.008,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.608,
+              "top_3_recall": 0.985,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.098,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.583,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.101,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.6,
+              "top_3_recall": 1.0,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.083,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.055,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.092,
+        "mean_top_3_recall_gain": 0.065,
+        "min_p_at_1_gain": 0.081,
+        "min_top_3_recall_gain": 0.055,
+        "segment_regression_count": 2
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.485,
+        "top_3_recall": 0.973,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.112,
+          "candidate_p_at_1": 0.099,
+          "name": "directive",
+          "p_at_1_delta": -0.013,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.6,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.486,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.052,
+          "candidate_p_at_1": 0.049,
+          "name": "directive",
+          "p_at_1_delta": -0.003,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.025,
+          "candidate_p_at_1": 0.023,
+          "name": "question",
+          "p_at_1_delta": -0.002,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.595,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    },
+    "contextual_hybrid_50": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.575,
+              "top_3_recall": 0.968,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.078,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.031,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.031,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.056,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.578,
+              "top_3_recall": 0.98,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.078,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.097,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.097,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.06,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.618,
+              "top_3_recall": 0.965,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.108,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.027,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.027,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.038,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.58,
+              "top_3_recall": 0.975,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.098,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.062,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.062,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.623,
+              "top_3_recall": 0.988,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.106,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.062,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.062,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.043,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.094,
+        "mean_top_3_recall_gain": 0.051,
+        "min_p_at_1_gain": 0.078,
+        "min_top_3_recall_gain": 0.038,
+        "segment_regression_count": 5
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.466,
+        "top_3_recall": 0.93,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.289,
+          "candidate_p_at_1": 0.264,
+          "name": "commissive",
+          "p_at_1_delta": -0.025,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.112,
+          "candidate_p_at_1": 0.015,
+          "name": "directive",
+          "p_at_1_delta": -0.097,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.469,
+        "top_3_recall": 0.903,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.38,
+          "candidate_p_at_1": 0.376,
+          "name": "commissive",
+          "p_at_1_delta": -0.004,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.052,
+          "candidate_p_at_1": 0.018,
+          "name": "directive",
+          "p_at_1_delta": -0.034,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.597,
+        "top_3_recall": 0.975,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 0.5,
+      "use_history_ranker": false
+    },
+    "contextual_inform_overlay": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.02,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.044,
+                "candidate_p_at_1": 0.035,
+                "name": "question",
+                "p_at_1_delta": -0.009,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.008,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.525,
+              "top_3_recall": 0.922,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.025,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.097,
+                "candidate_p_at_1": 0.032,
+                "name": "directive",
+                "p_at_1_delta": -0.065,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.061,
+                "candidate_p_at_1": 0.053,
+                "name": "question",
+                "p_at_1_delta": -0.008,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.002,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.565,
+              "top_3_recall": 0.932,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.055,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.033,
+                "candidate_p_at_1": 0.022,
+                "name": "question",
+                "p_at_1_delta": -0.011,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.005,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.505,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.023,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.003,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.56,
+              "top_3_recall": 0.948,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.043,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.003,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.033,
+        "mean_top_3_recall_gain": 0.004,
+        "min_p_at_1_gain": 0.02,
+        "min_top_3_recall_gain": 0.002,
+        "segment_regression_count": 4
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.415,
+        "top_3_recall": 0.885,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.289,
+          "candidate_p_at_1": 0.285,
+          "name": "commissive",
+          "p_at_1_delta": -0.004,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.112,
+          "candidate_p_at_1": 0.084,
+          "name": "directive",
+          "p_at_1_delta": -0.028,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.407,
+        "top_3_recall": 0.869,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.052,
+          "candidate_p_at_1": 0.036,
+          "name": "directive",
+          "p_at_1_delta": -0.016,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.025,
+          "candidate_p_at_1": 0.023,
+          "name": "question",
+          "p_at_1_delta": -0.002,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.534,
+        "top_3_recall": 0.928,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": "inform",
+      "transition_overlay_margin": 0.25,
+      "transition_protected_acts": [],
+      "transition_weight": 0.0,
+      "use_history_ranker": false
+    },
+    "contextual_transition": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.613,
+              "top_3_recall": 0.978,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.116,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.031,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.031,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.044,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.044,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.066,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.632,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.132,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.097,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.097,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.061,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.061,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.665,
+              "top_3_recall": 0.985,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.155,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.027,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.027,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.033,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.033,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.637,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.155,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.062,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.062,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.009,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.009,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.667,
+              "top_3_recall": 1.0,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.15,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.062,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.062,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.01,
+                "candidate_p_at_1": 0.0,
+                "name": "question",
+                "p_at_1_delta": -0.01,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.055,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.142,
+        "mean_top_3_recall_gain": 0.065,
+        "min_p_at_1_gain": 0.116,
+        "min_top_3_recall_gain": 0.055,
+        "segment_regression_count": 10
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.523,
+        "top_3_recall": 0.973,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.112,
+          "candidate_p_at_1": 0.0,
+          "name": "directive",
+          "p_at_1_delta": -0.112,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.02,
+          "candidate_p_at_1": 0.0,
+          "name": "question",
+          "p_at_1_delta": -0.02,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.521,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.052,
+          "candidate_p_at_1": 0.0,
+          "name": "directive",
+          "p_at_1_delta": -0.052,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.025,
+          "candidate_p_at_1": 0.0,
+          "name": "question",
+          "p_at_1_delta": -0.025,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.643,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 1.0,
+      "use_history_ranker": false
+    },
+    "directive_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.573,
+              "top_3_recall": 0.978,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.076,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.066,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.59,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.593,
+              "top_3_recall": 0.985,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.083,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.573,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.091,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.598,
+              "top_3_recall": 1.0,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.081,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.055,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.084,
+        "mean_top_3_recall_gain": 0.065,
+        "min_p_at_1_gain": 0.076,
+        "min_top_3_recall_gain": 0.055,
+        "segment_regression_count": 0
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.473,
+        "top_3_recall": 0.973,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "directive"
+      ],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.476,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.587,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    },
+    "guarded_contextual_transition": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.57,
+              "top_3_recall": 0.978,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.073,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.066,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.588,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.088,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.585,
+              "top_3_recall": 0.985,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.075,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.57,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.088,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.595,
+              "top_3_recall": 1.0,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.078,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.055,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.08,
+        "mean_top_3_recall_gain": 0.065,
+        "min_p_at_1_gain": 0.073,
+        "min_top_3_recall_gain": 0.055,
+        "segment_regression_count": 0
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.474,
+        "top_3_recall": 0.973,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.473,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.582,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": false
+    },
+    "heuristic": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.0,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.0,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.0,
+        "mean_top_3_recall_gain": 0.0,
+        "min_p_at_1_gain": 0.0,
+        "min_top_3_recall_gain": 0.0,
+        "segment_regression_count": 0
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.354,
+        "top_3_recall": 0.871,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.335,
+        "top_3_recall": 0.85,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.501,
+        "top_3_recall": 0.924,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 0.0,
+      "use_history_ranker": false
+    },
+    "hybrid_25": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.468,
+              "top_3_recall": 0.905,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": -0.029,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.129,
+                "candidate_p_at_1": 0.097,
+                "name": "commissive",
+                "p_at_1_delta": -0.032,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.031,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.031,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.848,
+                "candidate_p_at_1": 0.726,
+                "name": "inform",
+                "p_at_1_delta": -0.122,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.007,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.448,
+              "top_3_recall": 0.902,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": -0.052,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.097,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.097,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.824,
+                "candidate_p_at_1": 0.678,
+                "name": "inform",
+                "p_at_1_delta": -0.146,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.018,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.48,
+              "top_3_recall": 0.915,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.03,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.286,
+                "candidate_p_at_1": 0.214,
+                "name": "commissive",
+                "p_at_1_delta": -0.072,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.027,
+                "candidate_p_at_1": 0.0,
+                "name": "directive",
+                "p_at_1_delta": -0.027,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.787,
+                "candidate_p_at_1": 0.676,
+                "name": "inform",
+                "p_at_1_delta": -0.111,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.012,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.915,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": -0.012,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.222,
+                "candidate_p_at_1": 0.167,
+                "name": "commissive",
+                "p_at_1_delta": -0.055,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.062,
+                "candidate_p_at_1": 0.031,
+                "name": "directive",
+                "p_at_1_delta": -0.031,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.816,
+                "candidate_p_at_1": 0.717,
+                "name": "inform",
+                "p_at_1_delta": -0.099,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.002,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.492,
+              "top_3_recall": 0.93,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": -0.025,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.25,
+                "candidate_p_at_1": 0.208,
+                "name": "commissive",
+                "p_at_1_delta": -0.042,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.062,
+                "candidate_p_at_1": 0.031,
+                "name": "directive",
+                "p_at_1_delta": -0.031,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.815,
+                "candidate_p_at_1": 0.704,
+                "name": "inform",
+                "p_at_1_delta": -0.111,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.015,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": -0.03,
+        "mean_top_3_recall_gain": -0.011,
+        "min_p_at_1_gain": -0.052,
+        "min_top_3_recall_gain": -0.018,
+        "segment_regression_count": 14
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.326,
+        "top_3_recall": 0.863,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.289,
+          "candidate_p_at_1": 0.256,
+          "name": "commissive",
+          "p_at_1_delta": -0.033,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.112,
+          "candidate_p_at_1": 0.076,
+          "name": "directive",
+          "p_at_1_delta": -0.036,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.679,
+          "candidate_p_at_1": 0.459,
+          "name": "inform",
+          "p_at_1_delta": -0.22,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.25,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.314,
+        "top_3_recall": 0.85,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.38,
+          "candidate_p_at_1": 0.35,
+          "name": "commissive",
+          "p_at_1_delta": -0.03,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.052,
+          "candidate_p_at_1": 0.013,
+          "name": "directive",
+          "p_at_1_delta": -0.039,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.645,
+          "candidate_p_at_1": 0.454,
+          "name": "inform",
+          "p_at_1_delta": -0.191,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.564,
+        "top_3_recall": 0.949,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 0.0,
+      "use_history_ranker": false
+    },
+    "hybrid_50": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.475,
+              "top_3_recall": 0.897,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": -0.022,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.129,
+                "candidate_p_at_1": 0.032,
+                "name": "commissive",
+                "p_at_1_delta": -0.097,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.848,
+                "candidate_p_at_1": 0.749,
+                "name": "inform",
+                "p_at_1_delta": -0.099,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.015,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.448,
+              "top_3_recall": 0.89,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": -0.052,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.107,
+                "candidate_p_at_1": 0.071,
+                "name": "commissive",
+                "p_at_1_delta": -0.036,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.097,
+                "candidate_p_at_1": 0.065,
+                "name": "directive",
+                "p_at_1_delta": -0.032,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.824,
+                "candidate_p_at_1": 0.674,
+                "name": "inform",
+                "p_at_1_delta": -0.15,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.03,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.502,
+              "top_3_recall": 0.9,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.008,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.286,
+                "candidate_p_at_1": 0.143,
+                "name": "commissive",
+                "p_at_1_delta": -0.143,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.787,
+                "candidate_p_at_1": 0.701,
+                "name": "inform",
+                "p_at_1_delta": -0.086,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.027,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.475,
+              "top_3_recall": 0.897,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": -0.007,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.222,
+                "candidate_p_at_1": 0.139,
+                "name": "commissive",
+                "p_at_1_delta": -0.083,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.816,
+                "candidate_p_at_1": 0.726,
+                "name": "inform",
+                "p_at_1_delta": -0.09,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.02,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.487,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": -0.03,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.25,
+                "candidate_p_at_1": 0.125,
+                "name": "commissive",
+                "p_at_1_delta": -0.125,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.815,
+                "candidate_p_at_1": 0.7,
+                "name": "inform",
+                "p_at_1_delta": -0.115,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.025,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": -0.024,
+        "mean_top_3_recall_gain": -0.023,
+        "min_p_at_1_gain": -0.052,
+        "min_top_3_recall_gain": -0.03,
+        "segment_regression_count": 11
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.333,
+        "top_3_recall": 0.834,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.289,
+          "candidate_p_at_1": 0.211,
+          "name": "commissive",
+          "p_at_1_delta": -0.078,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.679,
+          "candidate_p_at_1": 0.447,
+          "name": "inform",
+          "p_at_1_delta": -0.232,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.5,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.323,
+        "top_3_recall": 0.829,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.38,
+          "candidate_p_at_1": 0.297,
+          "name": "commissive",
+          "p_at_1_delta": -0.083,
+          "segment": "expected_act"
+        },
+        {
+          "baseline_p_at_1": 0.645,
+          "candidate_p_at_1": 0.445,
+          "name": "inform",
+          "p_at_1_delta": -0.2,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.589,
+        "top_3_recall": 0.963,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 0.0,
+      "use_history_ranker": false
+    },
+    "hybrid_75": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.455,
+              "top_3_recall": 0.9,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": -0.042,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.129,
+                "candidate_p_at_1": 0.065,
+                "name": "commissive",
+                "p_at_1_delta": -0.064,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.848,
+                "candidate_p_at_1": 0.709,
+                "name": "inform",
+                "p_at_1_delta": -0.139,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.012,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.448,
+              "top_3_recall": 0.882,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": -0.052,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.824,
+                "candidate_p_at_1": 0.661,
+                "name": "inform",
+                "p_at_1_delta": -0.163,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.038,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.892,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.013,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.286,
+                "candidate_p_at_1": 0.107,
+                "name": "commissive",
+                "p_at_1_delta": -0.179,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.787,
+                "candidate_p_at_1": 0.68,
+                "name": "inform",
+                "p_at_1_delta": -0.107,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.035,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.49,
+              "top_3_recall": 0.892,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.008,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.222,
+                "candidate_p_at_1": 0.139,
+                "name": "commissive",
+                "p_at_1_delta": -0.083,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.816,
+                "candidate_p_at_1": 0.713,
+                "name": "inform",
+                "p_at_1_delta": -0.103,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.025,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.485,
+              "top_3_recall": 0.915,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": -0.032,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.25,
+                "candidate_p_at_1": 0.042,
+                "name": "commissive",
+                "p_at_1_delta": -0.208,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.815,
+                "candidate_p_at_1": 0.683,
+                "name": "inform",
+                "p_at_1_delta": -0.132,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.03,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": -0.026,
+        "mean_top_3_recall_gain": -0.028,
+        "min_p_at_1_gain": -0.052,
+        "min_top_3_recall_gain": -0.038,
+        "segment_regression_count": 9
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.308,
+        "top_3_recall": 0.773,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.679,
+          "candidate_p_at_1": 0.373,
+          "name": "inform",
+          "p_at_1_delta": -0.306,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 0.75,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.321,
+        "top_3_recall": 0.773,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.645,
+          "candidate_p_at_1": 0.397,
+          "name": "inform",
+          "p_at_1_delta": -0.248,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.629,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 0.0,
+      "use_history_ranker": false
+    },
+    "learned": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.477,
+              "top_3_recall": 0.885,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": -0.02,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.129,
+                "candidate_p_at_1": 0.097,
+                "name": "commissive",
+                "p_at_1_delta": -0.032,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.848,
+                "candidate_p_at_1": 0.691,
+                "name": "inform",
+                "p_at_1_delta": -0.157,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.027,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.453,
+              "top_3_recall": 0.885,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": -0.047,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.824,
+                "candidate_p_at_1": 0.652,
+                "name": "inform",
+                "p_at_1_delta": -0.172,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.035,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.49,
+              "top_3_recall": 0.885,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": -0.02,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.286,
+                "candidate_p_at_1": 0.107,
+                "name": "commissive",
+                "p_at_1_delta": -0.179,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.787,
+                "candidate_p_at_1": 0.652,
+                "name": "inform",
+                "p_at_1_delta": -0.135,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.042,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.465,
+              "top_3_recall": 0.885,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": -0.017,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.222,
+                "candidate_p_at_1": 0.083,
+                "name": "commissive",
+                "p_at_1_delta": -0.139,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.816,
+                "candidate_p_at_1": 0.664,
+                "name": "inform",
+                "p_at_1_delta": -0.152,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.032,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.49,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": -0.027,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.25,
+                "candidate_p_at_1": 0.125,
+                "name": "commissive",
+                "p_at_1_delta": -0.125,
+                "segment": "expected_act"
+              },
+              {
+                "baseline_p_at_1": 0.815,
+                "candidate_p_at_1": 0.65,
+                "name": "inform",
+                "p_at_1_delta": -0.165,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": -0.033,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": -0.026,
+        "mean_top_3_recall_gain": -0.034,
+        "min_p_at_1_gain": -0.047,
+        "min_top_3_recall_gain": -0.042,
+        "segment_regression_count": 9
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.309,
+        "top_3_recall": 0.768,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.679,
+          "candidate_p_at_1": 0.344,
+          "name": "inform",
+          "p_at_1_delta": -0.335,
+          "segment": "expected_act"
+        }
+      ],
+      "history_margin": 0.0,
+      "history_overlay_acts": [],
+      "history_preserved_acts": [],
+      "learned_weight": 1.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.321,
+        "top_3_recall": 0.767,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.645,
+          "candidate_p_at_1": 0.363,
+          "name": "inform",
+          "p_at_1_delta": -0.282,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.645,
+        "top_3_recall": 0.975,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [],
+      "transition_weight": 0.0,
+      "use_history_ranker": false
+    },
+    "protected_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.605,
+              "top_3_recall": 0.978,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.108,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.066,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.595,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.095,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.595,
+              "top_3_recall": 0.985,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.085,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.573,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.091,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.623,
+              "top_3_recall": 1.0,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.106,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.055,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.097,
+        "mean_top_3_recall_gain": 0.065,
+        "min_p_at_1_gain": 0.085,
+        "min_top_3_recall_gain": 0.055,
+        "segment_regression_count": 0
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.488,
+        "top_3_recall": 0.973,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "directive",
+        "question"
+      ],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.494,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.607,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    },
+    "question_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.603,
+              "top_3_recall": 0.978,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.106,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.066,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.593,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.093,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.588,
+              "top_3_recall": 0.985,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.078,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.57,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.088,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.62,
+              "top_3_recall": 1.0,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.103,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.055,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.094,
+        "mean_top_3_recall_gain": 0.065,
+        "min_p_at_1_gain": 0.078,
+        "min_top_3_recall_gain": 0.055,
+        "segment_regression_count": 0
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.49,
+        "top_3_recall": 0.973,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "question"
+      ],
+      "history_preserved_acts": [],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.492,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [
+        {
+          "baseline_p_at_1": 0.052,
+          "candidate_p_at_1": 0.049,
+          "name": "directive",
+          "p_at_1_delta": -0.003,
+          "segment": "expected_act"
+        }
+      ],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.601,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    },
+    "safe_question_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.497,
+              "top_3_recall": 0.912,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.598,
+              "top_3_recall": 0.978,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.101,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.066,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.5,
+              "top_3_recall": 0.92,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.59,
+              "top_3_recall": 0.995,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.075,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.51,
+              "top_3_recall": 0.927,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.588,
+              "top_3_recall": 0.985,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.078,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.058,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.482,
+              "top_3_recall": 0.917,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.57,
+              "top_3_recall": 0.99,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.088,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.073,
+            "validation_turns": 400
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.517,
+              "top_3_recall": 0.945,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.62,
+              "top_3_recall": 1.0,
+              "total_turns": 400,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.103,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.055,
+            "validation_turns": 400
+          }
+        ],
+        "mean_p_at_1_gain": 0.092,
+        "mean_top_3_recall_gain": 0.065,
+        "min_p_at_1_gain": 0.078,
+        "min_top_3_recall_gain": 0.055,
+        "segment_regression_count": 0
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.488,
+        "top_3_recall": 0.973,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "question"
+      ],
+      "history_preserved_acts": [
+        "directive"
+      ],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.491,
+        "top_3_recall": 0.974,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.6,
+        "top_3_recall": 0.99,
+        "total_turns": 2000,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    }
+  }
+}
