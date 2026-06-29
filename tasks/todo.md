@@ -661,3 +661,25 @@ Verification:
 - `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
 - Probability Pack replay result on the untouched ESConv test split: `prepared_hit_rate=0.577`, `exact_prepared_hit_rate=0.546`, `semantic_prepared_hit_rate=0.031`, `first_speech_hit_rate=0.217`, `background_hit_rate=0.360`, `median_latency_ms=90`, and `median_latency_saved_ms=560`.
 - Next lever: add per-mode prepared-hit analytics and semantic response-quality scoring so the background swarm can strengthen weak response mechanisms without overclaiming first-speech readiness.
+
+## Per-Mode Pack Analytics And Draft Quality
+
+- [x] Add per-response-mode Probability Pack replay analytics for prepared hits, exact hits, semantic hits, first-speech hits, background hits, and latency saved.
+- [x] Add deterministic semantic draft-quality scoring for response-mode prepared drafts.
+- [x] Include per-mode analytics and quality summaries in the ESConv response-mode bake-off artifact.
+- [x] Rerun the ESConv benchmark and document the strongest/weakest prepared response modes.
+- [x] Update README/catalog/tracker with exact held-out results and the next lever.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_draft_quality_scores_mode_specific_prepared_speech tests/test_conversation_probability.py::test_response_mode_probability_pack_replay_reports_per_mode_quality -v` failed because `response_mode_draft_quality_score` did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_draft_quality_scores_mode_specific_prepared_speech tests/test_conversation_probability.py::test_response_mode_probability_pack_replay_reports_per_mode_quality -v`: 2 passed.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 58 passed.
+- `python3 -m pytest -v`: 123 passed.
+- `git diff --check`: passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Overall replay result: `prepared_hit_rate=0.577`, `average_quality_score=0.974`, `quality_ready_rate=0.546`, `background_hit_rate=0.360`, and `median_latency_saved_ms=560`.
+- Strong prepared modes: `reassure` and `validate` at `1.000` prepared-hit rate, `ask_followup` at `0.833`, and `suggest` at `0.651`.
+- Weak prepared modes: `disclose`, `inform`, and `other` remain at `0.000` prepared-hit rate.
+- Next lever: targeted background specialists for `disclose`, `inform`, and `other`, promoted only when they improve per-mode prepared hits without lowering aggregate quality or protected first-speech behavior.

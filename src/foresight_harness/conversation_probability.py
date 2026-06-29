@@ -958,7 +958,7 @@ def score_response_mode_probability_pack_replay(
     turns: tuple[ConversationTurn, ...],
     packs: tuple[ConversationProbabilityPack, ...],
     prepared_latency_ms: int = 90,
-) -> dict[str, float | int]:
+) -> dict[str, object]:
     if len(turns) != len(packs):
         raise ValueError("turns and packs must have the same length")
 
@@ -970,6 +970,16 @@ def score_response_mode_probability_pack_replay(
         )
         for turn, pack in zip(turns, packs)
     )
+    summary = summarize_response_mode_probability_pack_rows(rows)
+    summary["segments"] = {
+        "expected_response_mode": summarize_response_mode_probability_pack_segments(rows)
+    }
+    return summary
+
+
+def summarize_response_mode_probability_pack_rows(
+    rows: tuple[dict[str, object], ...],
+) -> dict[str, float | int]:
     total = max(len(rows), 1)
     prepared_hits = sum(row["match_grade"] != "miss" for row in rows)
     exact_hits = sum(row["match_grade"] == "exact" for row in rows)
@@ -984,6 +994,13 @@ def score_response_mode_probability_pack_replay(
         and row["preparation_role"] == "first_speech"
         for row in rows
     )
+    quality_scores = tuple(
+        float(row["quality_score"]) for row in rows if row["match_grade"] != "miss"
+    )
+    quality_ready_hits = sum(
+        row["match_grade"] != "miss" and float(row["quality_score"]) >= 0.75
+        for row in rows
+    )
     return {
         "total_turns": len(rows),
         "prepared_hit_rate": round(prepared_hits / total, 3),
@@ -991,10 +1008,28 @@ def score_response_mode_probability_pack_replay(
         "semantic_prepared_hit_rate": round(semantic_hits / total, 3),
         "background_hit_rate": round(background_hits / total, 3),
         "first_speech_hit_rate": round(first_speech_hits / total, 3),
+        "average_quality_score": (
+            round(sum(quality_scores) / len(quality_scores), 3)
+            if quality_scores
+            else 0.0
+        ),
+        "quality_ready_rate": round(quality_ready_hits / total, 3),
         "median_latency_ms": int(median(row["latency_ms"] for row in rows)) if rows else 0,
         "median_latency_saved_ms": (
             int(median(row["latency_saved_ms"] for row in rows)) if rows else 0
         ),
+    }
+
+
+def summarize_response_mode_probability_pack_segments(
+    rows: tuple[dict[str, object], ...],
+) -> dict[str, dict[str, float | int]]:
+    segments: dict[str, list[dict[str, object]]] = {}
+    for row in rows:
+        segments.setdefault(str(row["expected_response_mode"]), []).append(row)
+    return {
+        mode: summarize_response_mode_probability_pack_rows(tuple(mode_rows))
+        for mode, mode_rows in sorted(segments.items())
     }
 
 
@@ -1015,6 +1050,10 @@ def score_response_mode_probability_pack_turn(
             "match_grade": grade,
             "preparation_role": draft["preparation_role"],
             "response_mode": draft["response_mode"],
+            "quality_score": response_mode_draft_quality_score(
+                draft,
+                expected_response_mode=turn.expected_response_mode,
+            ),
         }
         if best is None or response_mode_match_rank(grade) > response_mode_match_rank(
             str(best["match_grade"])
@@ -1032,6 +1071,7 @@ def score_response_mode_probability_pack_turn(
         "match_grade": best["match_grade"] if best else "miss",
         "preparation_role": best["preparation_role"] if best else "",
         "response_mode": best["response_mode"] if best else "",
+        "quality_score": best["quality_score"] if best else 0.0,
         "latency_ms": latency_ms,
         "latency_saved_ms": latency_saved_ms,
     }
@@ -1039,6 +1079,31 @@ def score_response_mode_probability_pack_turn(
 
 def response_mode_match_rank(grade: str) -> int:
     return {"miss": 0, "semantic_equivalent": 1, "exact": 2}.get(grade, 0)
+
+
+def response_mode_draft_quality_score(
+    draft: dict[str, object],
+    expected_response_mode: str,
+) -> float:
+    if not bool(draft.get("voice_ready", False)):
+        return 0.0
+
+    prepared_mode = str(draft["response_mode"])
+    grade = response_mode_match_grade(prepared_mode, expected_response_mode)
+    base_score = {
+        "exact": 0.65,
+        "semantic_equivalent": 0.45,
+        "miss": 0.2,
+    }[grade]
+    expected_template = RESPONSE_MODE_TEMPLATES.get(expected_response_mode, "")
+    draft_tokens = normalized_tokens(str(draft.get("tts_text", "")))
+    expected_tokens = normalized_tokens(expected_template)
+    overlap = (
+        len(draft_tokens & expected_tokens) / len(draft_tokens | expected_tokens)
+        if draft_tokens and expected_tokens
+        else 0.0
+    )
+    return round(min(1.0, base_score + (0.35 * overlap)), 3)
 
 
 def build_response_mode_probability_packs(

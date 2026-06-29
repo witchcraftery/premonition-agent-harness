@@ -527,9 +527,19 @@ prewarmer, prepared packs catch `0.577` of held-out turns: `0.546` exact
 response-mode hits plus `0.031` semantic-equivalent hits. First-speech hits are
 `0.217`, while safe background-prepared hits add another `0.360`. For usable
 prepared drafts, median latency is `90ms`, with `560ms` median latency saved
-against the turn budget. Next lever: add per-mode prepared-hit analytics and a
-semantic response-quality scorer so we can see which response mechanisms should
-get stronger background specialists next.
+against the turn budget.
+
+The per-mode replay view shows where the background swarm is actually ready.
+Prepared-hit rate is `1.000` for `reassure` and `validate`, `0.833` for
+`ask_followup`, and `0.651` for `suggest`. The strongest background-only win is
+`reassure`, where first-speech hit rate is still `0.000` but background hit rate
+is `1.000`, with average draft quality `0.997`. The weak modes are now equally
+clear: `disclose`, `inform`, and `other` remain at `0.000` prepared-hit rate.
+Overall average quality on prepared hits is `0.974`, and quality-ready coverage
+is `0.546` of all held-out turns. Next lever: targeted background specialists
+for `disclose`, `inform`, and `other`, promoted only when they improve per-mode
+prepared hits without lowering aggregate quality or protected first-speech
+behavior.
 
 ## Replay Data Format
 

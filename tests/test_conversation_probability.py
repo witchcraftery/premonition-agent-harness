@@ -26,6 +26,7 @@ from foresight_harness.conversation_probability import (
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
     response_mode_bakeoff_variants,
+    response_mode_draft_quality_score,
     response_mode_match_grade,
     response_mode_probability_pack_policy,
     response_mode_recommendations,
@@ -921,6 +922,93 @@ def test_response_mode_probability_pack_replay_scores_tts_readiness_hits():
     assert summary["first_speech_hit_rate"] == 0.0
     assert summary["median_latency_ms"] == 90
     assert summary["median_latency_saved_ms"] == 560
+
+
+def test_response_mode_draft_quality_scores_mode_specific_prepared_speech():
+    assert (
+        response_mode_draft_quality_score(
+            {
+                "response_mode": "reassure",
+                "tts_text": "I can offer grounded reassurance without overpromising.",
+                "voice_ready": True,
+            },
+            expected_response_mode="reassure",
+        )
+        == 1.0
+    )
+    assert (
+        response_mode_draft_quality_score(
+            {
+                "response_mode": "ask_followup",
+                "tts_text": "I can ask one warm follow-up question.",
+                "voice_ready": True,
+            },
+            expected_response_mode="reassure",
+        )
+        < 0.7
+    )
+
+
+def test_response_mode_probability_pack_replay_reports_per_mode_quality():
+    reassure_turn = conversation_turn(
+        "reassure-pack-turn",
+        "I am scared this will happen again.",
+        "inform",
+        expected_response_mode="reassure",
+    )
+    ask_turn = conversation_turn(
+        "ask-pack-turn",
+        "I do not know what to do next.",
+        "question",
+        expected_response_mode="ask_followup",
+    )
+    policy = {
+        "first_speech_variant": "response_mode_hybrid_75",
+        "first_speech_delivery": "confirm_before_delivery",
+        "background_readiness_variant": "calibrated_minority_specialist_coverage",
+        "background_preparation": "prewarm_tts",
+        "confirmation_mode": "confirm_first_speech_then_stream_prepared_background",
+    }
+    packs = (
+        build_response_mode_probability_pack(
+            reassure_turn,
+            first_speech_branches=(
+                response_mode_branch("ask_followup", "response_mode_hybrid_75", 0.7),
+            ),
+            background_readiness_branches=(
+                response_mode_branch("ask_followup", "calibrated_minority_specialist_coverage", 0.5),
+                response_mode_branch("reassure", "calibrated_minority_specialist_coverage", 0.49),
+            ),
+            policy=policy,
+        ),
+        build_response_mode_probability_pack(
+            ask_turn,
+            first_speech_branches=(
+                response_mode_branch("ask_followup", "response_mode_hybrid_75", 0.7),
+            ),
+            background_readiness_branches=(
+                response_mode_branch("ask_followup", "calibrated_minority_specialist_coverage", 0.5),
+                response_mode_branch("reassure", "calibrated_minority_specialist_coverage", 0.49),
+            ),
+            policy=policy,
+        ),
+    )
+
+    summary = score_response_mode_probability_pack_replay(
+        (reassure_turn, ask_turn),
+        packs,
+        prepared_latency_ms=90,
+    )
+
+    assert summary["average_quality_score"] == 1.0
+    assert summary["quality_ready_rate"] == 1.0
+    reassure_segment = summary["segments"]["expected_response_mode"]["reassure"]
+    ask_segment = summary["segments"]["expected_response_mode"]["ask_followup"]
+    assert reassure_segment["prepared_hit_rate"] == 1.0
+    assert reassure_segment["background_hit_rate"] == 1.0
+    assert reassure_segment["average_quality_score"] == 1.0
+    assert ask_segment["first_speech_hit_rate"] == 1.0
+    assert ask_segment["median_latency_saved_ms"] == 560
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():
@@ -2255,11 +2343,20 @@ def response_mode_branch(
     scoring_variant: str,
     probability: float,
 ) -> dict[str, object]:
+    templates = {
+        "ask_followup": "I can ask one warm follow-up question.",
+        "validate": "I can reflect the feeling back clearly and gently.",
+        "reassure": "I can offer grounded reassurance without overpromising.",
+        "disclose": "I can share a brief relatable disclosure when it is useful.",
+        "suggest": "I can offer one practical suggestion.",
+        "inform": "I can provide relevant information.",
+        "other": "I can keep a neutral supportive response ready.",
+    }
     return {
         "branch_id": f"branch-{mode}",
         "rank": 1,
         "response_mode": mode,
-        "tts_text": f"Prepared {mode} response.",
+        "tts_text": templates.get(mode, f"Prepared {mode} response."),
         "probability": probability,
         "trigger_cues": [],
         "scoring_variant": scoring_variant,
