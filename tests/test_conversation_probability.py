@@ -10,6 +10,7 @@ from foresight_harness.conversation_probability import (
     conversation_bakeoff_variants,
     cross_validate_conversation_variant,
     generate_conversation_branches,
+    load_empatheticdialogues_export,
     learn_conversation_guidance,
     load_dailydialog_split,
     load_conversation_turns,
@@ -74,6 +75,117 @@ def test_load_dailydialog_split_writes_limited_jsonl_sample(tmp_path):
     assert saved[1].expected_act == "directive"
     assert saved[1].observed_acts == ("inform", "inform")
     assert saved[2].expected_act == "question"
+
+
+def test_load_empatheticdialogues_export_creates_next_turn_examples(tmp_path):
+    input_path = tmp_path / "empathetic.csv"
+    input_path.write_text(
+        "conv_id,utterance_idx,context,prompt,speaker_idx,utterance\n"
+        "c1,1,proud,I finished the mural.,0,I finished the mural today.\n"
+        "c1,2,proud,I finished the mural.,1,That is wonderful news!\n"
+        "c1,3,proud,I finished the mural.,0,Can I show it to you later?\n"
+        "c2,1,afraid,I heard a noise.,0,I heard a noise outside.\n"
+        "c2,2,afraid,I heard a noise.,1,Please check the lock.\n",
+        encoding="utf-8",
+    )
+
+    turns = load_empatheticdialogues_export(input_path)
+
+    assert len(turns) == 3
+    assert turns[0].turn_id == "empathetic-c1-002"
+    assert turns[0].next_speaker == "speaker_b"
+    assert turns[0].actual_next_utterance == "That is wonderful news!"
+    assert turns[0].expected_act == "inform"
+    assert turns[0].expected_emotion == "happiness"
+    assert turns[0].observed_acts == ("inform",)
+    assert turns[1].expected_act == "question"
+    assert turns[2].expected_act == "directive"
+    assert turns[2].expected_emotion == "fear"
+
+
+def test_load_empatheticdialogues_export_supports_jsonl_rows(tmp_path):
+    input_path = tmp_path / "empathetic.jsonl"
+    input_path.write_text(
+        "\n".join(
+            [
+                json.dumps(
+                    {
+                        "conv_id": "j1",
+                        "utterance_idx": 1,
+                        "context": "grateful",
+                        "prompt": "A friend helped me move.",
+                        "speaker_idx": 0,
+                        "utterance": "My friend helped me move.",
+                    }
+                ),
+                json.dumps(
+                    {
+                        "conv_id": "j1",
+                        "utterance_idx": 2,
+                        "context": "grateful",
+                        "prompt": "A friend helped me move.",
+                        "speaker_idx": 1,
+                        "utterance": "I can send them a thank you note.",
+                    }
+                ),
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    turns = load_empatheticdialogues_export(input_path)
+
+    assert len(turns) == 1
+    assert turns[0].expected_act == "commissive"
+    assert turns[0].expected_emotion == "happiness"
+
+
+def test_load_empatheticdialogues_export_detects_common_commitment_phrases(tmp_path):
+    input_path = tmp_path / "empathetic.jsonl"
+    input_path.write_text(
+        "\n".join(
+            [
+                json.dumps(
+                    {
+                        "conv_id": "j2",
+                        "utterance_idx": 1,
+                        "context": "caring",
+                        "prompt": "A friend needed help.",
+                        "speaker_idx": 0,
+                        "utterance": "My friend needed help.",
+                    }
+                ),
+                json.dumps(
+                    {
+                        "conv_id": "j2",
+                        "utterance_idx": 2,
+                        "context": "caring",
+                        "prompt": "A friend needed help.",
+                        "speaker_idx": 1,
+                        "utterance": "I would stay with them until they felt safe.",
+                    }
+                ),
+                json.dumps(
+                    {
+                        "conv_id": "j2",
+                        "utterance_idx": 3,
+                        "context": "caring",
+                        "prompt": "A friend needed help.",
+                        "speaker_idx": 0,
+                        "utterance": "I'm going to call them tonight.",
+                    }
+                ),
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    turns = load_empatheticdialogues_export(input_path)
+
+    assert turns[0].expected_act == "commissive"
+    assert turns[1].expected_act == "commissive"
 
 
 def test_build_probability_pack_prepares_speakable_tts_drafts():

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from foresight_harness.cross_benchmark import run_cross_fold_benchmark
 from foresight_harness.conversation_probability import (
+    load_empatheticdialogues_export,
     load_dailydialog_split,
     load_conversation_turns,
     run_conversation_act_ranker_bakeoff,
@@ -149,6 +150,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to one DailyDialog split directory containing dialogues.txt and label files.",
     )
     parser.add_argument(
+        "--empatheticdialogues-input",
+        type=Path,
+        help="Path to one EmpatheticDialogues CSV or JSONL split file.",
+    )
+    parser.add_argument(
         "--conversation-output",
         type=Path,
         help="Optional JSONL path for exported human conversation probability turns.",
@@ -177,6 +183,34 @@ def main() -> None:
             json.dumps(
                 {
                     "source": str(args.dailydialog_dir),
+                    "output": str(args.conversation_output),
+                    "exported_turns": min(
+                        len(turns),
+                        args.conversation_limit if args.conversation_limit else len(turns),
+                    ),
+                    "available_turns": len(turns),
+                },
+                indent=2,
+                sort_keys=True,
+            )
+        )
+        return
+
+    if args.empatheticdialogues_input:
+        if not args.conversation_output:
+            raise SystemExit(
+                "--conversation-output is required with --empatheticdialogues-input"
+            )
+        turns = load_empatheticdialogues_export(args.empatheticdialogues_input)
+        write_conversation_turns(
+            turns,
+            args.conversation_output,
+            limit=args.conversation_limit,
+        )
+        print(
+            json.dumps(
+                {
+                    "source": str(args.empatheticdialogues_input),
                     "output": str(args.conversation_output),
                     "exported_turns": min(
                         len(turns),

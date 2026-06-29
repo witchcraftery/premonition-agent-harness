@@ -63,6 +63,17 @@ repeatable benchmark.
 - Full-test-depth result: on balanced 6740/6740/6740 samples, `deep_protected_act_rhythm_contextual` is selected. Held-out test `p_at_1` improves from `0.408` to `0.545`, `top_3_recall` improves from `0.881` to `0.982`, cross-validation mean gain is `0.105`, minimum fold gain is `0.089`, and cross-fold segment regressions stay at `0`. Held-out `question` top-1 improves from `0.026` to `0.163`, while `directive` top-1 improves from `0.077` to `0.090`. Conservative question-evidence variants were safe but did not beat the protected rhythm baseline, so they remain diagnostic.
 - Limitation: balanced scale is capped by the 6,740-turn DailyDialog test split; the next lever is adding a second human-conversation dataset to test whether protected sequence memory generalizes beyond DailyDialog.
 
+### EmpatheticDialogues Held-Out Samples
+
+- Status: derived samples included in this repository; raw source files are excluded under `data/external/`.
+- Files: `data/empatheticdialogues_train_6740_sample.jsonl`, `data/empatheticdialogues_validation_6740_sample.jsonl`, and `data/empatheticdialogues_test_6740_sample.jsonl`.
+- Report: `runs/empatheticdialogues_6740_act_ranker_bakeoff.json`.
+- Source used for import: `https://dl.fbaipublicfiles.com/parlai/empatheticdialogues/empatheticdialogues.tar.gz`.
+- Purpose: second held-out human-conversation benchmark focused on emotionally grounded dialogue.
+- Current use: imports visible prior utterances as context, maps EmpatheticDialogues `context` labels into coarse emotion groups, and infers conversation acts from the target utterance so the same act bake-off can run.
+- Current result: on balanced 6740/6740/6740 samples, the selector stays at `heuristic`. Held-out test `p_at_1` remains `0.608`, `top_3_recall` remains `0.981`, and selected segment regressions stay at `0`. Higher-headline contextual variants reach roughly `0.69` held-out `p_at_1`, but they regress sparse `commissive` and other protected act slices, so the strict gate blocks promotion.
+- Limitation: inferred act labels are too coarse for empathy-mode work. The next lever is a richer response-mode taxonomy or class-balanced act protection before treating EmpatheticDialogues gains as real.
+
 ## Human Conversation Candidates
 
 ### DailyDialog

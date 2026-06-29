@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 import math
 from dataclasses import dataclass
@@ -26,6 +27,41 @@ DAILYDIALOG_EMOTIONS = {
     "4": "happiness",
     "5": "sadness",
     "6": "surprise",
+}
+
+EMPATHETIC_EMOTION_MAP = {
+    "afraid": "fear",
+    "angry": "anger",
+    "annoyed": "anger",
+    "anticipating": "surprise",
+    "anxious": "fear",
+    "apprehensive": "fear",
+    "ashamed": "sadness",
+    "caring": "happiness",
+    "confident": "happiness",
+    "content": "happiness",
+    "devastated": "sadness",
+    "disappointed": "sadness",
+    "disgusted": "disgust",
+    "embarrassed": "sadness",
+    "excited": "happiness",
+    "faithful": "happiness",
+    "furious": "anger",
+    "grateful": "happiness",
+    "guilty": "sadness",
+    "hopeful": "happiness",
+    "impressed": "happiness",
+    "jealous": "anger",
+    "joyful": "happiness",
+    "lonely": "sadness",
+    "nostalgic": "sadness",
+    "prepared": "happiness",
+    "proud": "happiness",
+    "sad": "sadness",
+    "sentimental": "sadness",
+    "surprised": "surprise",
+    "terrified": "fear",
+    "trusting": "happiness",
 }
 
 CONVERSATION_ACTS = ("inform", "question", "directive", "commissive")
@@ -217,6 +253,126 @@ def load_conversation_turns(path: Path) -> tuple[ConversationTurn, ...]:
             if line.strip():
                 rows.append(ConversationTurn.from_dict(json.loads(line)))
     return tuple(rows)
+
+
+def load_empatheticdialogues_export(path: Path) -> tuple[ConversationTurn, ...]:
+    rows = load_empatheticdialogues_rows(path)
+    conversations: dict[str, list[dict[str, str]]] = {}
+    for row in rows:
+        conv_id = row.get("conv_id", "").strip()
+        if not conv_id:
+            continue
+        conversations.setdefault(conv_id, []).append(row)
+
+    turns: list[ConversationTurn] = []
+    for conv_id, conversation_rows in sorted(conversations.items()):
+        ordered = sorted(
+            conversation_rows,
+            key=lambda row: int(row.get("utterance_idx", "0") or 0),
+        )
+        utterances = [decode_empathetic_text(row.get("utterance", "")) for row in ordered]
+        acts = tuple(infer_conversation_act(utterance) for utterance in utterances)
+        for next_index in range(1, len(ordered)):
+            history = tuple(
+                Message(
+                    role=empathetic_speaker_role(ordered[index], index),
+                    content=utterances[index],
+                )
+                for index in range(next_index)
+                if utterances[index]
+            )
+            if not history or not utterances[next_index]:
+                continue
+            next_utterance_idx = int(
+                ordered[next_index].get("utterance_idx", str(next_index + 1)) or next_index + 1
+            )
+            turns.append(
+                ConversationTurn(
+                    turn_id=f"empathetic-{conv_id}-{next_utterance_idx:03d}",
+                    conversation=history,
+                    next_speaker=empathetic_speaker_role(
+                        ordered[next_index],
+                        next_index,
+                    ),
+                    actual_next_utterance=utterances[next_index],
+                    expected_act=acts[next_index],
+                    expected_emotion=empathetic_emotion(
+                        ordered[next_index].get("context", ""),
+                    ),
+                    observed_acts=acts[:next_index],
+                )
+            )
+    return tuple(turns)
+
+
+def load_empatheticdialogues_rows(path: Path) -> tuple[dict[str, str], ...]:
+    if path.suffix.lower() == ".jsonl":
+        rows: list[dict[str, str]] = []
+        with path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    rows.append(
+                        {
+                            str(key): str(value)
+                            for key, value in json.loads(line).items()
+                        }
+                    )
+        return tuple(rows)
+
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        return tuple(
+            {
+                str(key): str(value)
+                for key, value in row.items()
+                if key is not None and value is not None
+            }
+            for row in csv.DictReader(handle)
+        )
+
+
+def decode_empathetic_text(value: str) -> str:
+    return value.replace("_comma_", ",").strip()
+
+
+def empathetic_speaker_role(row: dict[str, str], index: int) -> str:
+    speaker_idx = row.get("speaker_idx", "")
+    try:
+        parsed = int(speaker_idx)
+    except ValueError:
+        parsed = index
+    return speaker_role(parsed)
+
+
+def empathetic_emotion(context: str) -> str:
+    return EMPATHETIC_EMOTION_MAP.get(context.strip().lower(), "no_emotion")
+
+
+def infer_conversation_act(utterance: str) -> str:
+    stripped = utterance.strip()
+    lowered = stripped.lower()
+    tokens = normalized_tokens(stripped)
+    if stripped.endswith("?"):
+        return "question"
+    if tokens & {"please", "should", "check", "try", "tell", "make", "go", "stop"}:
+        return "directive"
+    if lowered.startswith(
+        (
+            "i can ",
+            "i will ",
+            "i'll ",
+            "i would ",
+            "i'd ",
+            "i am going to ",
+            "i'm going to ",
+            "we can ",
+            "we will ",
+            "we'll ",
+            "we would ",
+            "we're going to ",
+        )
+    ):
+        return "commissive"
+    return "inform"
 
 
 def load_dailydialog_export(

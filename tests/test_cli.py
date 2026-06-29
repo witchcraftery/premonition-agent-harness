@@ -189,6 +189,41 @@ def test_cli_runs_cross_fold_benchmark(tmp_path):
     assert dashboard.read_text(encoding="utf-8").startswith("<!doctype html>")
 
 
+def test_cli_exports_empatheticdialogues_sample(tmp_path):
+    input_path = tmp_path / "empathetic.csv"
+    output = tmp_path / "empathetic.jsonl"
+    input_path.write_text(
+        "conv_id,utterance_idx,context,prompt,speaker_idx,utterance\n"
+        "c1,1,grateful,A friend helped me.,0,My friend helped me today.\n"
+        "c1,2,grateful,A friend helped me.,1,I would send them a thank you note.\n",
+        encoding="utf-8",
+    )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--empatheticdialogues-input",
+            str(input_path),
+            "--conversation-output",
+            str(output),
+            "--conversation-limit",
+            "1",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    exported = json.loads(output.read_text(encoding="utf-8"))
+
+    assert report["exported_turns"] == 1
+    assert exported["expected_act"] == "commissive"
+    assert exported["expected_emotion"] == "happiness"
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

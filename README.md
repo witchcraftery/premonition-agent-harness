@@ -387,6 +387,40 @@ cross-fold and held-out act-segment regressions stay at `0`. Held-out
 `question` top-1 improves from `0.026` to `0.163`; held-out `directive` top-1
 improves from `0.077` to `0.090`.
 
+Run the first EmpatheticDialogues generalization benchmark:
+
+```bash
+foresight-replay \
+  --empatheticdialogues-input data/external/empatheticdialogues/empatheticdialogues/train.csv \
+  --conversation-output data/empatheticdialogues_train_6740_sample.jsonl \
+  --conversation-limit 6740
+
+foresight-replay \
+  --empatheticdialogues-input data/external/empatheticdialogues/empatheticdialogues/valid.csv \
+  --conversation-output data/empatheticdialogues_validation_6740_sample.jsonl \
+  --conversation-limit 6740
+
+foresight-replay \
+  --empatheticdialogues-input data/external/empatheticdialogues/empatheticdialogues/test.csv \
+  --conversation-output data/empatheticdialogues_test_6740_sample.jsonl \
+  --conversation-limit 6740
+
+foresight-replay \
+  --conversation-train-input data/empatheticdialogues_train_6740_sample.jsonl \
+  --conversation-dev-input data/empatheticdialogues_validation_6740_sample.jsonl \
+  --conversation-test-input data/empatheticdialogues_test_6740_sample.jsonl \
+  --conversation-bakeoff-report runs/empatheticdialogues_6740_act_ranker_bakeoff.json
+```
+
+On the 6740/6740/6740 EmpatheticDialogues samples, the selector stays at
+`heuristic`: held-out test `p_at_1` remains `0.608`, held-out `top_3_recall`
+remains `0.981`, and there are `0` selected segment regressions. This is a
+useful generalization result. The stronger contextual variants reach roughly
+`0.69` held-out `p_at_1`, but they regress sparse act slices, especially
+`commissive`, so the strict gate blocks them. The next empathy lever is better
+mode/act labeling or class-balanced protection, not loosening the promotion
+rules.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -412,11 +446,12 @@ meaningful step is to replay 300-500 real or tau-bench-style support turns,
 label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
-For conversational voice-agent foresight, the next meaningful step is to move
-beyond DailyDialog by adding EmpatheticDialogues for emotional readiness and
-Taskmaster or SpokenWOZ for practical spoken-assistant flows. The DailyDialog
-result suggests deeper protected sequence memory helps more than generic
-question-language cues on this dataset.
+For conversational voice-agent foresight, the next meaningful step is to improve
+emotion/mode labeling for EmpatheticDialogues, then add Taskmaster or SpokenWOZ
+for practical spoken-assistant flows. The DailyDialog result suggests deeper
+protected sequence memory helps on dialogue acts, while EmpatheticDialogues shows
+that emotional conversation needs a better mode taxonomy before the same variants
+can promote safely.
 
 Useful expansion points:
 

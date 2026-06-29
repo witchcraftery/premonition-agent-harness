@@ -485,3 +485,23 @@ Verification:
 - Segment result: held-out `question` top-1 improved from `0.026` to `0.163`, held-out `directive` top-1 improved from `0.077` to `0.090`, and no held-out act segment regressed.
 - Diagnostic note: question-evidence variants are implemented and safe at conservative margins, but did not beat the protected rhythm baseline on DailyDialog. The real lift came from extending protected dialogue rhythm to an 8-act history window.
 - Result: the harness now supports language-evidence overlays and variant-specific history depth. DailyDialog suggests the next dataset should test whether protected sequence memory generalizes to emotional or task-oriented spoken conversations.
+
+## EmpatheticDialogues Generalization Lever
+
+- [x] Add an EmpatheticDialogues importer for CSV/JSONL rows with `conv_id`, `utterance_idx`, `context`, `prompt`, `speaker_idx`, and `utterance`.
+- [x] Export bounded train/dev/test conversation samples from the second human-dialogue dataset.
+- [x] Run the same conversation bake-off and compare selected variant, held-out score, emotion segments, and act regressions against DailyDialog.
+- [x] Document whether deep protected sequence memory generalizes beyond DailyDialog.
+- [x] Commit and push reproducible samples, report, and docs if the run is useful.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_load_empatheticdialogues_export_creates_next_turn_examples tests/test_conversation_probability.py::test_load_empatheticdialogues_export_supports_jsonl_rows -v` failed because `load_empatheticdialogues_export` did not exist.
+- Label-quality red check: `python3 -m pytest tests/test_conversation_probability.py::test_load_empatheticdialogues_export_detects_common_commitment_phrases -v` failed because common commitment phrases like `I would...` were labeled `inform` instead of `commissive`.
+- `python3 -m pytest tests/test_cli.py::test_cli_exports_empatheticdialogues_sample tests/test_conversation_probability.py::test_load_empatheticdialogues_export_detects_common_commitment_phrases tests/test_conversation_probability.py::test_load_empatheticdialogues_export_creates_next_turn_examples tests/test_conversation_probability.py::test_load_empatheticdialogues_export_supports_jsonl_rows -v`: 4 passed.
+- Downloaded raw source archive from `https://dl.fbaipublicfiles.com/parlai/empatheticdialogues/empatheticdialogues.tar.gz` into ignored `data/external/empatheticdialogues/`.
+- Exported balanced 6,740-turn samples: `data/empatheticdialogues_train_6740_sample.jsonl`, `data/empatheticdialogues_validation_6740_sample.jsonl`, and `data/empatheticdialogues_test_6740_sample.jsonl`.
+- `foresight-replay --conversation-train-input data/empatheticdialogues_train_6740_sample.jsonl --conversation-dev-input data/empatheticdialogues_validation_6740_sample.jsonl --conversation-test-input data/empatheticdialogues_test_6740_sample.jsonl --conversation-bakeoff-report runs/empatheticdialogues_6740_act_ranker_bakeoff.json`: completed.
+- Selected EmpatheticDialogues variant: `heuristic`; held-out test `p_at_1` stayed at `0.608`, held-out top-3 recall stayed at `0.981`, and selected dev/test/cross-fold segment regressions stayed at `0`.
+- Diagnostic note: contextual variants reached about `0.69` held-out `p_at_1`, but regressed sparse protected act slices, especially `commissive`, so the strict gate correctly blocked promotion.
+- Result: deep protected rhythm did not generalize safely to EmpatheticDialogues under coarse inferred act labels. Next lever is richer empathy response-mode labeling or class-balanced protection before promoting emotional conversation gains.
