@@ -2894,6 +2894,13 @@
       "esconv-test-1300-011"
     ]
   },
+  "probability_pack_policy": {
+    "background_preparation": "prewarm_tts",
+    "background_readiness_variant": "calibrated_minority_specialist_coverage",
+    "confirmation_mode": "confirm_first_speech_then_stream_prepared_background",
+    "first_speech_delivery": "confirm_before_delivery",
+    "first_speech_variant": "response_mode_hybrid_75"
+  },
   "promotion": {
     "dev_selected_variant": "response_mode_hybrid_75",
     "heldout_promotable": false,

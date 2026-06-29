@@ -811,6 +811,133 @@ def build_probability_pack(
     )
 
 
+def response_mode_probability_pack_policy(
+    recommendations: dict[str, object],
+) -> dict[str, object]:
+    first_speech = dict(recommendations["first_speech"])
+    background = dict(recommendations["background_readiness"])
+    first_speech_promotable = bool(first_speech["heldout_promotable"])
+    background_promotable = bool(background["heldout_promotable"])
+    return {
+        "first_speech_variant": str(first_speech["name"]),
+        "first_speech_delivery": (
+            "ready_for_delivery"
+            if first_speech_promotable
+            else "confirm_before_delivery"
+        ),
+        "background_readiness_variant": str(background["name"]),
+        "background_preparation": (
+            "prewarm_tts" if background_promotable else "diagnostic_only"
+        ),
+        "confirmation_mode": (
+            "deliver_first_speech_and_stream_prepared_background"
+            if first_speech_promotable
+            else "confirm_first_speech_then_stream_prepared_background"
+        ),
+    }
+
+
+def build_response_mode_probability_pack(
+    turn: ConversationTurn,
+    first_speech_branches: tuple[dict[str, object], ...],
+    background_readiness_branches: tuple[dict[str, object], ...],
+    policy: dict[str, object],
+    top_k: int = 3,
+) -> ConversationProbabilityPack:
+    if top_k <= 0:
+        raise ValueError("top_k must be positive")
+    if not first_speech_branches:
+        raise ValueError("first_speech_branches are required")
+    if not background_readiness_branches:
+        raise ValueError("background_readiness_branches are required")
+
+    top_branches = response_mode_probability_pack_branches(
+        first_speech_branches=first_speech_branches,
+        background_readiness_branches=background_readiness_branches,
+        policy=policy,
+        top_k=top_k,
+    )
+    prepared_drafts = tuple(
+        {
+            "branch_id": branch["branch_id"],
+            "response_mode": branch["response_mode"],
+            "tts_text": branch["tts_text"],
+            "voice_ready": True,
+            "readiness_score": round(float(branch["probability"]) * 0.94, 3),
+            "preparation_role": branch["preparation_role"],
+            "delivery_policy": (
+                policy["first_speech_delivery"]
+                if branch["preparation_role"] == "first_speech"
+                else policy["background_preparation"]
+            ),
+            "source_variant": branch["source_variant"],
+        }
+        for branch in top_branches
+    )
+    return ConversationProbabilityPack(
+        pack_id=f"{turn.turn_id}-response-mode-probability-pack",
+        turn_id=turn.turn_id,
+        observed_context=turn.context_text(),
+        top_branches=top_branches,
+        prepared_drafts=prepared_drafts,
+        confirmation_mode=str(policy["confirmation_mode"]),
+        expires_after_ms=2500,
+    )
+
+
+def response_mode_probability_pack_branches(
+    first_speech_branches: tuple[dict[str, object], ...],
+    background_readiness_branches: tuple[dict[str, object], ...],
+    policy: dict[str, object],
+    top_k: int,
+) -> tuple[dict[str, object], ...]:
+    first = response_mode_pack_branch(
+        first_speech_branches[0],
+        rank=1,
+        preparation_role="first_speech",
+        source_variant=str(policy["first_speech_variant"]),
+    )
+    selected = [first]
+    selected_modes = {str(first["response_mode"])}
+
+    for branch in background_readiness_branches:
+        mode = str(branch["response_mode"])
+        if mode in selected_modes:
+            continue
+        selected.append(
+            response_mode_pack_branch(
+                branch,
+                rank=len(selected) + 1,
+                preparation_role="background_readiness",
+                source_variant=str(policy["background_readiness_variant"]),
+            )
+        )
+        selected_modes.add(mode)
+        if len(selected) >= top_k:
+            break
+
+    return tuple(selected)
+
+
+def response_mode_pack_branch(
+    branch: dict[str, object],
+    rank: int,
+    preparation_role: str,
+    source_variant: str,
+) -> dict[str, object]:
+    return {
+        "branch_id": branch["branch_id"],
+        "rank": rank,
+        "response_mode": branch["response_mode"],
+        "tts_text": branch["tts_text"],
+        "probability": branch["probability"],
+        "trigger_cues": list(branch.get("trigger_cues", [])),
+        "scoring_variant": branch.get("scoring_variant", source_variant),
+        "preparation_role": preparation_role,
+        "source_variant": source_variant,
+    }
+
+
 def generate_conversation_branches(
     turn: ConversationTurn,
     top_k: int = 3,
@@ -2338,6 +2465,10 @@ def run_response_mode_ranker_bakeoff(
     selected_rows = variant_rows[selected_name]["test"]
     selected_train_rows = variant_rows[selected_name]["train"]
     selected_dev_rows = variant_rows[selected_name]["dev"]
+    recommendations = response_mode_recommendations(
+        variants,
+        first_speech_variant_name=selected_name,
+    )
 
     return {
         "summary": {
@@ -2358,9 +2489,9 @@ def run_response_mode_ranker_bakeoff(
             "name": selected_name,
             **variants[selected_name],
         },
-        "recommendations": response_mode_recommendations(
-            variants,
-            first_speech_variant_name=selected_name,
+        "recommendations": recommendations,
+        "probability_pack_policy": response_mode_probability_pack_policy(
+            recommendations
         ),
         "promotion": response_mode_promotion_summary(
             selected_name=selected_name,

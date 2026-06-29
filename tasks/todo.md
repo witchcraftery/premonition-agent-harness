@@ -619,3 +619,24 @@ Verification:
 - First-speech recommendation: `response_mode_hybrid_75`, dev `p_at_1=0.204`, held-out test `p_at_1=0.217`, `heldout_promotable=false`, and `1` held-out segment regression.
 - Background-readiness recommendation: `calibrated_minority_specialist_coverage`, dev top-3 `0.542`, held-out test top-3 `0.546`, `heldout_promotable=true`, and `0` held-out segment regressions.
 - Next lever: wire the background-readiness recommendation into Probability Pack preparation policy while keeping first speech governed by the stricter rank-1 selector.
+
+## Response-Mode Probability Pack Prep Policy
+
+- [x] Add a response-mode Probability Pack policy derived from first-speech and background-readiness recommendations.
+- [x] Mark first-speech delivery as confirmation-gated when the first-speech recommendation is not held-out promotable.
+- [x] Mark background readiness as TTS-prewarm eligible when the readiness recommendation is held-out promotable.
+- [x] Add a response-mode Probability Pack builder that keeps the first branch from the first-speech selector while preparing background-readiness branches.
+- [x] Include the policy in the ESConv response-mode bake-off report.
+- [x] Update README/catalog/tracker with the exact policy result and next lever.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_probability_pack_policy_uses_recommendation_promotability tests/test_conversation_probability.py::test_response_mode_probability_pack_prepares_background_readiness_branches -v` failed because `build_response_mode_probability_pack` and `response_mode_probability_pack_policy` did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_probability_pack_policy_uses_recommendation_promotability tests/test_conversation_probability.py::test_response_mode_probability_pack_prepares_background_readiness_branches tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v`: 3 passed.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 54 passed.
+- `python3 -m pytest -v`: 119 passed.
+- `git diff --check`: passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Policy result: first-speech variant `response_mode_hybrid_75`, first-speech delivery `confirm_before_delivery`, background-readiness variant `calibrated_minority_specialist_coverage`, background preparation `prewarm_tts`, confirmation mode `confirm_first_speech_then_stream_prepared_background`.
+- Next lever: replay response-mode Probability Packs turn-by-turn and score whether prepared background drafts would reduce TTS latency on exact/semantic hits.

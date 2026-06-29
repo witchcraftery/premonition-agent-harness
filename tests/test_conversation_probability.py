@@ -5,6 +5,7 @@ from pathlib import Path
 
 from foresight_harness.conversation_probability import (
     build_probability_pack,
+    build_response_mode_probability_pack,
     ConversationGuidance,
     ConversationTurn,
     conversation_bakeoff_variants,
@@ -25,6 +26,7 @@ from foresight_harness.conversation_probability import (
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
     response_mode_bakeoff_variants,
+    response_mode_probability_pack_policy,
     response_mode_recommendations,
     score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
@@ -411,6 +413,8 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "recommendations" in report
     assert "first_speech" in report["recommendations"]
     assert "background_readiness" in report["recommendations"]
+    assert "probability_pack_policy" in report
+    assert "background_preparation" in report["probability_pack_policy"]
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():
@@ -753,6 +757,99 @@ def test_response_mode_recommendations_split_speech_and_readiness_winners():
     assert recommendations["background_readiness"]["reason"] == (
         "held-out test passed background readiness checks"
     )
+
+
+def test_response_mode_probability_pack_policy_uses_recommendation_promotability():
+    recommendations = {
+        "first_speech": {
+            "name": "response_mode_hybrid_75",
+            "heldout_promotable": False,
+        },
+        "background_readiness": {
+            "name": "calibrated_minority_specialist_coverage",
+            "heldout_promotable": True,
+        },
+    }
+
+    policy = response_mode_probability_pack_policy(recommendations)
+
+    assert policy["first_speech_variant"] == "response_mode_hybrid_75"
+    assert policy["first_speech_delivery"] == "confirm_before_delivery"
+    assert (
+        policy["background_readiness_variant"]
+        == "calibrated_minority_specialist_coverage"
+    )
+    assert policy["background_preparation"] == "prewarm_tts"
+    assert policy["confirmation_mode"] == (
+        "confirm_first_speech_then_stream_prepared_background"
+    )
+
+
+def test_response_mode_probability_pack_prepares_background_readiness_branches():
+    turn = conversation_turn(
+        "pack-turn",
+        "I am scared this will happen again.",
+        "inform",
+        expected_response_mode="reassure",
+    )
+    policy = {
+        "first_speech_variant": "response_mode_hybrid_75",
+        "first_speech_delivery": "confirm_before_delivery",
+        "background_readiness_variant": "calibrated_minority_specialist_coverage",
+        "background_preparation": "prewarm_tts",
+        "confirmation_mode": "confirm_first_speech_then_stream_prepared_background",
+    }
+    first_speech_branches = (
+        {
+            "branch_id": "pack-turn-mode-branch-1",
+            "rank": 1,
+            "response_mode": "ask_followup",
+            "tts_text": "I can ask a focused follow-up question.",
+            "probability": 0.7,
+            "trigger_cues": ["scared"],
+            "scoring_variant": "response_mode_hybrid_75",
+        },
+    )
+    background_readiness_branches = (
+        {
+            "branch_id": "pack-turn-mode-branch-1",
+            "rank": 1,
+            "response_mode": "ask_followup",
+            "tts_text": "I can ask a focused follow-up question.",
+            "probability": 0.55,
+            "trigger_cues": ["scared"],
+            "scoring_variant": "calibrated_minority_specialist_coverage",
+        },
+        {
+            "branch_id": "pack-turn-mode-branch-2",
+            "rank": 2,
+            "response_mode": "reassure",
+            "tts_text": "I can offer calm reassurance without overpromising.",
+            "probability": 0.54,
+            "trigger_cues": ["scared"],
+            "scoring_variant": "calibrated_minority_specialist_coverage",
+        },
+    )
+
+    pack = build_response_mode_probability_pack(
+        turn,
+        first_speech_branches=first_speech_branches,
+        background_readiness_branches=background_readiness_branches,
+        policy=policy,
+    )
+
+    assert pack.confirmation_mode == (
+        "confirm_first_speech_then_stream_prepared_background"
+    )
+    assert pack.top_branches[0]["response_mode"] == "ask_followup"
+    assert pack.top_branches[0]["preparation_role"] == "first_speech"
+    assert pack.top_branches[0]["source_variant"] == "response_mode_hybrid_75"
+    reassure_draft = next(
+        draft for draft in pack.prepared_drafts if draft["response_mode"] == "reassure"
+    )
+    assert reassure_draft["preparation_role"] == "background_readiness"
+    assert reassure_draft["delivery_policy"] == "prewarm_tts"
+    assert reassure_draft["source_variant"] == "calibrated_minority_specialist_coverage"
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():

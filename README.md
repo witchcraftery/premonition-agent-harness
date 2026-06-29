@@ -511,6 +511,17 @@ Next lever: turn the background-readiness recommendation into a Probability Pack
 policy so the backend can warm safe TTS alternatives while first speech remains
 under the stricter rank-1 selector.
 
+The Probability Pack prep policy now makes this operational. The report emits
+`probability_pack_policy` with `first_speech_variant=response_mode_hybrid_75`,
+`first_speech_delivery=confirm_before_delivery`,
+`background_readiness_variant=calibrated_minority_specialist_coverage`,
+`background_preparation=prewarm_tts`, and
+`confirmation_mode=confirm_first_speech_then_stream_prepared_background`. In
+other words: do not auto-speak the first candidate yet, but do warm the safe
+background TTS branches so confirmation can release already-prepared audio. Next
+lever: replay response-mode Probability Packs turn-by-turn and score whether the
+prepared background drafts would have reduced TTS latency on exact/semantic hits.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
