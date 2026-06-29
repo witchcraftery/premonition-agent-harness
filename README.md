@@ -518,9 +518,18 @@ The Probability Pack prep policy now makes this operational. The report emits
 `background_preparation=prewarm_tts`, and
 `confirmation_mode=confirm_first_speech_then_stream_prepared_background`. In
 other words: do not auto-speak the first candidate yet, but do warm the safe
-background TTS branches so confirmation can release already-prepared audio. Next
-lever: replay response-mode Probability Packs turn-by-turn and score whether the
-prepared background drafts would have reduced TTS latency on exact/semantic hits.
+background TTS branches so confirmation can release already-prepared audio.
+
+The Probability Pack replay scorer now measures that policy directly on the
+untouched ESConv test split. With `response_mode_hybrid_75` as the first-speech
+brancher and `calibrated_minority_specialist_coverage` as the background
+prewarmer, prepared packs catch `0.577` of held-out turns: `0.546` exact
+response-mode hits plus `0.031` semantic-equivalent hits. First-speech hits are
+`0.217`, while safe background-prepared hits add another `0.360`. For usable
+prepared drafts, median latency is `90ms`, with `560ms` median latency saved
+against the turn budget. Next lever: add per-mode prepared-hit analytics and a
+semantic response-quality scorer so we can see which response mechanisms should
+get stronger background specialists next.
 
 ## Replay Data Format
 

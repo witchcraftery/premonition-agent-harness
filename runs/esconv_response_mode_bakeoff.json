@@ -2901,6 +2901,16 @@
     "first_speech_delivery": "confirm_before_delivery",
     "first_speech_variant": "response_mode_hybrid_75"
   },
+  "probability_pack_replay": {
+    "background_hit_rate": 0.36,
+    "exact_prepared_hit_rate": 0.546,
+    "first_speech_hit_rate": 0.217,
+    "median_latency_ms": 90,
+    "median_latency_saved_ms": 560,
+    "prepared_hit_rate": 0.577,
+    "semantic_prepared_hit_rate": 0.031,
+    "total_turns": 1748
+  },
   "promotion": {
     "dev_selected_variant": "response_mode_hybrid_75",
     "heldout_promotable": false,
@@ -3234,6 +3244,7 @@
         }
       ],
       "learned_weight": 0.5,
+      "name": "balanced_prior_coverage_response_mode_50",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3277,6 +3288,7 @@
         }
       ],
       "learned_weight": 0.5,
+      "name": "balanced_prior_response_mode_50",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3312,6 +3324,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.75,
+      "name": "balanced_prior_response_mode_75",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3368,6 +3381,7 @@
         }
       ],
       "learned_weight": 0.5,
+      "name": "balanced_response_mode_50",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3408,6 +3422,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.75,
+      "name": "balanced_response_mode_75",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3451,6 +3466,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "name": "calibrated_minority_specialist_coverage",
       "specialist_calibration": {
         "accepted_mode_min_scores": {
           "reassure": -0.25
@@ -3537,6 +3553,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "name": "heuristic_response_mode",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3580,6 +3597,7 @@
         }
       ],
       "learned_weight": 1.0,
+      "name": "learned_response_mode",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3630,6 +3648,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "name": "protected_minority_specialist_coverage",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_3",
       "specialist_min_score": 0.0,
@@ -3674,6 +3693,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "name": "protected_minority_specialist_coverage_low_margin",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_3",
       "specialist_min_score": -0.75,
@@ -3718,6 +3738,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "name": "protected_minority_specialists",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.5,
@@ -3762,6 +3783,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "name": "protected_minority_specialists_low_margin",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3814,6 +3836,7 @@
         }
       ],
       "learned_weight": 0.25,
+      "name": "response_mode_hybrid_25",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3865,6 +3888,7 @@
         }
       ],
       "learned_weight": 0.5,
+      "name": "response_mode_hybrid_50",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
@@ -3900,6 +3924,7 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.75,
+      "name": "response_mode_hybrid_75",
       "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,

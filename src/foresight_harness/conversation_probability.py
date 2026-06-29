@@ -144,6 +144,11 @@ ESCONV_STRATEGY_RESPONSE_MODES = {
     "other": "other",
 }
 
+RESPONSE_MODE_SEMANTIC_FAMILIES = (
+    frozenset(("validate", "reassure")),
+    frozenset(("inform", "disclose")),
+)
+
 ESCONV_EMOTION_MAP = {
     "anger": "anger",
     "anxiety": "fear",
@@ -936,6 +941,179 @@ def response_mode_pack_branch(
         "preparation_role": preparation_role,
         "source_variant": source_variant,
     }
+
+
+def response_mode_match_grade(prepared_mode: str, expected_mode: str) -> str:
+    if prepared_mode == expected_mode:
+        return "exact"
+    if any(
+        prepared_mode in family and expected_mode in family
+        for family in RESPONSE_MODE_SEMANTIC_FAMILIES
+    ):
+        return "semantic_equivalent"
+    return "miss"
+
+
+def score_response_mode_probability_pack_replay(
+    turns: tuple[ConversationTurn, ...],
+    packs: tuple[ConversationProbabilityPack, ...],
+    prepared_latency_ms: int = 90,
+) -> dict[str, float | int]:
+    if len(turns) != len(packs):
+        raise ValueError("turns and packs must have the same length")
+
+    rows = tuple(
+        score_response_mode_probability_pack_turn(
+            turn,
+            pack,
+            prepared_latency_ms=prepared_latency_ms,
+        )
+        for turn, pack in zip(turns, packs)
+    )
+    total = max(len(rows), 1)
+    prepared_hits = sum(row["match_grade"] != "miss" for row in rows)
+    exact_hits = sum(row["match_grade"] == "exact" for row in rows)
+    semantic_hits = sum(row["match_grade"] == "semantic_equivalent" for row in rows)
+    background_hits = sum(
+        row["match_grade"] != "miss"
+        and row["preparation_role"] == "background_readiness"
+        for row in rows
+    )
+    first_speech_hits = sum(
+        row["match_grade"] != "miss"
+        and row["preparation_role"] == "first_speech"
+        for row in rows
+    )
+    return {
+        "total_turns": len(rows),
+        "prepared_hit_rate": round(prepared_hits / total, 3),
+        "exact_prepared_hit_rate": round(exact_hits / total, 3),
+        "semantic_prepared_hit_rate": round(semantic_hits / total, 3),
+        "background_hit_rate": round(background_hits / total, 3),
+        "first_speech_hit_rate": round(first_speech_hits / total, 3),
+        "median_latency_ms": int(median(row["latency_ms"] for row in rows)) if rows else 0,
+        "median_latency_saved_ms": (
+            int(median(row["latency_saved_ms"] for row in rows)) if rows else 0
+        ),
+    }
+
+
+def score_response_mode_probability_pack_turn(
+    turn: ConversationTurn,
+    pack: ConversationProbabilityPack,
+    prepared_latency_ms: int,
+) -> dict[str, object]:
+    best: dict[str, object] | None = None
+    for draft in pack.prepared_drafts:
+        grade = response_mode_match_grade(
+            str(draft["response_mode"]),
+            turn.expected_response_mode,
+        )
+        if grade == "miss":
+            continue
+        candidate = {
+            "match_grade": grade,
+            "preparation_role": draft["preparation_role"],
+            "response_mode": draft["response_mode"],
+        }
+        if best is None or response_mode_match_rank(grade) > response_mode_match_rank(
+            str(best["match_grade"])
+        ):
+            best = candidate
+
+    latency_ms = turn.latency_budget_ms
+    latency_saved_ms = 0
+    if best:
+        latency_ms = prepared_latency_ms
+        latency_saved_ms = max(0, turn.latency_budget_ms - prepared_latency_ms)
+    return {
+        "turn_id": turn.turn_id,
+        "expected_response_mode": turn.expected_response_mode,
+        "match_grade": best["match_grade"] if best else "miss",
+        "preparation_role": best["preparation_role"] if best else "",
+        "response_mode": best["response_mode"] if best else "",
+        "latency_ms": latency_ms,
+        "latency_saved_ms": latency_saved_ms,
+    }
+
+
+def response_mode_match_rank(grade: str) -> int:
+    return {"miss": 0, "semantic_equivalent": 1, "exact": 2}.get(grade, 0)
+
+
+def build_response_mode_probability_packs(
+    turns: tuple[ConversationTurn, ...],
+    policy: dict[str, object],
+    variants: dict[str, dict[str, object]],
+    ranker: ResponseModeRanker,
+    balanced_prior_ranker: ResponseModeRanker,
+    specialists: dict[str, ResponseModeSpecialist],
+    top_k: int,
+) -> tuple[ConversationProbabilityPack, ...]:
+    first_speech_variant = variants[str(policy["first_speech_variant"])]
+    background_variant = variants[str(policy["background_readiness_variant"])]
+    return tuple(
+        build_response_mode_probability_pack(
+            turn,
+            first_speech_branches=response_mode_variant_branches(
+                turn,
+                variant=first_speech_variant,
+                ranker=ranker,
+                balanced_prior_ranker=balanced_prior_ranker,
+                specialists=specialists,
+                top_k=top_k,
+            ),
+            background_readiness_branches=response_mode_variant_branches(
+                turn,
+                variant=background_variant,
+                ranker=ranker,
+                balanced_prior_ranker=balanced_prior_ranker,
+                specialists=specialists,
+                top_k=top_k,
+            ),
+            policy=policy,
+            top_k=top_k,
+        )
+        for turn in turns
+    )
+
+
+def response_mode_variant_branches(
+    turn: ConversationTurn,
+    variant: dict[str, object],
+    ranker: ResponseModeRanker,
+    balanced_prior_ranker: ResponseModeRanker,
+    specialists: dict[str, ResponseModeSpecialist],
+    top_k: int,
+) -> tuple[dict[str, object], ...]:
+    learned_weight = float(variant["learned_weight"])
+    variant_ranker = (
+        balanced_prior_ranker
+        if bool(variant.get("class_balanced_prior", False))
+        else ranker
+    )
+    return generate_response_mode_branches(
+        turn,
+        top_k=top_k,
+        ranker=variant_ranker if learned_weight > 0 else None,
+        learned_weight=learned_weight,
+        coverage_modes=tuple(str(mode) for mode in variant.get("coverage_modes", ())),
+        coverage_min_score=float(variant.get("coverage_min_score", 0.0)),
+        specialists=specialists,
+        specialist_modes=tuple(
+            str(mode) for mode in variant.get("specialist_modes", ())
+        ),
+        specialist_min_score=float(variant.get("specialist_min_score", 0.0)),
+        specialist_mode_min_scores={
+            str(mode): float(score)
+            for mode, score in dict(variant.get("specialist_mode_min_scores", {})).items()
+        },
+        specialist_preserved_modes=tuple(
+            str(mode) for mode in variant.get("specialist_preserved_modes", ())
+        ),
+        specialist_insert_mode=str(variant.get("specialist_insert_mode", "top_1")),
+        scoring_variant=str(variant.get("name", "response_mode_variant")),
+    )
 
 
 def generate_conversation_branches(
@@ -2439,6 +2617,7 @@ def run_response_mode_ranker_bakeoff(
             "test": test_rows,
         }
         variants[name] = {
+            "name": name,
             "learned_weight": learned_weight,
             "coverage_modes": coverage_modes,
             "coverage_min_score": coverage_min_score,
@@ -2469,6 +2648,16 @@ def run_response_mode_ranker_bakeoff(
         variants,
         first_speech_variant_name=selected_name,
     )
+    probability_pack_policy = response_mode_probability_pack_policy(recommendations)
+    probability_packs = build_response_mode_probability_packs(
+        test_turns,
+        policy=probability_pack_policy,
+        variants=variants,
+        ranker=ranker,
+        balanced_prior_ranker=balanced_prior_ranker,
+        specialists=specialists,
+        top_k=top_k,
+    )
 
     return {
         "summary": {
@@ -2490,8 +2679,10 @@ def run_response_mode_ranker_bakeoff(
             **variants[selected_name],
         },
         "recommendations": recommendations,
-        "probability_pack_policy": response_mode_probability_pack_policy(
-            recommendations
+        "probability_pack_policy": probability_pack_policy,
+        "probability_pack_replay": score_response_mode_probability_pack_replay(
+            test_turns,
+            probability_packs,
         ),
         "promotion": response_mode_promotion_summary(
             selected_name=selected_name,

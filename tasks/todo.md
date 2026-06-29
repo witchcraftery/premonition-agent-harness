@@ -640,3 +640,24 @@ Verification:
 - `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
 - Policy result: first-speech variant `response_mode_hybrid_75`, first-speech delivery `confirm_before_delivery`, background-readiness variant `calibrated_minority_specialist_coverage`, background preparation `prewarm_tts`, confirmation mode `confirm_first_speech_then_stream_prepared_background`.
 - Next lever: replay response-mode Probability Packs turn-by-turn and score whether prepared background drafts would reduce TTS latency on exact/semantic hits.
+
+## Response-Mode Probability Pack Replay Scoring
+
+- [x] Add response-mode match grading for exact and semantic-equivalent prepared drafts.
+- [x] Add a Probability Pack replay scorer with prepared hit rate, exact hit rate, semantic hit rate, background hit rate, first-speech hit rate, and estimated latency saved.
+- [x] Generate response-mode packs from the first-speech and background-readiness recommendations inside the ESConv bake-off.
+- [x] Report pack replay metrics in the ESConv response-mode bake-off artifact.
+- [x] Rerun the ESConv benchmark and document whether warmed background drafts produce measurable latency readiness.
+- [x] Update README/catalog/tracker with the exact result and next lever.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_match_grade_counts_exact_and_semantic_hits tests/test_conversation_probability.py::test_response_mode_probability_pack_replay_scores_tts_readiness_hits -v` failed because `response_mode_match_grade` did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_conversation_probability.py::test_response_mode_match_grade_counts_exact_and_semantic_hits tests/test_conversation_probability.py::test_response_mode_probability_pack_replay_scores_tts_readiness_hits -v`: 3 passed.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 56 passed.
+- `python3 -m pytest -v`: 121 passed.
+- `git diff --check`: passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Probability Pack replay result on the untouched ESConv test split: `prepared_hit_rate=0.577`, `exact_prepared_hit_rate=0.546`, `semantic_prepared_hit_rate=0.031`, `first_speech_hit_rate=0.217`, `background_hit_rate=0.360`, `median_latency_ms=90`, and `median_latency_saved_ms=560`.
+- Next lever: add per-mode prepared-hit analytics and semantic response-quality scoring so the background swarm can strengthen weak response mechanisms without overclaiming first-speech readiness.

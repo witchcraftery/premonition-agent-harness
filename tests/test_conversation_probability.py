@@ -26,8 +26,10 @@ from foresight_harness.conversation_probability import (
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
     response_mode_bakeoff_variants,
+    response_mode_match_grade,
     response_mode_probability_pack_policy,
     response_mode_recommendations,
+    score_response_mode_probability_pack_replay,
     score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
     train_conversation_act_ranker,
@@ -415,6 +417,8 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "background_readiness" in report["recommendations"]
     assert "probability_pack_policy" in report
     assert "background_preparation" in report["probability_pack_policy"]
+    assert "probability_pack_replay" in report
+    assert "prepared_hit_rate" in report["probability_pack_replay"]
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():
@@ -850,6 +854,73 @@ def test_response_mode_probability_pack_prepares_background_readiness_branches()
     assert reassure_draft["preparation_role"] == "background_readiness"
     assert reassure_draft["delivery_policy"] == "prewarm_tts"
     assert reassure_draft["source_variant"] == "calibrated_minority_specialist_coverage"
+
+
+def test_response_mode_match_grade_counts_exact_and_semantic_hits():
+    assert response_mode_match_grade("reassure", "reassure") == "exact"
+    assert response_mode_match_grade("validate", "reassure") == "semantic_equivalent"
+    assert response_mode_match_grade("suggest", "reassure") == "miss"
+
+
+def test_response_mode_probability_pack_replay_scores_tts_readiness_hits():
+    exact_turn = conversation_turn(
+        "exact-pack-turn",
+        "I am scared this will happen again.",
+        "inform",
+        expected_response_mode="reassure",
+    )
+    semantic_turn = conversation_turn(
+        "semantic-pack-turn",
+        "I feel completely overwhelmed.",
+        "inform",
+        expected_response_mode="reassure",
+    )
+    policy = {
+        "first_speech_variant": "response_mode_hybrid_75",
+        "first_speech_delivery": "confirm_before_delivery",
+        "background_readiness_variant": "calibrated_minority_specialist_coverage",
+        "background_preparation": "prewarm_tts",
+        "confirmation_mode": "confirm_first_speech_then_stream_prepared_background",
+    }
+    first_speech = (
+        response_mode_branch("ask_followup", "response_mode_hybrid_75", 0.7),
+    )
+    exact_background = (
+        response_mode_branch("ask_followup", "calibrated_minority_specialist_coverage", 0.5),
+        response_mode_branch("reassure", "calibrated_minority_specialist_coverage", 0.49),
+    )
+    semantic_background = (
+        response_mode_branch("ask_followup", "calibrated_minority_specialist_coverage", 0.5),
+        response_mode_branch("validate", "calibrated_minority_specialist_coverage", 0.49),
+    )
+    packs = (
+        build_response_mode_probability_pack(
+            exact_turn,
+            first_speech_branches=first_speech,
+            background_readiness_branches=exact_background,
+            policy=policy,
+        ),
+        build_response_mode_probability_pack(
+            semantic_turn,
+            first_speech_branches=first_speech,
+            background_readiness_branches=semantic_background,
+            policy=policy,
+        ),
+    )
+
+    summary = score_response_mode_probability_pack_replay(
+        (exact_turn, semantic_turn),
+        packs,
+        prepared_latency_ms=90,
+    )
+
+    assert summary["prepared_hit_rate"] == 1.0
+    assert summary["exact_prepared_hit_rate"] == 0.5
+    assert summary["semantic_prepared_hit_rate"] == 0.5
+    assert summary["background_hit_rate"] == 1.0
+    assert summary["first_speech_hit_rate"] == 0.0
+    assert summary["median_latency_ms"] == 90
+    assert summary["median_latency_saved_ms"] == 560
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():
@@ -2177,3 +2248,19 @@ def conversation_turn(
         observed_response_modes=observed_response_modes,
         source_metadata=source_metadata,
     )
+
+
+def response_mode_branch(
+    mode: str,
+    scoring_variant: str,
+    probability: float,
+) -> dict[str, object]:
+    return {
+        "branch_id": f"branch-{mode}",
+        "rank": 1,
+        "response_mode": mode,
+        "tts_text": f"Prepared {mode} response.",
+        "probability": probability,
+        "trigger_cues": [],
+        "scoring_variant": scoring_variant,
+    }
