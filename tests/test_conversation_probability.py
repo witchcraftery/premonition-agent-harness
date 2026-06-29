@@ -28,6 +28,8 @@ from foresight_harness.conversation_probability import (
     response_mode_bakeoff_variants,
     response_mode_background_recovery_evaluation,
     response_mode_background_recovery_policy,
+    response_mode_background_recovery_policy_candidates,
+    response_mode_recovery_policy_for_replay,
     response_mode_draft_quality_score,
     response_mode_match_grade,
     response_mode_probability_pack_policy,
@@ -35,6 +37,7 @@ from foresight_harness.conversation_probability import (
     score_response_mode_probability_pack_replay,
     score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
+    select_response_mode_background_recovery_candidate,
     train_conversation_act_ranker,
     train_conversation_history_ranker,
     train_conversation_question_evidence_ranker,
@@ -424,6 +427,9 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "prepared_hit_rate" in report["probability_pack_replay"]
     assert "probability_pack_replay_baseline" in report
     assert "background_recovery_policy" in report
+    assert "background_recovery_calibration" in report
+    assert "candidate_evaluations" in report["background_recovery_calibration"]
+    assert "selected_policy" in report["background_recovery_calibration"]
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():
@@ -1188,6 +1194,123 @@ def test_response_mode_background_recovery_evaluation_blocks_quality_drop():
     assert evaluation["quality_floor_met"] is False
     assert evaluation["target_modes_improved"] is True
     assert evaluation["first_speech_preserved"] is True
+
+
+def test_response_mode_background_recovery_policy_candidates_include_mode_subsets():
+    policy = {
+        "target_modes": ["disclose", "inform", "other"],
+        "mode_variants": {
+            "disclose": "balanced_prior_top_3",
+            "inform": "specialist_rescue_top_3",
+            "other": "balanced_prior_top_3",
+        },
+        "preparation_role": "background_recovery",
+        "first_speech_locked": True,
+        "quality_floor": 0.974,
+    }
+
+    candidates = response_mode_background_recovery_policy_candidates(policy)
+
+    candidate_names = {str(candidate["name"]) for candidate in candidates}
+    assert "recover_disclose_inform_other" in candidate_names
+    assert "recover_inform_other" in candidate_names
+    assert "recover_inform" in candidate_names
+    inform_policy = next(
+        candidate for candidate in candidates if candidate["name"] == "recover_inform"
+    )
+    assert inform_policy["target_modes"] == ["inform"]
+    assert inform_policy["mode_variants"] == {"inform": "specialist_rescue_top_3"}
+    assert inform_policy["quality_floor"] == 0.974
+
+
+def test_select_response_mode_background_recovery_candidate_prefers_quality_safe_subset():
+    baseline = {
+        "prepared_hit_rate": 0.577,
+        "quality_ready_rate": 0.546,
+        "first_speech_hit_rate": 0.217,
+        "average_quality_score": 0.974,
+        "segments": {
+            "expected_response_mode": {
+                "disclose": {"prepared_hit_rate": 0.0},
+                "inform": {"prepared_hit_rate": 0.0},
+            }
+        },
+    }
+    broad_policy = {
+        "name": "recover_disclose_inform",
+        "target_modes": ["disclose", "inform"],
+        "quality_floor": 0.974,
+    }
+    safe_policy = {
+        "name": "recover_inform",
+        "target_modes": ["inform"],
+        "quality_floor": 0.974,
+    }
+    candidate_replays = {
+        "recover_disclose_inform": {
+            "prepared_hit_rate": 0.843,
+            "quality_ready_rate": 0.765,
+            "first_speech_hit_rate": 0.217,
+            "average_quality_score": 0.955,
+            "segments": {
+                "expected_response_mode": {
+                    "disclose": {"prepared_hit_rate": 0.858},
+                    "inform": {"prepared_hit_rate": 0.812},
+                }
+            },
+        },
+        "recover_inform": {
+            "prepared_hit_rate": 0.701,
+            "quality_ready_rate": 0.681,
+            "first_speech_hit_rate": 0.217,
+            "average_quality_score": 0.976,
+            "segments": {
+                "expected_response_mode": {
+                    "disclose": {"prepared_hit_rate": 0.0},
+                    "inform": {"prepared_hit_rate": 0.812},
+                }
+            },
+        },
+    }
+
+    selection = select_response_mode_background_recovery_candidate(
+        baseline,
+        candidate_replays=candidate_replays,
+        candidate_policies=(broad_policy, safe_policy),
+    )
+
+    assert selection["promoted"] is True
+    assert selection["selected_policy"]["name"] == "recover_inform"
+    assert selection["selected_evaluation"]["quality_floor_met"] is True
+    assert (
+        selection["candidate_evaluations"]["recover_disclose_inform"][
+            "quality_floor_met"
+        ]
+        is False
+    )
+
+
+def test_response_mode_recovery_policy_for_replay_uses_local_baseline_quality_floor():
+    selected_policy = {
+        "name": "recover_other",
+        "target_modes": ["other"],
+        "mode_variants": {"other": "protected_minority_specialist_coverage_low_margin"},
+        "quality_floor": 0.98,
+        "first_speech_locked": True,
+    }
+    test_baseline = {
+        "average_quality_score": 0.974,
+    }
+
+    adjusted_policy = response_mode_recovery_policy_for_replay(
+        selected_policy,
+        test_baseline,
+    )
+
+    assert adjusted_policy["name"] == "recover_other"
+    assert adjusted_policy["target_modes"] == ["other"]
+    assert adjusted_policy["quality_floor"] == 0.974
+    assert selected_policy["quality_floor"] == 0.98
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():

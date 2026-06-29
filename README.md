@@ -544,9 +544,20 @@ candidate lifts prepared-hit rate from `0.577` to `0.843` and preserves
 first-speech hit rate at `0.217`. It recovers all three previously blank modes:
 `disclose` moves to `0.858`, `inform` to `0.812`, and `other` to `0.723`
 prepared-hit rate. The gate correctly keeps this candidate diagnostic, not
-promoted, because average quality drops from `0.974` to `0.955`. The next lever
-is per-mode recovery calibration, especially improving `disclose` draft quality
-from `0.768`, so the broader recovery pack can clear the quality floor.
+promoted, because average quality drops from `0.974` to `0.955`.
+
+The per-mode recovery calibration pass now turns that diagnostic signal into a
+selective policy. The harness generates recovery subsets on validation data,
+requires target-mode improvement, preserves first-speech behavior, and then
+applies only the selected policy to held-out test replay. Validation rejects
+`recover_inform` and `recover_inform_other` because their draft quality misses
+the floor, but promotes `recover_other`. Held-out test accepts that policy:
+active prepared-hit rate rises from `0.577` to `0.692`, background-hit rate
+rises from `0.360` to `0.475`, quality-ready coverage rises from `0.546` to
+`0.661`, and average prepared-draft quality rises from `0.974` to `0.978`.
+First-speech hit rate remains locked at `0.217`. The recovered `other` slice
+now reaches `0.723` prepared-hit rate; `disclose` and `inform` remain the next
+weak modes.
 
 ## Replay Data Format
 

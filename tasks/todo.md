@@ -708,3 +708,26 @@ Verification:
 - Recovered target-mode prepared-hit rates: `disclose=0.858`, `inform=0.812`, and `other=0.723`.
 - Recovery is not promoted because average quality drops from `0.974` to `0.955`, missing the quality floor.
 - Next lever: per-mode recovery calibration, especially improving `disclose` draft quality from `0.768`, so the broader recovery pack can clear the quality gate.
+
+## Per-Mode Recovery Calibration
+
+- [x] Add recovery policy subset candidates so weak modes can be promoted selectively instead of as one all-or-nothing bundle.
+- [x] Select recovery policy on dev data using target-mode improvement, first-speech preservation, and the baseline quality floor.
+- [x] Apply the dev-selected recovery policy to held-out test replay and report candidate calibration transparency.
+- [x] Rerun the ESConv response-mode benchmark and document whether any recovery subset is promoted.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_candidates_include_mode_subsets tests/test_conversation_probability.py::test_select_response_mode_background_recovery_candidate_prefers_quality_safe_subset -v` failed because `response_mode_background_recovery_policy_candidates` did not exist.
+- Integration red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v` failed because the report had no `background_recovery_calibration` field.
+- Split-floor red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_recovery_policy_for_replay_uses_local_baseline_quality_floor -v` failed because `response_mode_recovery_policy_for_replay` did not exist.
+- Focused green check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_recovery_policy_for_replay_uses_local_baseline_quality_floor tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_conversation_probability.py::test_select_response_mode_background_recovery_candidate_prefers_quality_safe_subset -v`: 3 passed.
+- Full pre-benchmark suite: `python3 -m pytest -v`: 129 passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Validation calibration promoted `recover_other`; `recover_inform` and `recover_inform_other` stayed diagnostic because their average draft quality missed the validation quality floor.
+- Held-out test accepted `recover_other`: active `prepared_hit_rate` rose from `0.577` to `0.692`, `background_hit_rate` from `0.360` to `0.475`, `quality_ready_rate` from `0.546` to `0.661`, and `average_quality_score` from `0.974` to `0.978`; `first_speech_hit_rate` stayed locked at `0.217`.
+- Recovered target mode: `other` prepared-hit rate is now `0.723`; `disclose` and `inform` remain at `0.000`.
+- Final suite: `python3 -m pytest -v`: 130 passed.
+- `git diff --check`: passed.
+- Next lever: draft-quality-aware recovery generation for `disclose` and `inform`.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+from itertools import combinations
 import json
 import math
 from dataclasses import dataclass
@@ -1205,6 +1206,16 @@ def response_mode_background_recovery_evaluation(
         "first_speech_preserved": first_speech_preserved,
         "quality_floor_met": quality_floor_met,
         "quality_floor": float(recovery_policy["quality_floor"]),
+        "prepared_hit_gain": round(
+            float(candidate_replay["prepared_hit_rate"])
+            - float(baseline_replay["prepared_hit_rate"]),
+            3,
+        ),
+        "quality_ready_gain": round(
+            float(candidate_replay.get("quality_ready_rate", 0.0))
+            - float(baseline_replay.get("quality_ready_rate", 0.0)),
+            3,
+        ),
         "baseline_average_quality_score": float(
             baseline_replay["average_quality_score"]
         ),
@@ -1212,6 +1223,100 @@ def response_mode_background_recovery_evaluation(
             candidate_replay["average_quality_score"]
         ),
         "target_mode_results": target_mode_results,
+    }
+
+
+def response_mode_background_recovery_policy_candidates(
+    recovery_policy: dict[str, object],
+) -> tuple[dict[str, object], ...]:
+    target_modes = [str(mode) for mode in recovery_policy.get("target_modes", ())]
+    mode_variants = {
+        str(mode): str(variant)
+        for mode, variant in dict(recovery_policy.get("mode_variants", {})).items()
+    }
+    candidates = []
+    for size in range(len(target_modes), 0, -1):
+        for mode_subset in combinations(target_modes, size):
+            subset = list(mode_subset)
+            candidates.append(
+                {
+                    **recovery_policy,
+                    "name": f"recover_{'_'.join(subset)}",
+                    "target_modes": subset,
+                    "mode_variants": {
+                        mode: mode_variants[mode]
+                        for mode in subset
+                        if mode in mode_variants
+                    },
+                }
+            )
+    return tuple(candidates)
+
+
+def select_response_mode_background_recovery_candidate(
+    baseline_replay: dict[str, object],
+    *,
+    candidate_replays: dict[str, dict[str, object]],
+    candidate_policies: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    candidate_evaluations = {
+        str(policy["name"]): response_mode_background_recovery_evaluation(
+            baseline_replay,
+            candidate_replays[str(policy["name"])],
+            policy,
+        )
+        for policy in candidate_policies
+        if str(policy["name"]) in candidate_replays
+    }
+    promoted_names = [
+        name
+        for name, evaluation in candidate_evaluations.items()
+        if bool(evaluation["promoted"])
+    ]
+    selected_name = (
+        max(
+            promoted_names,
+            key=lambda name: (
+                float(candidate_evaluations[name]["prepared_hit_gain"]),
+                float(candidate_evaluations[name]["quality_ready_gain"]),
+                float(candidate_replays[name]["average_quality_score"]),
+                len(
+                    list(
+                        dict(candidate_evaluations[name]["target_mode_results"]).keys()
+                    )
+                ),
+            ),
+        )
+        if promoted_names
+        else None
+    )
+    selected_policy = next(
+        (
+            policy
+            for policy in candidate_policies
+            if selected_name is not None and str(policy["name"]) == selected_name
+        ),
+        None,
+    )
+    return {
+        "promoted": selected_name is not None,
+        "selected_policy": selected_policy,
+        "selected_evaluation": (
+            candidate_evaluations[selected_name]
+            if selected_name is not None
+            else None
+        ),
+        "candidate_evaluations": candidate_evaluations,
+    }
+
+
+def response_mode_recovery_policy_for_replay(
+    selected_policy: dict[str, object],
+    baseline_replay: dict[str, object],
+) -> dict[str, object]:
+    return {
+        **selected_policy,
+        "quality_floor": float(baseline_replay["average_quality_score"]),
     }
 
 
@@ -2880,6 +2985,70 @@ def run_response_mode_ranker_bakeoff(
         variant_rows=variant_rows,
         test_turns=test_turns,
     )
+    dev_coverage_projection = response_mode_coverage_projection(
+        variant_rows={
+            name: {"test": rows["dev"]} for name, rows in variant_rows.items()
+        },
+        test_turns=dev_turns,
+    )
+    dev_baseline_probability_packs = build_response_mode_probability_packs(
+        dev_turns,
+        policy=probability_pack_policy,
+        variants=variants,
+        ranker=ranker,
+        balanced_prior_ranker=balanced_prior_ranker,
+        specialists=specialists,
+        top_k=top_k,
+    )
+    dev_baseline_probability_pack_replay = score_response_mode_probability_pack_replay(
+        dev_turns,
+        dev_baseline_probability_packs,
+    )
+    dev_recovery_policy = response_mode_background_recovery_policy(
+        dev_baseline_probability_pack_replay,
+        coverage_projection=dev_coverage_projection,
+    )
+    recovery_policy_candidates = response_mode_background_recovery_policy_candidates(
+        dev_recovery_policy,
+    )
+    dev_recovery_candidate_replays = {}
+    for recovery_policy_candidate in recovery_policy_candidates:
+        candidate_name = str(recovery_policy_candidate["name"])
+        dev_recovery_candidate_packs = build_response_mode_probability_packs(
+            dev_turns,
+            policy=probability_pack_policy,
+            variants=variants,
+            ranker=ranker,
+            balanced_prior_ranker=balanced_prior_ranker,
+            specialists=specialists,
+            top_k=top_k,
+            recovery_policy=recovery_policy_candidate,
+        )
+        dev_recovery_candidate_replays[candidate_name] = (
+            score_response_mode_probability_pack_replay(
+                dev_turns,
+                dev_recovery_candidate_packs,
+            )
+        )
+    background_recovery_calibration = (
+        select_response_mode_background_recovery_candidate(
+            dev_baseline_probability_pack_replay,
+            candidate_replays=dev_recovery_candidate_replays,
+            candidate_policies=recovery_policy_candidates,
+        )
+    )
+    selected_recovery_policy = background_recovery_calibration["selected_policy"]
+    background_recovery_policy = (
+        selected_recovery_policy
+        if selected_recovery_policy is not None
+        else dev_recovery_policy
+    )
+    background_recovery_calibration = {
+        **background_recovery_calibration,
+        "baseline_replay": dev_baseline_probability_pack_replay,
+        "candidate_replays": dev_recovery_candidate_replays,
+        "candidate_policies": recovery_policy_candidates,
+    }
     baseline_probability_packs = build_response_mode_probability_packs(
         test_turns,
         policy=probability_pack_policy,
@@ -2893,9 +3062,9 @@ def run_response_mode_ranker_bakeoff(
         test_turns,
         baseline_probability_packs,
     )
-    background_recovery_policy = response_mode_background_recovery_policy(
+    background_recovery_policy = response_mode_recovery_policy_for_replay(
+        background_recovery_policy,
         baseline_probability_pack_replay,
-        coverage_projection=coverage_projection,
     )
     probability_packs = build_response_mode_probability_packs(
         test_turns,
@@ -2918,7 +3087,8 @@ def run_response_mode_ranker_bakeoff(
     )
     promoted_probability_pack_replay = (
         recovery_candidate_replay
-        if bool(background_recovery_evaluation["promoted"])
+        if bool(background_recovery_calibration["promoted"])
+        and bool(background_recovery_evaluation["promoted"])
         else baseline_probability_pack_replay
     )
 
@@ -2944,6 +3114,7 @@ def run_response_mode_ranker_bakeoff(
         "recommendations": recommendations,
         "probability_pack_policy": probability_pack_policy,
         "background_recovery_policy": background_recovery_policy,
+        "background_recovery_calibration": background_recovery_calibration,
         "background_recovery_evaluation": background_recovery_evaluation,
         "probability_pack_replay_baseline": baseline_probability_pack_replay,
         "probability_pack_replay_recovery_candidate": recovery_candidate_replay,
