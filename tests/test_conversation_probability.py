@@ -8,6 +8,7 @@ from foresight_harness.conversation_probability import (
     ConversationGuidance,
     ConversationTurn,
     conversation_bakeoff_variants,
+    conversation_features,
     conversation_turn_to_dict,
     cross_validate_conversation_variant,
     generate_conversation_branches,
@@ -29,6 +30,7 @@ from foresight_harness.conversation_probability import (
     train_conversation_history_ranker,
     train_conversation_question_evidence_ranker,
     train_conversation_transition_ranker,
+    train_response_mode_specialists,
     train_response_mode_ranker,
     write_conversation_turns,
 )
@@ -223,6 +225,7 @@ def test_load_esconv_export_creates_response_mode_examples(tmp_path):
             [
                 {
                     "emotion_type": "anxiety",
+                    "experience_type": "Previous Experience",
                     "problem_type": "job crisis",
                     "dialog": [
                         {
@@ -264,6 +267,13 @@ def test_load_esconv_export_creates_response_mode_examples(tmp_path):
     assert turns[0].expected_emotion == "fear"
     assert turns[1].expected_response_mode == "validate"
     assert turns[1].observed_response_modes == ("ask_followup",)
+    assert turns[0].source_metadata == (
+        ("emotion_type", "anxiety"),
+        ("experience_type", "Previous Experience"),
+        ("problem_type", "job crisis"),
+    )
+    assert "problem_type_crisis_job" in conversation_features(turns[0])
+    assert "emotion_type_anxiety" in conversation_features(turns[0])
 
 
 def test_learned_response_mode_ranker_predicts_repeated_support_mode():
@@ -392,6 +402,202 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "expected_response_mode" in report["analytics"]["test_segments"]
     assert "coverage_projection" in report
     assert "validate" in report["coverage_projection"]["expected_response_mode"]
+    assert "specialist_diagnostics" in report
+    assert "protected_minority_specialists" in report["variants"]
+
+
+def test_response_mode_specialist_promotes_target_mode_from_metadata():
+    train_turns = (
+        conversation_turn(
+            "train-other-1",
+            "The situation is complicated.",
+            "inform",
+            expected_response_mode="other",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+        conversation_turn(
+            "train-other-2",
+            "There are many pieces here.",
+            "inform",
+            expected_response_mode="other",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+        conversation_turn(
+            "train-ask",
+            "What happened next?",
+            "question",
+            expected_response_mode="ask_followup",
+            source_metadata=(("problem_type", "job crisis"),),
+        ),
+    )
+    specialists = train_response_mode_specialists(train_turns, target_modes=("other",))
+    test_turn = conversation_turn(
+        "test-other",
+        "The situation has many pieces.",
+        "inform",
+        expected_response_mode="other",
+        source_metadata=(("problem_type", "family conflict"),),
+    )
+
+    branches = generate_response_mode_branches(
+        test_turn,
+        top_k=3,
+        specialists=specialists,
+        specialist_modes=("other",),
+        specialist_min_score=0.0,
+        scoring_variant="protected_minority_specialists",
+    )
+
+    assert branches[0]["response_mode"] == "other"
+    assert branches[0]["scoring_variant"] == "protected_minority_specialists"
+
+
+def test_response_mode_specialist_preserves_protected_top_mode():
+    train_turns = (
+        conversation_turn(
+            "train-other",
+            "familycue complicated",
+            "inform",
+            expected_response_mode="other",
+        ),
+        conversation_turn(
+            "train-ask-1",
+            "What happened next?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+        conversation_turn(
+            "train-ask-2",
+            "Why did it change?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    specialists = train_response_mode_specialists(train_turns, target_modes=("other",))
+    test_turn = conversation_turn(
+        "test-ask",
+        "What happened next?",
+        "question",
+        expected_response_mode="ask_followup",
+    )
+
+    branches = generate_response_mode_branches(
+        test_turn,
+        top_k=3,
+        specialists=specialists,
+        specialist_modes=("other",),
+        specialist_min_score=0.0,
+        specialist_preserved_modes=("ask_followup",),
+        scoring_variant="protected_minority_specialists",
+    )
+
+    assert branches[0]["response_mode"] == "ask_followup"
+
+
+def test_response_mode_specialist_score_includes_mode_prior():
+    train_turns = (
+        conversation_turn(
+            "train-other",
+            "familycue complicated",
+            "inform",
+            expected_response_mode="other",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+        conversation_turn(
+            "train-ask-1",
+            "What happened next?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+        conversation_turn(
+            "train-ask-2",
+            "Why did it change?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+        conversation_turn(
+            "train-ask-3",
+            "How are you handling it?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    specialist = train_response_mode_specialists(
+        train_turns,
+        target_modes=("other",),
+    )["other"]
+    positive_turn = conversation_turn(
+        "test-other",
+        "familycue complicated",
+        "inform",
+        expected_response_mode="other",
+        source_metadata=(("problem_type", "family conflict"),),
+    )
+    negative_turn = conversation_turn(
+        "test-ask",
+        "What happened next?",
+        "question",
+        expected_response_mode="ask_followup",
+    )
+
+    assert specialist.mode_log_prior < 0
+    assert specialist.score(positive_turn) > specialist.score(negative_turn)
+
+
+def test_response_mode_specialist_top_three_preserves_first_branch():
+    train_turns = (
+        conversation_turn(
+            "train-other-1",
+            "familycue complicated",
+            "inform",
+            expected_response_mode="other",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+        conversation_turn(
+            "train-other-2",
+            "familycue many pieces",
+            "inform",
+            expected_response_mode="other",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+        conversation_turn(
+            "train-ask-1",
+            "What happened next?",
+            "question",
+            expected_response_mode="ask_followup",
+            source_metadata=(("problem_type", "job crisis"),),
+        ),
+        conversation_turn(
+            "train-ask-2",
+            "Why did it change?",
+            "question",
+            expected_response_mode="ask_followup",
+            source_metadata=(("problem_type", "job crisis"),),
+        ),
+    )
+    specialists = train_response_mode_specialists(train_turns, target_modes=("other",))
+    test_turn = conversation_turn(
+        "test-ask-other",
+        "What happened next?",
+        "question",
+        expected_response_mode="other",
+        source_metadata=(("problem_type", "family conflict"),),
+    )
+
+    branches = generate_response_mode_branches(
+        test_turn,
+        top_k=3,
+        specialists=specialists,
+        specialist_modes=("other",),
+        specialist_min_score=0.0,
+        specialist_preserved_modes=("ask_followup",),
+        specialist_insert_mode="top_3",
+        scoring_variant="protected_minority_specialist_coverage",
+    )
+
+    response_modes = [branch["response_mode"] for branch in branches]
+    assert response_modes[0] == "ask_followup"
+    assert "other" in response_modes[1:]
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():
@@ -1705,6 +1911,7 @@ def conversation_turn(
     observed_acts: tuple[str, ...] = (),
     expected_response_mode: str = "inform",
     observed_response_modes: tuple[str, ...] = (),
+    source_metadata: tuple[tuple[str, str], ...] = (),
 ) -> ConversationTurn:
     return ConversationTurn(
         turn_id=turn_id,
@@ -1716,4 +1923,5 @@ def conversation_turn(
         expected_response_mode=expected_response_mode,
         observed_acts=observed_acts,
         observed_response_modes=observed_response_modes,
+        source_metadata=source_metadata,
     )

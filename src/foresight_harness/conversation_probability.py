@@ -170,6 +170,7 @@ class ConversationTurn:
     expected_response_mode: str = "inform"
     observed_acts: tuple[str, ...] = tuple()
     observed_response_modes: tuple[str, ...] = tuple()
+    source_metadata: tuple[tuple[str, str], ...] = tuple()
     latency_budget_ms: int = 650
 
     @classmethod
@@ -190,6 +191,10 @@ class ConversationTurn:
             observed_acts=tuple(str(act) for act in row.get("observed_acts", [])),
             observed_response_modes=tuple(
                 str(mode) for mode in row.get("observed_response_modes", [])
+            ),
+            source_metadata=tuple(
+                (str(key), str(value))
+                for key, value in row.get("source_metadata", [])
             ),
             latency_budget_ms=int(row.get("latency_budget_ms", 650)),
         )
@@ -333,6 +338,37 @@ class ResponseModeRanker:
 
 
 @dataclass(frozen=True)
+class ResponseModeSpecialist:
+    mode: str
+    mode_log_prior: float
+    feature_log_odds: dict[str, float]
+    positive_turn_count: int
+    negative_turn_count: int
+
+    def score(self, turn: ConversationTurn) -> float:
+        evidence = sorted(
+            (
+                self.feature_log_odds.get(feature, 0.0)
+                for feature in conversation_features(turn)
+            ),
+            reverse=True,
+        )
+        return round(
+            self.mode_log_prior + sum(score for score in evidence[:6] if score > 0),
+            3,
+        )
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "mode": self.mode,
+            "mode_log_prior": round(self.mode_log_prior, 3),
+            "feature_count": len(self.feature_log_odds),
+            "positive_turn_count": self.positive_turn_count,
+            "negative_turn_count": self.negative_turn_count,
+        }
+
+
+@dataclass(frozen=True)
 class ConversationProbabilityPack:
     pack_id: str
     turn_id: str
@@ -378,6 +414,7 @@ def load_esconv_export(path: Path, split: str = "train") -> tuple[ConversationTu
         observed_acts: list[str] = []
         supporter_index = 0
         emotion = esconv_emotion(conversation.get("emotion_type", ""))
+        source_metadata = esconv_source_metadata(conversation)
         for dialog_index, row in enumerate(dialog):
             content = str(row.get("content", "")).strip()
             if not content:
@@ -416,6 +453,7 @@ def load_esconv_export(path: Path, split: str = "train") -> tuple[ConversationTu
                             expected_response_mode=mode,
                             observed_acts=tuple(observed_acts),
                             observed_response_modes=tuple(observed_modes),
+                            source_metadata=source_metadata,
                         )
                     )
                 observed_modes.append(mode)
@@ -450,6 +488,15 @@ def esconv_strategy_response_mode(strategy: str) -> str:
 
 def esconv_emotion(emotion_type: str) -> str:
     return ESCONV_EMOTION_MAP.get(emotion_type.strip().lower(), "no_emotion")
+
+
+def esconv_source_metadata(conversation: dict[str, Any]) -> tuple[tuple[str, str], ...]:
+    metadata = []
+    for key in ("emotion_type", "experience_type", "problem_type"):
+        value = str(conversation.get(key, "")).strip()
+        if value:
+            metadata.append((key, value))
+    return tuple(metadata)
 
 
 def load_empatheticdialogues_export(path: Path) -> tuple[ConversationTurn, ...]:
@@ -652,6 +699,7 @@ def load_dailydialog_split(split_dir: Path) -> tuple[ConversationTurn, ...]:
             expected_response_mode=turn.expected_response_mode,
             observed_acts=turn.observed_acts,
             observed_response_modes=turn.observed_response_modes,
+            source_metadata=turn.source_metadata,
             latency_budget_ms=turn.latency_budget_ms,
         )
         for turn in turns
@@ -684,6 +732,7 @@ def conversation_turn_to_dict(turn: ConversationTurn) -> dict[str, object]:
         "expected_response_mode": turn.expected_response_mode,
         "observed_acts": list(turn.observed_acts),
         "observed_response_modes": list(turn.observed_response_modes),
+        "source_metadata": list(turn.source_metadata),
         "latency_budget_ms": turn.latency_budget_ms,
     }
 
@@ -1202,6 +1251,50 @@ def train_response_mode_ranker(
     )
 
 
+def train_response_mode_specialists(
+    turns: tuple[ConversationTurn, ...],
+    target_modes: tuple[str, ...],
+) -> dict[str, ResponseModeSpecialist]:
+    if not turns:
+        raise ValueError("training turns are required")
+    if any(mode not in RESPONSE_MODES for mode in target_modes):
+        raise ValueError("target_modes must be known response modes")
+
+    specialists: dict[str, ResponseModeSpecialist] = {}
+    for target_mode in target_modes:
+        feature_counts: dict[str, dict[str, int]] = {}
+        positive_turn_count = 0
+        negative_turn_count = 0
+        for turn in turns:
+            is_positive = turn.expected_response_mode == target_mode
+            if is_positive:
+                positive_turn_count += 1
+            else:
+                negative_turn_count += 1
+            bucket = "positive" if is_positive else "negative"
+            for feature in conversation_features(turn):
+                feature_counts.setdefault(feature, {"positive": 0, "negative": 0})
+                feature_counts[feature][bucket] += 1
+
+        positive_denominator = positive_turn_count + 2
+        negative_denominator = negative_turn_count + 2
+        feature_log_odds = {
+            feature: math.log((counts["positive"] + 1) / positive_denominator)
+            - math.log((counts["negative"] + 1) / negative_denominator)
+            for feature, counts in feature_counts.items()
+        }
+        specialists[target_mode] = ResponseModeSpecialist(
+            mode=target_mode,
+            mode_log_prior=math.log(
+                (positive_turn_count + 1) / (negative_turn_count + 1)
+            ),
+            feature_log_odds=feature_log_odds,
+            positive_turn_count=positive_turn_count,
+            negative_turn_count=negative_turn_count,
+        )
+    return specialists
+
+
 def normalize_counts(counts: dict[str, int]) -> dict[str, float]:
     total = sum(counts.values())
     return {
@@ -1224,6 +1317,11 @@ def conversation_features(turn: ConversationTurn) -> tuple[str, ...]:
         features.add(f"previous_mode_{turn.observed_response_modes[-1]}")
         for mode in turn.observed_response_modes[-3:]:
             features.add(f"recent_mode_{mode}")
+    for key, value in turn.source_metadata:
+        key_token = "_".join(sorted(normalized_tokens(key)))
+        value_token = "_".join(sorted(normalized_tokens(value)))
+        if key_token and value_token:
+            features.add(f"{key_token}_{value_token}")
     return tuple(sorted(features))
 
 
@@ -1234,6 +1332,11 @@ def generate_response_mode_branches(
     learned_weight: float = 1.0,
     coverage_modes: tuple[str, ...] = tuple(),
     coverage_min_score: float = 0.0,
+    specialists: dict[str, ResponseModeSpecialist] | None = None,
+    specialist_modes: tuple[str, ...] = tuple(),
+    specialist_min_score: float = 0.0,
+    specialist_preserved_modes: tuple[str, ...] = tuple(),
+    specialist_insert_mode: str = "top_1",
     scoring_variant: str = "heuristic_response_mode",
 ) -> tuple[dict[str, object], ...]:
     if top_k <= 0:
@@ -1244,6 +1347,12 @@ def generate_response_mode_branches(
         raise ValueError("coverage_min_score must be non-negative")
     if any(mode not in RESPONSE_MODES for mode in coverage_modes):
         raise ValueError("coverage_modes must be known response modes")
+    if specialist_insert_mode not in {"top_1", "top_3"}:
+        raise ValueError("specialist_insert_mode must be top_1 or top_3")
+    if any(mode not in RESPONSE_MODES for mode in specialist_modes):
+        raise ValueError("specialist_modes must be known response modes")
+    if any(mode not in RESPONSE_MODES for mode in specialist_preserved_modes):
+        raise ValueError("specialist_preserved_modes must be known response modes")
     context_tokens = normalized_tokens(turn.context_text())
     scores = heuristic_response_mode_scores(turn, context_tokens)
     if ranker and learned_weight > 0:
@@ -1263,6 +1372,16 @@ def generate_response_mode_branches(
         coverage_min_score=coverage_min_score,
         top_k=top_k,
     )
+    ranked = apply_response_mode_specialists(
+        ranked=ranked,
+        turn=turn,
+        specialists=specialists or {},
+        specialist_modes=specialist_modes,
+        specialist_min_score=specialist_min_score,
+        specialist_preserved_modes=specialist_preserved_modes,
+        specialist_insert_mode=specialist_insert_mode,
+        top_k=top_k,
+    )
     return tuple(
         {
             "branch_id": f"{turn.turn_id}-mode-branch-{index}",
@@ -1275,6 +1394,69 @@ def generate_response_mode_branches(
         }
         for index, (mode, score) in enumerate(ranked, start=1)
     )
+
+
+def apply_response_mode_specialists(
+    ranked: list[tuple[str, float]],
+    turn: ConversationTurn,
+    specialists: dict[str, ResponseModeSpecialist],
+    specialist_modes: tuple[str, ...],
+    specialist_min_score: float,
+    specialist_preserved_modes: tuple[str, ...],
+    specialist_insert_mode: str,
+    top_k: int,
+) -> list[tuple[str, float]]:
+    if not specialists or not specialist_modes or top_k < 1:
+        return ranked
+
+    candidates = [
+        (mode, specialists[mode].score(turn))
+        for mode in specialist_modes
+        if mode in specialists and specialists[mode].score(turn) >= specialist_min_score
+    ]
+    if not candidates:
+        return ranked
+
+    specialist_mode, specialist_score = max(candidates, key=lambda item: item[1])
+    current_top_mode = ranked[0][0]
+    if specialist_mode == current_top_mode:
+        return ranked
+
+    if specialist_insert_mode == "top_3":
+        return insert_response_mode_specialist_branch(
+            ranked=ranked,
+            specialist_mode=specialist_mode,
+            specialist_score=specialist_score,
+            top_k=top_k,
+        )
+
+    if current_top_mode in specialist_preserved_modes:
+        return ranked
+
+    remaining = [(mode, score) for mode, score in ranked if mode != specialist_mode]
+    promoted_score = max(ranked[0][1] + 0.002, specialist_score)
+    return [(specialist_mode, promoted_score), *remaining][:top_k]
+
+
+def insert_response_mode_specialist_branch(
+    ranked: list[tuple[str, float]],
+    specialist_mode: str,
+    specialist_score: float,
+    top_k: int,
+) -> list[tuple[str, float]]:
+    if top_k < 2:
+        return ranked
+    if specialist_mode in {mode for mode, _score in ranked}:
+        return ranked
+
+    first = ranked[0]
+    remaining = ranked[1:]
+    insertion_score = min(
+        first[1] - 0.001,
+        max(specialist_score, ranked[-1][1] + 0.001),
+    )
+    inserted = [first, (specialist_mode, insertion_score), *remaining]
+    return inserted[:top_k]
 
 
 def apply_response_mode_coverage(
@@ -2024,6 +2206,10 @@ def run_response_mode_ranker_bakeoff(
         train_turns,
         class_balanced=True,
     )
+    specialists = train_response_mode_specialists(
+        train_turns,
+        target_modes=("other", "inform", "disclose", "reassure"),
+    )
     train_baseline_rows = score_response_mode_turns(train_turns, top_k=top_k)
     dev_baseline_rows = score_response_mode_turns(dev_turns, top_k=top_k)
     test_baseline_rows = score_response_mode_turns(test_turns, top_k=top_k)
@@ -2035,6 +2221,14 @@ def run_response_mode_ranker_bakeoff(
         coverage_modes = tuple(str(mode) for mode in variant.get("coverage_modes", ()))
         coverage_min_score = float(variant.get("coverage_min_score", 0.0))
         class_balanced_prior = bool(variant.get("class_balanced_prior", False))
+        specialist_modes = tuple(
+            str(mode) for mode in variant.get("specialist_modes", ())
+        )
+        specialist_min_score = float(variant.get("specialist_min_score", 0.0))
+        specialist_preserved_modes = tuple(
+            str(mode) for mode in variant.get("specialist_preserved_modes", ())
+        )
+        specialist_insert_mode = str(variant.get("specialist_insert_mode", "top_1"))
         variant_ranker = balanced_prior_ranker if class_balanced_prior else ranker
         use_ranker = learned_weight > 0
         train_rows = score_response_mode_turns(
@@ -2044,6 +2238,11 @@ def run_response_mode_ranker_bakeoff(
             learned_weight=learned_weight,
             coverage_modes=coverage_modes,
             coverage_min_score=coverage_min_score,
+            specialists=specialists,
+            specialist_modes=specialist_modes,
+            specialist_min_score=specialist_min_score,
+            specialist_preserved_modes=specialist_preserved_modes,
+            specialist_insert_mode=specialist_insert_mode,
             scoring_variant=name,
         )
         dev_rows = score_response_mode_turns(
@@ -2053,6 +2252,11 @@ def run_response_mode_ranker_bakeoff(
             learned_weight=learned_weight,
             coverage_modes=coverage_modes,
             coverage_min_score=coverage_min_score,
+            specialists=specialists,
+            specialist_modes=specialist_modes,
+            specialist_min_score=specialist_min_score,
+            specialist_preserved_modes=specialist_preserved_modes,
+            specialist_insert_mode=specialist_insert_mode,
             scoring_variant=name,
         )
         test_rows = score_response_mode_turns(
@@ -2062,6 +2266,11 @@ def run_response_mode_ranker_bakeoff(
             learned_weight=learned_weight,
             coverage_modes=coverage_modes,
             coverage_min_score=coverage_min_score,
+            specialists=specialists,
+            specialist_modes=specialist_modes,
+            specialist_min_score=specialist_min_score,
+            specialist_preserved_modes=specialist_preserved_modes,
+            specialist_insert_mode=specialist_insert_mode,
             scoring_variant=name,
         )
         variant_rows[name] = {
@@ -2074,6 +2283,10 @@ def run_response_mode_ranker_bakeoff(
             "coverage_modes": coverage_modes,
             "coverage_min_score": coverage_min_score,
             "class_balanced_prior": class_balanced_prior,
+            "specialist_modes": specialist_modes,
+            "specialist_min_score": specialist_min_score,
+            "specialist_preserved_modes": specialist_preserved_modes,
+            "specialist_insert_mode": specialist_insert_mode,
             "train": summarize_response_mode_rows(train_rows, train_turns),
             "dev": summarize_response_mode_rows(dev_rows, dev_turns),
             "test": summarize_response_mode_rows(test_rows, test_turns),
@@ -2100,6 +2313,10 @@ def run_response_mode_ranker_bakeoff(
         },
         "ranker": ranker.to_dict(),
         "balanced_prior_ranker": balanced_prior_ranker.to_dict(),
+        "specialists": {
+            mode: specialist.to_dict()
+            for mode, specialist in sorted(specialists.items())
+        },
         "variants": variants,
         "selected_variant": {
             "name": selected_name,
@@ -2150,6 +2367,11 @@ def run_response_mode_ranker_bakeoff(
         "coverage_projection": response_mode_coverage_projection(
             variant_rows=variant_rows,
             test_turns=test_turns,
+        ),
+        "specialist_diagnostics": response_mode_specialist_diagnostics(
+            variant_rows=variant_rows,
+            baseline_rows=test_baseline_rows,
+            variants=variants,
         ),
         "guidance_delta": compare_response_mode_guidance_delta(
             test_baseline_rows,
@@ -2239,6 +2461,75 @@ def response_mode_coverage_projection(
     return {"expected_response_mode": projection}
 
 
+def response_mode_specialist_diagnostics(
+    variant_rows: dict[str, dict[str, tuple[dict[str, object], ...]]],
+    baseline_rows: tuple[dict[str, object], ...],
+    variants: dict[str, dict[str, object]],
+) -> dict[str, object]:
+    diagnostics: dict[str, object] = {}
+    baseline_correct = {
+        str(row["turn_id"]): (
+            row["rank_1_response_mode"] == row["expected_response_mode"]
+        )
+        for row in baseline_rows
+    }
+    baseline_top_3_correct = {
+        str(row["turn_id"]): (
+            row["expected_response_mode"] in row["top_response_modes"]
+        )
+        for row in baseline_rows
+    }
+    for name, variant in variants.items():
+        specialist_modes = tuple(variant.get("specialist_modes", ()))
+        if not specialist_modes:
+            continue
+        rows = variant_rows[name]["test"]
+        top_1_eligible = [
+            row
+            for row in rows
+            if str(row["rank_1_response_mode"]) in specialist_modes
+        ]
+        top_3_eligible = [
+            row
+            for row in rows
+            if any(
+                str(response_mode) in specialist_modes
+                for response_mode in row["top_response_modes"]
+            )
+        ]
+        top_1_improved = [
+            row
+            for row in top_1_eligible
+            if not baseline_correct.get(str(row["turn_id"]), False)
+            and row["rank_1_response_mode"] == row["expected_response_mode"]
+        ]
+        top_3_improved = [
+            row
+            for row in top_3_eligible
+            if not baseline_top_3_correct.get(str(row["turn_id"]), False)
+            and row["expected_response_mode"] in row["top_response_modes"]
+        ]
+        blocked_regressions = find_response_mode_segment_regressions(
+            baseline_rows=baseline_rows,
+            candidate_rows=rows,
+        )
+        diagnostics[name] = {
+            "specialist_modes": list(specialist_modes),
+            "specialist_insert_mode": str(
+                variant.get("specialist_insert_mode", "top_1")
+            ),
+            "top_1_eligible_turn_count": len(top_1_eligible),
+            "top_3_eligible_turn_count": len(top_3_eligible),
+            "top_1_improved_turn_count": len(top_1_improved),
+            "top_3_improved_turn_count": len(top_3_improved),
+            "eligible_turn_count": len(top_1_eligible),
+            "improved_turn_count": len(top_1_improved),
+            "blocked_by_regression_count": len(blocked_regressions),
+            "blocked_regressions": blocked_regressions,
+        }
+    return diagnostics
+
+
 def response_mode_bakeoff_variants() -> tuple[dict[str, object], ...]:
     return (
         {"name": "heuristic_response_mode", "learned_weight": 0.0},
@@ -2274,6 +2565,36 @@ def response_mode_bakeoff_variants() -> tuple[dict[str, object], ...]:
             "coverage_modes": ("disclose", "inform", "other", "reassure"),
             "coverage_min_score": 0.16,
         },
+        {
+            "name": "protected_minority_specialists",
+            "learned_weight": 0.0,
+            "specialist_modes": ("other", "inform", "disclose", "reassure"),
+            "specialist_min_score": 0.5,
+            "specialist_preserved_modes": ("ask_followup", "suggest", "validate"),
+        },
+        {
+            "name": "protected_minority_specialists_low_margin",
+            "learned_weight": 0.0,
+            "specialist_modes": ("other", "inform", "disclose", "reassure"),
+            "specialist_min_score": 0.0,
+            "specialist_preserved_modes": ("ask_followup", "suggest", "validate"),
+        },
+        {
+            "name": "protected_minority_specialist_coverage",
+            "learned_weight": 0.0,
+            "specialist_modes": ("other", "inform", "disclose", "reassure"),
+            "specialist_min_score": 0.0,
+            "specialist_preserved_modes": ("ask_followup", "suggest", "validate"),
+            "specialist_insert_mode": "top_3",
+        },
+        {
+            "name": "protected_minority_specialist_coverage_low_margin",
+            "learned_weight": 0.0,
+            "specialist_modes": ("other", "inform", "disclose", "reassure"),
+            "specialist_min_score": -0.75,
+            "specialist_preserved_modes": ("ask_followup", "suggest", "validate"),
+            "specialist_insert_mode": "top_3",
+        },
         {"name": "learned_response_mode", "learned_weight": 1.0},
     )
 
@@ -2285,6 +2606,11 @@ def score_response_mode_turns(
     learned_weight: float = 0.0,
     coverage_modes: tuple[str, ...] = tuple(),
     coverage_min_score: float = 0.0,
+    specialists: dict[str, ResponseModeSpecialist] | None = None,
+    specialist_modes: tuple[str, ...] = tuple(),
+    specialist_min_score: float = 0.0,
+    specialist_preserved_modes: tuple[str, ...] = tuple(),
+    specialist_insert_mode: str = "top_1",
     scoring_variant: str = "heuristic_response_mode",
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
@@ -2296,6 +2622,11 @@ def score_response_mode_turns(
             learned_weight=learned_weight,
             coverage_modes=coverage_modes,
             coverage_min_score=coverage_min_score,
+            specialists=specialists,
+            specialist_modes=specialist_modes,
+            specialist_min_score=specialist_min_score,
+            specialist_preserved_modes=specialist_preserved_modes,
+            specialist_insert_mode=specialist_insert_mode,
             scoring_variant=scoring_variant,
         )
         rank_1 = branches[0]

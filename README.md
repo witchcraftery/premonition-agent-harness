@@ -474,6 +474,19 @@ balanced coverage can lift `inform` top-3 to `0.739` and `reassure` top-3 to
 modes. The next lever is protected minority-mode promotion with richer features,
 not a looser promotion gate.
 
+The protected minority specialist pass preserves ESConv `emotion_type`,
+`experience_type`, and `problem_type` as source features, then trains one-vs-rest
+specialists for `other`, `inform`, `disclose`, and `reassure`. Direct top-1
+promotion remains blocked because it would still compete with strong
+`ask_followup`, `suggest`, and `validate` reads. The useful win is preparedness:
+`protected_minority_specialist_coverage` keeps held-out test `p_at_1` unchanged
+at `0.206`, raises top-3 recall from `0.526` to `0.532`, introduces `224`
+previously missed top-3 hits, and reports `0` held-out segment regressions. The
+strongest slice is `other`, where the specialist coverage variant lifts top-3
+recall from `0.0` to `0.723`. Next lever: make these specialists thresholded by
+per-mode validation calibration so `disclose` and `inform` can get similar
+prepared-branch coverage without lowering dev top-3.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:

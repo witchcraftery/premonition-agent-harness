@@ -548,3 +548,27 @@ Verification:
 - Coverage projection now shows the reachable weak-mode signal: learned-only reaches `disclose` at `0.091` top-1 / `0.449` top-3, `inform` at `0.152` top-1, `other` at `0.381` top-1 / `0.691` top-3, and `reassure` at `0.105` top-1. Next lever: protected minority-mode promotion with richer features.
 - `python3 -m pytest -v`: 110 passed.
 - `git diff --check`: passed.
+
+## Protected Minority Response-Mode Specialists
+
+- [x] Preserve ESConv source metadata (`problem_type`, `emotion_type`, and `experience_type`) in conversation turns as response-mode features.
+- [x] Add one-vs-rest response-mode specialist scoring for `other`, `inform`, `disclose`, and `reassure`.
+- [x] Add protected specialist variants that can promote weak modes only when confidence margins clear validation gates.
+- [x] Report specialist eligibility, blocked counts, and protected-mode regressions in the response-mode bake-off.
+- [x] Rerun ESConv response-mode benchmark and compare weak-mode top-1/top-3 movement against `response_mode_hybrid_75`.
+- [x] Update README/catalog/tracker with the exact result and next lever.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_specialist_score_includes_mode_prior tests/test_conversation_probability.py::test_response_mode_specialist_top_three_preserves_first_branch -v` failed because specialists did not include a calibrated mode prior and the brancher had no top-3 specialist insertion mode.
+- `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_specialist_score_includes_mode_prior tests/test_conversation_probability.py::test_response_mode_specialist_top_three_preserves_first_branch tests/test_conversation_probability.py::test_response_mode_specialist_promotes_target_mode_from_metadata tests/test_conversation_probability.py::test_response_mode_specialist_preserves_protected_top_mode tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v`: 5 passed.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 49 passed.
+- `python3 -m pytest -v`: 114 passed.
+- `git diff --check`: passed.
+- Re-exported ESConv train/validation/test response-mode samples so each turn includes source metadata.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Result: direct top-1 protected minority promotion remains diagnostic, but top-3 specialist coverage is useful. `protected_minority_specialist_coverage` kept held-out test `p_at_1=0.206`, raised top-3 recall from `0.526` to `0.532`, added `224` previously missed prepared top-3 hits, and had `0` held-out segment regressions.
+- Strongest weak-mode movement: `other` top-3 recall improved from `0.0` to `0.723` under `protected_minority_specialist_coverage_low_margin`.
+- Current selected variant remains `response_mode_hybrid_75`, but it is still not promotable because held-out `suggest` top-1 slips from `0.291` to `0.284`.
+- Next lever: per-mode validation-calibrated specialist thresholds for `disclose` and `inform`, so protected minority coverage improves without lowering dev top-3.
