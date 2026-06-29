@@ -500,6 +500,17 @@ lever: split the benchmark selector into first-speech accuracy and background
 readiness recommendations, because the best voice-agent pack may not be the same
 variant as the best rank-1 response.
 
+The dual-recommendation pass makes that split explicit. The report now includes
+`recommendations.first_speech` and `recommendations.background_readiness`.
+First speech still points to `response_mode_hybrid_75`: dev `p_at_1=0.204`,
+held-out test `p_at_1=0.217`, and `heldout_promotable=false` because the
+held-out `suggest` segment regresses. Background readiness points to
+`calibrated_minority_specialist_coverage`: dev top-3 `0.542`, held-out test
+top-3 `0.546`, `heldout_promotable=true`, and no held-out segment regressions.
+Next lever: turn the background-readiness recommendation into a Probability Pack
+policy so the backend can warm safe TTS alternatives while first speech remains
+under the stricter rank-1 selector.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:

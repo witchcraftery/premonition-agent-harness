@@ -597,3 +597,25 @@ Verification:
 - Best calibrated slice: `reassure` top-3 recall improved from `0.688` to `0.993`, a `+0.305` gain over baseline.
 - Current first-speech selector still chooses `response_mode_hybrid_75`, but that path remains not promotable because held-out `suggest` top-1 slips from `0.291` to `0.284`.
 - Next lever: split reporting into first-speech accuracy recommendation and background-readiness recommendation, because the best TTS preparedness variant is no longer the same as the rank-1 selector.
+
+## Dual Recommendation Reporting
+
+- [x] Add a response-mode recommendation layer that reports first-speech and background-readiness winners separately.
+- [x] Keep first-speech selection focused on validation top-1 with segment-safety checks.
+- [x] Select background readiness by validation top-3, requiring no dev segment regressions and no drop below heuristic first-speech accuracy.
+- [x] Report held-out promotability separately for each recommendation.
+- [x] Rerun the ESConv benchmark and confirm background readiness selects the calibrated specialist path.
+- [x] Update README/catalog/tracker with the exact result and next lever.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_recommendations_split_speech_and_readiness_winners -v` failed because `response_mode_recommendations` did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_recommendations_split_speech_and_readiness_winners tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v`: 2 passed.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 52 passed.
+- `python3 -m pytest -v`: 117 passed.
+- `git diff --check`: passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- First-speech recommendation: `response_mode_hybrid_75`, dev `p_at_1=0.204`, held-out test `p_at_1=0.217`, `heldout_promotable=false`, and `1` held-out segment regression.
+- Background-readiness recommendation: `calibrated_minority_specialist_coverage`, dev top-3 `0.542`, held-out test top-3 `0.546`, `heldout_promotable=true`, and `0` held-out segment regressions.
+- Next lever: wire the background-readiness recommendation into Probability Pack preparation policy while keeping first speech governed by the stricter rank-1 selector.

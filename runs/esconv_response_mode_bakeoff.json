@@ -2916,6 +2916,50 @@
     },
     "vocabulary_size": 7882
   },
+  "recommendations": {
+    "background_readiness": {
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.198,
+        "top_3_recall": 0.542,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "heldout_promotable": true,
+      "name": "calibrated_minority_specialist_coverage",
+      "reason": "held-out test passed background readiness checks",
+      "role": "background_readiness",
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.206,
+        "top_3_recall": 0.546,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regression_count": 0
+    },
+    "first_speech": {
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.204,
+        "top_3_recall": 0.54,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "heldout_promotable": false,
+      "name": "response_mode_hybrid_75",
+      "reason": "held-out test failed first-speech checks",
+      "role": "first_speech",
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.217,
+        "top_3_recall": 0.526,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regression_count": 1
+    }
+  },
   "selected_variant": {
     "class_balanced_prior": false,
     "coverage_min_score": 0.0,

@@ -25,6 +25,7 @@ from foresight_harness.conversation_probability import (
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
     response_mode_bakeoff_variants,
+    response_mode_recommendations,
     score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
     train_conversation_act_ranker,
@@ -407,6 +408,9 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "protected_minority_specialists" in report["variants"]
     assert "specialist_calibration" in report
     assert "calibrated_minority_specialist_coverage" in report["variants"]
+    assert "recommendations" in report
+    assert "first_speech" in report["recommendations"]
+    assert "background_readiness" in report["recommendations"]
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():
@@ -700,6 +704,55 @@ def test_response_mode_specialist_calibration_rejects_dev_top_three_drop():
     assert calibration["accepted_mode_min_scores"] == {}
     assert calibration["modes"]["other"]["accepted"] is False
     assert calibration["modes"]["other"]["rejection_reason"] == "aggregate_dev_top_3_drop"
+
+
+def test_response_mode_recommendations_split_speech_and_readiness_winners():
+    variants = {
+        "heuristic_response_mode": {
+            "learned_weight": 0.0,
+            "dev": {"p_at_1": 0.2, "top_3_recall": 0.53},
+            "test": {"p_at_1": 0.2, "top_3_recall": 0.53},
+            "dev_segment_regressions": [],
+            "test_segment_regressions": [],
+        },
+        "response_mode_hybrid_75": {
+            "learned_weight": 0.75,
+            "dev": {"p_at_1": 0.21, "top_3_recall": 0.54},
+            "test": {"p_at_1": 0.22, "top_3_recall": 0.53},
+            "dev_segment_regressions": [],
+            "test_segment_regressions": [{"segment": "expected_response_mode"}],
+        },
+        "calibrated_minority_specialist_coverage": {
+            "learned_weight": 0.0,
+            "dev": {"p_at_1": 0.2, "top_3_recall": 0.55},
+            "test": {"p_at_1": 0.2, "top_3_recall": 0.56},
+            "dev_segment_regressions": [],
+            "test_segment_regressions": [],
+        },
+        "learned_response_mode": {
+            "learned_weight": 1.0,
+            "dev": {"p_at_1": 0.27, "top_3_recall": 0.62},
+            "test": {"p_at_1": 0.27, "top_3_recall": 0.61},
+            "dev_segment_regressions": [{"segment": "expected_response_mode"}],
+            "test_segment_regressions": [],
+        },
+    }
+
+    recommendations = response_mode_recommendations(
+        variants,
+        first_speech_variant_name="response_mode_hybrid_75",
+    )
+
+    assert recommendations["first_speech"]["name"] == "response_mode_hybrid_75"
+    assert recommendations["first_speech"]["heldout_promotable"] is False
+    assert (
+        recommendations["background_readiness"]["name"]
+        == "calibrated_minority_specialist_coverage"
+    )
+    assert recommendations["background_readiness"]["heldout_promotable"] is True
+    assert recommendations["background_readiness"]["reason"] == (
+        "held-out test passed background readiness checks"
+    )
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():

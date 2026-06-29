@@ -2358,6 +2358,10 @@ def run_response_mode_ranker_bakeoff(
             "name": selected_name,
             **variants[selected_name],
         },
+        "recommendations": response_mode_recommendations(
+            variants,
+            first_speech_variant_name=selected_name,
+        ),
         "promotion": response_mode_promotion_summary(
             selected_name=selected_name,
             baseline=variants["heuristic_response_mode"]["test"],
@@ -2434,6 +2438,101 @@ def response_mode_promotion_summary(
             if not test_segment_regressions
             else "held-out test exposed response-mode segment regressions"
         ),
+        "test_segment_regression_count": len(test_segment_regressions),
+    }
+
+
+def response_mode_recommendations(
+    variants: dict[str, dict[str, object]],
+    first_speech_variant_name: str,
+) -> dict[str, object]:
+    baseline = variants["heuristic_response_mode"]
+    background_name = select_response_mode_readiness_variant(variants)
+    return {
+        "first_speech": response_mode_recommendation_summary(
+            name=first_speech_variant_name,
+            role="first_speech",
+            baseline=baseline,
+            selected=variants[first_speech_variant_name],
+        ),
+        "background_readiness": response_mode_recommendation_summary(
+            name=background_name,
+            role="background_readiness",
+            baseline=baseline,
+            selected=variants[background_name],
+        ),
+    }
+
+
+def select_response_mode_readiness_variant(
+    variants: dict[str, dict[str, object]],
+) -> str:
+    heuristic = variants["heuristic_response_mode"]
+    candidates = {
+        name: row
+        for name, row in variants.items()
+        if (
+            not row["dev_segment_regressions"]
+            and float(row["dev"]["p_at_1"])
+            >= float(heuristic["dev"]["p_at_1"])
+            and float(row["dev"]["top_3_recall"])
+            >= float(heuristic["dev"]["top_3_recall"])
+        )
+    }
+    if not candidates:
+        return "heuristic_response_mode"
+    return sorted(
+        candidates,
+        key=lambda name: (
+            float(candidates[name]["dev"]["top_3_recall"]),
+            float(candidates[name]["dev"]["p_at_1"]),
+            -float(candidates[name]["learned_weight"]),
+        ),
+        reverse=True,
+    )[0]
+
+
+def response_mode_recommendation_summary(
+    name: str,
+    role: str,
+    baseline: dict[str, object],
+    selected: dict[str, object],
+) -> dict[str, object]:
+    test_segment_regressions = list(selected["test_segment_regressions"])
+    test_summary = selected["test"]
+    baseline_test_summary = baseline["test"]
+    if role == "background_readiness":
+        heldout_promotable = (
+            not test_segment_regressions
+            and float(test_summary["top_3_recall"])
+            >= float(baseline_test_summary["top_3_recall"])
+            and float(test_summary["p_at_1"]) >= float(baseline_test_summary["p_at_1"])
+        )
+        reason = (
+            "held-out test passed background readiness checks"
+            if heldout_promotable
+            else "held-out test failed background readiness checks"
+        )
+    else:
+        heldout_promotable = (
+            not test_segment_regressions
+            and float(test_summary["p_at_1"]) >= float(baseline_test_summary["p_at_1"])
+            and float(test_summary["top_3_recall"])
+            >= float(baseline_test_summary["top_3_recall"])
+        )
+        reason = (
+            "held-out test passed first-speech checks"
+            if heldout_promotable
+            else "held-out test failed first-speech checks"
+        )
+
+    return {
+        "name": name,
+        "role": role,
+        "heldout_promotable": heldout_promotable,
+        "reason": reason,
+        "dev": selected["dev"],
+        "test": test_summary,
         "test_segment_regression_count": len(test_segment_regressions),
     }
 
