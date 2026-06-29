@@ -1512,14 +1512,20 @@ def conversation_stability_tie_candidates(
     candidates: dict[str, dict[str, object]],
 ) -> dict[str, dict[str, object]]:
     best_dev = max(float(row["dev"]["p_at_1"]) for row in candidates.values())
+    best_overlay = tuple(
+        next(
+            row
+            for row in candidates.values()
+            if float(row["dev"]["p_at_1"]) == best_dev
+        ).get("history_overlay_acts", ())
+    )
     near_best = {
         name: row
         for name, row in candidates.items()
         if best_dev - float(row["dev"]["p_at_1"]) <= CONVERSATION_BAKEOFF_DEV_TIE_MARGIN
+        and tuple(row.get("history_overlay_acts", ())) == best_overlay
     }
-    if any(conversation_preservation_score(row) > 0 for row in near_best.values()):
-        return near_best
-    return candidates
+    return near_best
 
 
 def conversation_preservation_score(row: dict[str, object]) -> int:

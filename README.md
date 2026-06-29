@@ -317,6 +317,39 @@ held-out act-segment regressions. Most importantly, held-out `question` top-1
 improves from `0.025` to `0.116`, while `directive` top-1 is preserved and both
 `question` and `directive` top-3 recall reach `1.0`.
 
+Run the 5k scale-up:
+
+```bash
+foresight-replay \
+  --dailydialog-dir data/external/dailydialog/train \
+  --conversation-output data/dailydialog_train_5k_sample.jsonl \
+  --conversation-limit 5000
+
+foresight-replay \
+  --dailydialog-dir data/external/dailydialog/validation \
+  --conversation-output data/dailydialog_validation_5k_sample.jsonl \
+  --conversation-limit 5000
+
+foresight-replay \
+  --dailydialog-dir data/external/dailydialog/test \
+  --conversation-output data/dailydialog_test_5k_sample.jsonl \
+  --conversation-limit 5000
+
+foresight-replay \
+  --conversation-train-input data/dailydialog_train_5k_sample.jsonl \
+  --conversation-dev-input data/dailydialog_validation_5k_sample.jsonl \
+  --conversation-test-input data/dailydialog_test_5k_sample.jsonl \
+  --conversation-bakeoff-report runs/dailydialog_5k_act_ranker_bakeoff.json
+```
+
+On the 5000/5000/5000 samples, the broader protected-act specialist becomes
+stable. The selected variant is `protected_act_rhythm_contextual`: held-out
+test `p_at_1` improves from `0.368` to `0.515`, held-out `top_3_recall`
+improves from `0.863` to `0.977`, cross-validation mean gain is `0.108`,
+minimum fold gain is `0.099`, and both cross-fold and held-out act-segment
+regressions stay at `0`. Held-out `question` top-1 improves from `0.021` to
+`0.123`, and held-out `directive` top-1 improves from `0.076` to `0.115`.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -342,8 +375,8 @@ meaningful step is to replay 300-500 real or tau-bench-style support turns,
 label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
-For conversational voice-agent foresight, the next meaningful step is to import
-larger and more representative DailyDialog slices beyond 2k, then add
+For conversational voice-agent foresight, the next meaningful step is to scale
+DailyDialog as far as the local validation/test splits allow, then add
 question-specific features that improve top-1 without relying only on act
 history. After that, add EmpatheticDialogues for emotional readiness and
 Taskmaster or SpokenWOZ for practical spoken-assistant flows.
@@ -356,7 +389,7 @@ Useful expansion points:
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 - Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
-- Scale the DailyDialog benchmark beyond 2k and add question-specific evidence that improves top-1 question accuracy without relying only on act history.
+- Scale DailyDialog beyond 5k where split size allows, then add question-specific evidence that improves top-1 question accuracy without relying only on act history.
 
 ## Benchmark Loop
 

@@ -429,3 +429,22 @@ Verification:
 - Selected 2k variant: `safe_question_act_rhythm_contextual`; validation `p_at_1=0.488`, held-out test `p_at_1=0.491`, held-out top-3 recall `0.974`, cross-validation mean gain `0.092`, minimum fold gain `0.078`, and `0` cross-fold segment regressions.
 - Segment result: held-out `question` top-1 improved from `0.025` to `0.116`, held-out `directive` top-1 stayed at `0.052`, and both `question` and `directive` top-3 recall reached `1.0`.
 - Result: breakthrough achieved through more examples plus a stability-biased tie selector. Next lever is scaling beyond 2k and adding question-specific evidence beyond act history.
+
+## 5k DailyDialog Scale-Up
+
+- [x] Export bounded 5k DailyDialog train/dev/test samples.
+- [x] Run the same act-ranker bake-off on 5k/5k/5k.
+- [x] Compare selected variant, held-out score, cross-fold stability, and act-segment regressions against the 2k result.
+- [x] Document whether scaling strengthens question-specialist promotion or exposes a new failure mode.
+- [x] Commit and push reproducible 5k artifacts if the run is useful.
+
+Verification:
+
+- Initial 5k run exposed an over-conservative selector tie rule: `safe_question_act_rhythm_contextual` displaced a stronger stable protected-act specialist.
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_bakeoff_selection_keeps_stronger_stable_protected_specialist -v` failed because the preserved-question tie rule overrode the stronger protected-act variant.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 31 passed.
+- Exported committed 5k samples: `data/dailydialog_train_5k_sample.jsonl`, `data/dailydialog_validation_5k_sample.jsonl`, and `data/dailydialog_test_5k_sample.jsonl`.
+- `foresight-replay --conversation-train-input data/dailydialog_train_5k_sample.jsonl --conversation-dev-input data/dailydialog_validation_5k_sample.jsonl --conversation-test-input data/dailydialog_test_5k_sample.jsonl --conversation-bakeoff-report runs/dailydialog_5k_act_ranker_bakeoff.json`: completed.
+- Selected 5k variant: `protected_act_rhythm_contextual`; held-out test `p_at_1` improved from `0.368` to `0.515`, held-out top-3 recall improved from `0.863` to `0.977`, cross-validation mean gain `0.108`, minimum fold gain `0.099`, and `0` cross-fold segment regressions.
+- Segment result: held-out `question` top-1 improved from `0.021` to `0.123`, and held-out `directive` top-1 improved from `0.076` to `0.115`, with no held-out act-segment regressions.
+- Result: scaling strengthened the specialist from question-only at 2k to protected directive+question at 5k. Next lever is scaling as far as validation/test split size allows, then adding question-specific evidence beyond act history.

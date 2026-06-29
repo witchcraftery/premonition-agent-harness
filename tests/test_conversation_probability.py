@@ -730,6 +730,40 @@ def test_bakeoff_selection_prefers_preserved_specialist_inside_dev_tie():
     assert selected == "safe_question_specialist"
 
 
+def test_bakeoff_selection_keeps_stronger_stable_protected_specialist():
+    variants = {
+        "protected_act_specialist": {
+            "learned_weight": 0.0,
+            "history_overlay_acts": ("directive", "question"),
+            "train": {"p_at_1": 0.61, "top_3_recall": 0.99},
+            "dev": {"p_at_1": 0.501, "top_3_recall": 0.977},
+            "dev_segment_regressions": [],
+            "cross_validation": {
+                "mean_p_at_1_gain": 0.108,
+                "min_p_at_1_gain": 0.099,
+                "segment_regression_count": 0,
+            },
+        },
+        "safe_question_specialist": {
+            "learned_weight": 0.0,
+            "history_overlay_acts": ("question",),
+            "history_preserved_acts": ("directive",),
+            "train": {"p_at_1": 0.60, "top_3_recall": 0.99},
+            "dev": {"p_at_1": 0.498, "top_3_recall": 0.977},
+            "dev_segment_regressions": [],
+            "cross_validation": {
+                "mean_p_at_1_gain": 0.107,
+                "min_p_at_1_gain": 0.098,
+                "segment_regression_count": 0,
+            },
+        },
+    }
+
+    selected = select_conversation_bakeoff_variant(variants)
+
+    assert selected == "protected_act_specialist"
+
+
 def test_conversation_train_dev_test_loop_blocks_act_segment_regression():
     train_turns = (
         conversation_turn(
