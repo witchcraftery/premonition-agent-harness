@@ -1335,6 +1335,7 @@ def generate_response_mode_branches(
     specialists: dict[str, ResponseModeSpecialist] | None = None,
     specialist_modes: tuple[str, ...] = tuple(),
     specialist_min_score: float = 0.0,
+    specialist_mode_min_scores: dict[str, float] | None = None,
     specialist_preserved_modes: tuple[str, ...] = tuple(),
     specialist_insert_mode: str = "top_1",
     scoring_variant: str = "heuristic_response_mode",
@@ -1351,6 +1352,10 @@ def generate_response_mode_branches(
         raise ValueError("specialist_insert_mode must be top_1 or top_3")
     if any(mode not in RESPONSE_MODES for mode in specialist_modes):
         raise ValueError("specialist_modes must be known response modes")
+    if specialist_mode_min_scores and any(
+        mode not in RESPONSE_MODES for mode in specialist_mode_min_scores
+    ):
+        raise ValueError("specialist_mode_min_scores must use known response modes")
     if any(mode not in RESPONSE_MODES for mode in specialist_preserved_modes):
         raise ValueError("specialist_preserved_modes must be known response modes")
     context_tokens = normalized_tokens(turn.context_text())
@@ -1378,6 +1383,7 @@ def generate_response_mode_branches(
         specialists=specialists or {},
         specialist_modes=specialist_modes,
         specialist_min_score=specialist_min_score,
+        specialist_mode_min_scores=specialist_mode_min_scores or {},
         specialist_preserved_modes=specialist_preserved_modes,
         specialist_insert_mode=specialist_insert_mode,
         top_k=top_k,
@@ -1402,6 +1408,7 @@ def apply_response_mode_specialists(
     specialists: dict[str, ResponseModeSpecialist],
     specialist_modes: tuple[str, ...],
     specialist_min_score: float,
+    specialist_mode_min_scores: dict[str, float],
     specialist_preserved_modes: tuple[str, ...],
     specialist_insert_mode: str,
     top_k: int,
@@ -1410,9 +1417,11 @@ def apply_response_mode_specialists(
         return ranked
 
     candidates = [
-        (mode, specialists[mode].score(turn))
+        (mode, score)
         for mode in specialist_modes
-        if mode in specialists and specialists[mode].score(turn) >= specialist_min_score
+        if mode in specialists
+        for score in (specialists[mode].score(turn),)
+        if score >= specialist_mode_min_scores.get(mode, specialist_min_score)
     ]
     if not candidates:
         return ranked
@@ -2213,6 +2222,13 @@ def run_response_mode_ranker_bakeoff(
     train_baseline_rows = score_response_mode_turns(train_turns, top_k=top_k)
     dev_baseline_rows = score_response_mode_turns(dev_turns, top_k=top_k)
     test_baseline_rows = score_response_mode_turns(test_turns, top_k=top_k)
+    specialist_calibration = calibrate_response_mode_specialist_thresholds(
+        dev_turns=dev_turns,
+        baseline_rows=dev_baseline_rows,
+        specialists=specialists,
+        specialist_modes=("other", "inform", "disclose", "reassure"),
+        top_k=top_k,
+    )
     variant_rows: dict[str, dict[str, tuple[dict[str, object], ...]]] = {}
     variants: dict[str, dict[str, object]] = {}
     for variant in response_mode_bakeoff_variants():
@@ -2225,6 +2241,20 @@ def run_response_mode_ranker_bakeoff(
             str(mode) for mode in variant.get("specialist_modes", ())
         )
         specialist_min_score = float(variant.get("specialist_min_score", 0.0))
+        specialist_mode_min_scores = {
+            str(mode): float(score)
+            for mode, score in dict(variant.get("specialist_mode_min_scores", {})).items()
+        }
+        specialist_calibration_report: dict[str, object] | None = None
+        if bool(variant.get("calibrate_specialist_thresholds", False)):
+            specialist_calibration_report = specialist_calibration
+            specialist_mode_min_scores = {
+                str(mode): float(score)
+                for mode, score in dict(
+                    specialist_calibration["accepted_mode_min_scores"]
+                ).items()
+            }
+            specialist_modes = tuple(sorted(specialist_mode_min_scores))
         specialist_preserved_modes = tuple(
             str(mode) for mode in variant.get("specialist_preserved_modes", ())
         )
@@ -2241,6 +2271,7 @@ def run_response_mode_ranker_bakeoff(
             specialists=specialists,
             specialist_modes=specialist_modes,
             specialist_min_score=specialist_min_score,
+            specialist_mode_min_scores=specialist_mode_min_scores,
             specialist_preserved_modes=specialist_preserved_modes,
             specialist_insert_mode=specialist_insert_mode,
             scoring_variant=name,
@@ -2255,6 +2286,7 @@ def run_response_mode_ranker_bakeoff(
             specialists=specialists,
             specialist_modes=specialist_modes,
             specialist_min_score=specialist_min_score,
+            specialist_mode_min_scores=specialist_mode_min_scores,
             specialist_preserved_modes=specialist_preserved_modes,
             specialist_insert_mode=specialist_insert_mode,
             scoring_variant=name,
@@ -2269,6 +2301,7 @@ def run_response_mode_ranker_bakeoff(
             specialists=specialists,
             specialist_modes=specialist_modes,
             specialist_min_score=specialist_min_score,
+            specialist_mode_min_scores=specialist_mode_min_scores,
             specialist_preserved_modes=specialist_preserved_modes,
             specialist_insert_mode=specialist_insert_mode,
             scoring_variant=name,
@@ -2285,6 +2318,8 @@ def run_response_mode_ranker_bakeoff(
             "class_balanced_prior": class_balanced_prior,
             "specialist_modes": specialist_modes,
             "specialist_min_score": specialist_min_score,
+            "specialist_mode_min_scores": specialist_mode_min_scores,
+            "specialist_calibration": specialist_calibration_report,
             "specialist_preserved_modes": specialist_preserved_modes,
             "specialist_insert_mode": specialist_insert_mode,
             "train": summarize_response_mode_rows(train_rows, train_turns),
@@ -2317,6 +2352,7 @@ def run_response_mode_ranker_bakeoff(
             mode: specialist.to_dict()
             for mode, specialist in sorted(specialists.items())
         },
+        "specialist_calibration": specialist_calibration,
         "variants": variants,
         "selected_variant": {
             "name": selected_name,
@@ -2461,6 +2497,129 @@ def response_mode_coverage_projection(
     return {"expected_response_mode": projection}
 
 
+def calibrate_response_mode_specialist_thresholds(
+    dev_turns: tuple[ConversationTurn, ...],
+    baseline_rows: tuple[dict[str, object], ...],
+    specialists: dict[str, ResponseModeSpecialist],
+    specialist_modes: tuple[str, ...],
+    candidate_min_scores: tuple[float, ...] = (
+        1.5,
+        1.0,
+        0.75,
+        0.5,
+        0.25,
+        0.0,
+        -0.25,
+        -0.5,
+        -0.75,
+    ),
+    top_k: int = 3,
+) -> dict[str, object]:
+    baseline_aggregate_top_3 = response_mode_top_3_recall(baseline_rows)
+    accepted_mode_min_scores: dict[str, float] = {}
+    mode_reports: dict[str, object] = {}
+
+    for mode in specialist_modes:
+        baseline_mode_rows = tuple(
+            row
+            for row in baseline_rows
+            if str(row["expected_response_mode"]) == mode
+        )
+        baseline_mode_top_3 = response_mode_top_3_recall(baseline_mode_rows)
+        best_accepted: dict[str, object] | None = None
+        best_rejected: dict[str, object] | None = None
+
+        for threshold in sorted(candidate_min_scores, reverse=True):
+            candidate_rows = score_response_mode_turns(
+                dev_turns,
+                top_k=top_k,
+                specialists=specialists,
+                specialist_modes=(mode,),
+                specialist_min_score=threshold,
+                specialist_mode_min_scores={mode: threshold},
+                specialist_insert_mode="top_3",
+                scoring_variant="calibrated_minority_specialist_coverage",
+            )
+            candidate_mode_rows = tuple(
+                row
+                for row in candidate_rows
+                if str(row["expected_response_mode"]) == mode
+            )
+            aggregate_top_3 = response_mode_top_3_recall(candidate_rows)
+            mode_top_3 = response_mode_top_3_recall(candidate_mode_rows)
+            aggregate_gain = round(aggregate_top_3 - baseline_aggregate_top_3, 3)
+            mode_gain = round(mode_top_3 - baseline_mode_top_3, 3)
+            row = {
+                "threshold": threshold,
+                "dev_top_3_recall": aggregate_top_3,
+                "dev_top_3_gain": aggregate_gain,
+                "mode_dev_top_3_recall": mode_top_3,
+                "mode_dev_top_3_gain": mode_gain,
+            }
+            if mode_gain > 0 and aggregate_gain >= 0:
+                if best_accepted is None or (
+                    mode_gain,
+                    aggregate_gain,
+                    threshold,
+                ) > (
+                    float(best_accepted["mode_dev_top_3_gain"]),
+                    float(best_accepted["dev_top_3_gain"]),
+                    float(best_accepted["threshold"]),
+                ):
+                    best_accepted = row
+            elif best_rejected is None or (
+                mode_gain,
+                aggregate_gain,
+                threshold,
+            ) > (
+                float(best_rejected["mode_dev_top_3_gain"]),
+                float(best_rejected["dev_top_3_gain"]),
+                float(best_rejected["threshold"]),
+            ):
+                best_rejected = row
+
+        if best_accepted:
+            accepted_mode_min_scores[mode] = float(best_accepted["threshold"])
+            mode_reports[mode] = {
+                **best_accepted,
+                "accepted": True,
+                "rejection_reason": "",
+            }
+        else:
+            rejection_source = best_rejected or {
+                "threshold": 0.0,
+                "dev_top_3_recall": baseline_aggregate_top_3,
+                "dev_top_3_gain": 0.0,
+                "mode_dev_top_3_recall": baseline_mode_top_3,
+                "mode_dev_top_3_gain": 0.0,
+            }
+            reason = (
+                "aggregate_dev_top_3_drop"
+                if float(rejection_source["dev_top_3_gain"]) < 0
+                else "no_mode_dev_top_3_gain"
+            )
+            mode_reports[mode] = {
+                **rejection_source,
+                "accepted": False,
+                "rejection_reason": reason,
+            }
+
+    return {
+        "baseline_dev_top_3_recall": baseline_aggregate_top_3,
+        "accepted_mode_min_scores": accepted_mode_min_scores,
+        "modes": mode_reports,
+    }
+
+
+def response_mode_top_3_recall(rows: tuple[dict[str, object], ...]) -> float:
+    total = max(len(rows), 1)
+    hits = sum(
+        row["expected_response_mode"] in row["top_response_modes"]
+        for row in rows
+    )
+    return round(hits / total, 3)
+
+
 def response_mode_specialist_diagnostics(
     variant_rows: dict[str, dict[str, tuple[dict[str, object], ...]]],
     baseline_rows: tuple[dict[str, object], ...],
@@ -2595,6 +2754,15 @@ def response_mode_bakeoff_variants() -> tuple[dict[str, object], ...]:
             "specialist_preserved_modes": ("ask_followup", "suggest", "validate"),
             "specialist_insert_mode": "top_3",
         },
+        {
+            "name": "calibrated_minority_specialist_coverage",
+            "learned_weight": 0.0,
+            "specialist_modes": ("other", "inform", "disclose", "reassure"),
+            "specialist_min_score": 0.0,
+            "specialist_preserved_modes": ("ask_followup", "suggest", "validate"),
+            "specialist_insert_mode": "top_3",
+            "calibrate_specialist_thresholds": True,
+        },
         {"name": "learned_response_mode", "learned_weight": 1.0},
     )
 
@@ -2609,6 +2777,7 @@ def score_response_mode_turns(
     specialists: dict[str, ResponseModeSpecialist] | None = None,
     specialist_modes: tuple[str, ...] = tuple(),
     specialist_min_score: float = 0.0,
+    specialist_mode_min_scores: dict[str, float] | None = None,
     specialist_preserved_modes: tuple[str, ...] = tuple(),
     specialist_insert_mode: str = "top_1",
     scoring_variant: str = "heuristic_response_mode",
@@ -2625,6 +2794,7 @@ def score_response_mode_turns(
             specialists=specialists,
             specialist_modes=specialist_modes,
             specialist_min_score=specialist_min_score,
+            specialist_mode_min_scores=specialist_mode_min_scores,
             specialist_preserved_modes=specialist_preserved_modes,
             specialist_insert_mode=specialist_insert_mode,
             scoring_variant=scoring_variant,

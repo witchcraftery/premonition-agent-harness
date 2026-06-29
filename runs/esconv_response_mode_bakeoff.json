@@ -1050,12 +1050,12 @@
         "best_top_1_variant": "learned_response_mode",
         "best_top_3": {
           "p_at_1": 0.0,
-          "top_3_recall": 0.751,
+          "top_3_recall": 0.993,
           "total_turns": 285,
           "tts_readiness_rate": 1.0
         },
-        "best_top_3_gain": 0.063,
-        "best_top_3_variant": "balanced_response_mode_50"
+        "best_top_3_gain": 0.305,
+        "best_top_3_variant": "calibrated_minority_specialist_coverage"
       },
       "suggest": {
         "baseline": {
@@ -2930,8 +2930,10 @@
     "dev_segment_regressions": [],
     "learned_weight": 0.75,
     "name": "response_mode_hybrid_75",
+    "specialist_calibration": null,
     "specialist_insert_mode": "top_1",
     "specialist_min_score": 0.0,
+    "specialist_mode_min_scores": {},
     "specialist_modes": [],
     "specialist_preserved_modes": [],
     "test": {
@@ -2958,7 +2960,65 @@
       "tts_readiness_rate": 1.0
     }
   },
+  "specialist_calibration": {
+    "accepted_mode_min_scores": {
+      "reassure": -0.25
+    },
+    "baseline_dev_top_3_recall": 0.532,
+    "modes": {
+      "disclose": {
+        "accepted": false,
+        "dev_top_3_gain": -0.05,
+        "dev_top_3_recall": 0.482,
+        "mode_dev_top_3_gain": 0.933,
+        "mode_dev_top_3_recall": 0.933,
+        "rejection_reason": "aggregate_dev_top_3_drop",
+        "threshold": -0.75
+      },
+      "inform": {
+        "accepted": false,
+        "dev_top_3_gain": -0.096,
+        "dev_top_3_recall": 0.436,
+        "mode_dev_top_3_gain": 0.98,
+        "mode_dev_top_3_recall": 0.98,
+        "rejection_reason": "aggregate_dev_top_3_drop",
+        "threshold": -0.5
+      },
+      "other": {
+        "accepted": false,
+        "dev_top_3_gain": -0.008,
+        "dev_top_3_recall": 0.524,
+        "mode_dev_top_3_gain": 0.97,
+        "mode_dev_top_3_recall": 0.97,
+        "rejection_reason": "aggregate_dev_top_3_drop",
+        "threshold": -0.75
+      },
+      "reassure": {
+        "accepted": true,
+        "dev_top_3_gain": 0.01,
+        "dev_top_3_recall": 0.542,
+        "mode_dev_top_3_gain": 0.224,
+        "mode_dev_top_3_recall": 1.0,
+        "rejection_reason": "",
+        "threshold": -0.25
+      }
+    }
+  },
   "specialist_diagnostics": {
+    "calibrated_minority_specialist_coverage": {
+      "blocked_by_regression_count": 0,
+      "blocked_regressions": [],
+      "eligible_turn_count": 0,
+      "improved_turn_count": 0,
+      "specialist_insert_mode": "top_3",
+      "specialist_modes": [
+        "reassure"
+      ],
+      "top_1_eligible_turn_count": 0,
+      "top_1_improved_turn_count": 0,
+      "top_3_eligible_turn_count": 1728,
+      "top_3_improved_turn_count": 87
+    },
     "protected_minority_specialist_coverage": {
       "blocked_by_regression_count": 0,
       "blocked_regressions": [],
@@ -3123,8 +3183,10 @@
         }
       ],
       "learned_weight": 0.5,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3164,8 +3226,10 @@
         }
       ],
       "learned_weight": 0.5,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3197,8 +3261,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.75,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3251,8 +3317,10 @@
         }
       ],
       "learned_weight": 0.5,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3289,8 +3357,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.75,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3317,6 +3387,92 @@
         "tts_readiness_rate": 1.0
       }
     },
+    "calibrated_minority_specialist_coverage": {
+      "class_balanced_prior": false,
+      "coverage_min_score": 0.0,
+      "coverage_modes": [],
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.198,
+        "top_3_recall": 0.542,
+        "total_turns": 1800,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "learned_weight": 0.0,
+      "specialist_calibration": {
+        "accepted_mode_min_scores": {
+          "reassure": -0.25
+        },
+        "baseline_dev_top_3_recall": 0.532,
+        "modes": {
+          "disclose": {
+            "accepted": false,
+            "dev_top_3_gain": -0.05,
+            "dev_top_3_recall": 0.482,
+            "mode_dev_top_3_gain": 0.933,
+            "mode_dev_top_3_recall": 0.933,
+            "rejection_reason": "aggregate_dev_top_3_drop",
+            "threshold": -0.75
+          },
+          "inform": {
+            "accepted": false,
+            "dev_top_3_gain": -0.096,
+            "dev_top_3_recall": 0.436,
+            "mode_dev_top_3_gain": 0.98,
+            "mode_dev_top_3_recall": 0.98,
+            "rejection_reason": "aggregate_dev_top_3_drop",
+            "threshold": -0.5
+          },
+          "other": {
+            "accepted": false,
+            "dev_top_3_gain": -0.008,
+            "dev_top_3_recall": 0.524,
+            "mode_dev_top_3_gain": 0.97,
+            "mode_dev_top_3_recall": 0.97,
+            "rejection_reason": "aggregate_dev_top_3_drop",
+            "threshold": -0.75
+          },
+          "reassure": {
+            "accepted": true,
+            "dev_top_3_gain": 0.01,
+            "dev_top_3_recall": 0.542,
+            "mode_dev_top_3_gain": 0.224,
+            "mode_dev_top_3_recall": 1.0,
+            "rejection_reason": "",
+            "threshold": -0.25
+          }
+        }
+      },
+      "specialist_insert_mode": "top_3",
+      "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {
+        "reassure": -0.25
+      },
+      "specialist_modes": [
+        "reassure"
+      ],
+      "specialist_preserved_modes": [
+        "ask_followup",
+        "suggest",
+        "validate"
+      ],
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.206,
+        "top_3_recall": 0.546,
+        "total_turns": 1748,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.194,
+        "top_3_recall": 0.536,
+        "total_turns": 6740,
+        "tts_readiness_rate": 1.0
+      }
+    },
     "heuristic_response_mode": {
       "class_balanced_prior": false,
       "coverage_min_score": 0.0,
@@ -3330,8 +3486,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3371,8 +3529,10 @@
         }
       ],
       "learned_weight": 1.0,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3419,8 +3579,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_3",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [
         "other",
         "inform",
@@ -3461,8 +3623,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_3",
       "specialist_min_score": -0.75,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [
         "other",
         "inform",
@@ -3503,8 +3667,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.5,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [
         "other",
         "inform",
@@ -3545,8 +3711,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.0,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [
         "other",
         "inform",
@@ -3595,8 +3763,10 @@
         }
       ],
       "learned_weight": 0.25,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3644,8 +3814,10 @@
         }
       ],
       "learned_weight": 0.5,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {
@@ -3677,8 +3849,10 @@
       },
       "dev_segment_regressions": [],
       "learned_weight": 0.75,
+      "specialist_calibration": null,
       "specialist_insert_mode": "top_1",
       "specialist_min_score": 0.0,
+      "specialist_mode_min_scores": {},
       "specialist_modes": [],
       "specialist_preserved_modes": [],
       "test": {

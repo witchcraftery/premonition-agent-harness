@@ -487,6 +487,19 @@ recall from `0.0` to `0.723`. Next lever: make these specialists thresholded by
 per-mode validation calibration so `disclose` and `inform` can get similar
 prepared-branch coverage without lowering dev top-3.
 
+The validation-calibrated pass adds per-mode specialist thresholds. It rejects
+`disclose`, `inform`, and `other` because each can improve its own dev slice only
+by lowering aggregate dev top-3. It accepts `reassure` at threshold `-0.25`,
+raising dev top-3 from `0.532` to `0.542` and held-out test top-3 from `0.526`
+to `0.546`, with unchanged held-out `p_at_1=0.206`, `87` previously missed
+prepared hits, and `0` held-out segment regressions. This makes
+`calibrated_minority_specialist_coverage` the best safe preparedness variant so
+far, even though the first-speech selector still favors `response_mode_hybrid_75`
+and remains non-promotable because of the held-out `suggest` regression. Next
+lever: split the benchmark selector into first-speech accuracy and background
+readiness recommendations, because the best voice-agent pack may not be the same
+variant as the best rank-1 response.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:

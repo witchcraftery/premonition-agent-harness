@@ -19,6 +19,7 @@ from foresight_harness.conversation_probability import (
     load_dailydialog_split,
     load_conversation_turns,
     load_dailydialog_export,
+    calibrate_response_mode_specialist_thresholds,
     run_conversation_act_ranker_bakeoff,
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
@@ -404,6 +405,8 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "validate" in report["coverage_projection"]["expected_response_mode"]
     assert "specialist_diagnostics" in report
     assert "protected_minority_specialists" in report["variants"]
+    assert "specialist_calibration" in report
+    assert "calibrated_minority_specialist_coverage" in report["variants"]
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():
@@ -598,6 +601,105 @@ def test_response_mode_specialist_top_three_preserves_first_branch():
     response_modes = [branch["response_mode"] for branch in branches]
     assert response_modes[0] == "ask_followup"
     assert "other" in response_modes[1:]
+
+
+def test_response_mode_specialist_uses_per_mode_thresholds():
+    train_turns = (
+        conversation_turn(
+            "train-other",
+            "familycue complicated",
+            "inform",
+            expected_response_mode="other",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+        conversation_turn(
+            "train-inform",
+            "factcue practical details",
+            "inform",
+            expected_response_mode="inform",
+            source_metadata=(("problem_type", "job crisis"),),
+        ),
+        conversation_turn(
+            "train-ask",
+            "What happened next?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    specialists = train_response_mode_specialists(
+        train_turns,
+        target_modes=("other", "inform"),
+    )
+    test_turn = conversation_turn(
+        "test",
+        "familycue factcue practical details",
+        "question",
+        source_metadata=(("problem_type", "job crisis"),),
+    )
+
+    branches = generate_response_mode_branches(
+        test_turn,
+        top_k=3,
+        specialists=specialists,
+        specialist_modes=("other", "inform"),
+        specialist_min_score=-10.0,
+        specialist_mode_min_scores={"other": 99.0, "inform": -10.0},
+        specialist_insert_mode="top_3",
+        scoring_variant="calibrated_minority_specialist_coverage",
+    )
+
+    response_modes = [branch["response_mode"] for branch in branches]
+    assert "inform" in response_modes
+    assert "other" not in response_modes
+
+
+def test_response_mode_specialist_calibration_rejects_dev_top_three_drop():
+    train_turns = (
+        conversation_turn(
+            "train-other",
+            "familycue complicated",
+            "inform",
+            expected_response_mode="other",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+        conversation_turn(
+            "train-ask",
+            "What happened next?",
+            "question",
+            expected_response_mode="ask_followup",
+        ),
+    )
+    dev_turns = (
+        conversation_turn(
+            "dev-reassure",
+            "What happened next?",
+            "inform",
+            expected_response_mode="reassure",
+            source_metadata=(("problem_type", "family conflict"),),
+        ),
+    )
+    specialists = train_response_mode_specialists(train_turns, target_modes=("other",))
+    baseline_rows = (
+        {
+            "turn_id": "dev-reassure",
+            "expected_response_mode": "reassure",
+            "rank_1_response_mode": "ask_followup",
+            "top_response_modes": ["ask_followup", "validate", "reassure"],
+        },
+    )
+
+    calibration = calibrate_response_mode_specialist_thresholds(
+        dev_turns=dev_turns,
+        baseline_rows=baseline_rows,
+        specialists=specialists,
+        specialist_modes=("other",),
+        candidate_min_scores=(-10.0,),
+        top_k=3,
+    )
+
+    assert calibration["accepted_mode_min_scores"] == {}
+    assert calibration["modes"]["other"]["accepted"] is False
+    assert calibration["modes"]["other"]["rejection_reason"] == "aggregate_dev_top_3_drop"
 
 
 def test_balanced_response_mode_brancher_adds_minority_mode_to_top_three():

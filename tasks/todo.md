@@ -572,3 +572,28 @@ Verification:
 - Strongest weak-mode movement: `other` top-3 recall improved from `0.0` to `0.723` under `protected_minority_specialist_coverage_low_margin`.
 - Current selected variant remains `response_mode_hybrid_75`, but it is still not promotable because held-out `suggest` top-1 slips from `0.291` to `0.284`.
 - Next lever: per-mode validation-calibrated specialist thresholds for `disclose` and `inform`, so protected minority coverage improves without lowering dev top-3.
+
+## Validation-Calibrated Minority Specialists
+
+- [x] Add per-mode specialist thresholds so `disclose`, `inform`, `other`, and `reassure` are not forced through one global gate.
+- [x] Add validation calibration that accepts a specialist threshold only when it improves that mode's dev top-3 coverage without lowering aggregate dev top-3.
+- [x] Report accepted/rejected specialist thresholds, dev mode gain, and dev aggregate gain in the bake-off.
+- [x] Add a calibrated protected specialist coverage variant to the ESConv response-mode bake-off.
+- [x] Rerun the ESConv benchmark and compare calibrated coverage against protected specialist coverage and `response_mode_hybrid_75`.
+- [x] Update README/catalog/tracker with the exact result and next lever.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_specialist_uses_per_mode_thresholds tests/test_conversation_probability.py::test_response_mode_specialist_calibration_rejects_dev_top_three_drop -v` failed because `calibrate_response_mode_specialist_thresholds` did not exist and the brancher had no per-mode specialist threshold support.
+- `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_specialist_uses_per_mode_thresholds tests/test_conversation_probability.py::test_response_mode_specialist_calibration_rejects_dev_top_three_drop -v`: 2 passed.
+- `python3 -m pytest tests/test_conversation_probability.py::test_load_esconv_export_creates_response_mode_examples tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_conversation_probability.py::test_response_mode_specialist_uses_per_mode_thresholds tests/test_conversation_probability.py::test_response_mode_specialist_calibration_rejects_dev_top_three_drop tests/test_conversation_probability.py::test_response_mode_specialist_top_three_preserves_first_branch tests/test_conversation_probability.py::test_response_mode_bakeoff_variants_include_balanced_coverage -v`: 6 passed.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 51 passed.
+- `python3 -m pytest -v`: 116 passed.
+- `git diff --check`: passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Calibration result: accepted `reassure` at threshold `-0.25`; rejected `disclose`, `inform`, and `other` because their best dev slice gains lowered aggregate dev top-3.
+- Held-out result: `calibrated_minority_specialist_coverage` kept `p_at_1=0.206`, improved top-3 recall from `0.526` to `0.546`, added `87` previously missed prepared hits, and had `0` held-out segment regressions.
+- Best calibrated slice: `reassure` top-3 recall improved from `0.688` to `0.993`, a `+0.305` gain over baseline.
+- Current first-speech selector still chooses `response_mode_hybrid_75`, but that path remains not promotable because held-out `suggest` top-1 slips from `0.291` to `0.284`.
+- Next lever: split reporting into first-speech accuracy recommendation and background-readiness recommendation, because the best TTS preparedness variant is no longer the same as the rank-1 selector.
