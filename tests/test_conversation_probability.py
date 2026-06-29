@@ -444,6 +444,48 @@ def test_history_ranker_promotes_allowed_question_specialist():
     assert branches[0]["act"] == "question"
 
 
+def test_question_specialist_preserves_current_directive_read():
+    train_turns = (
+        conversation_turn(
+            "train-history-question-1",
+            "The package arrived.",
+            "question",
+            observed_acts=("inform", "directive"),
+        ),
+        conversation_turn(
+            "train-history-question-2",
+            "The route changed.",
+            "question",
+            observed_acts=("inform", "directive"),
+        ),
+        conversation_turn(
+            "train-history-inform",
+            "Anything else?",
+            "inform",
+            observed_acts=("question", "commissive"),
+        ),
+    )
+    history_ranker = train_conversation_history_ranker(train_turns, window_size=2)
+    turn = conversation_turn(
+        "test-question-preserve-directive",
+        "What should we do next?",
+        "directive",
+        observed_acts=("inform", "directive"),
+    )
+
+    branches = generate_conversation_branches(
+        turn,
+        top_k=3,
+        history_ranker=history_ranker,
+        history_margin=0.0,
+        history_overlay_acts=("question",),
+        history_preserved_acts=("directive",),
+        scoring_variant="safe_question_history_specialist",
+    )
+
+    assert branches[0]["act"] == "directive"
+
+
 def test_bakeoff_variants_include_protected_act_specialists():
     variants = {
         str(variant["name"]): variant
@@ -458,6 +500,12 @@ def test_bakeoff_variants_include_protected_act_specialists():
         "question",
     )
     assert variants["directive_act_rhythm_contextual"]["history_overlay_acts"] == (
+        "directive",
+    )
+    assert variants["safe_question_act_rhythm_contextual"]["history_overlay_acts"] == (
+        "question",
+    )
+    assert variants["safe_question_act_rhythm_contextual"]["history_preserved_acts"] == (
         "directive",
     )
 

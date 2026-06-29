@@ -1417,6 +1417,7 @@
     "history_overlay_acts": [
       "directive"
     ],
+    "history_preserved_acts": [],
     "learned_weight": 0.0,
     "name": "directive_act_rhythm_contextual",
     "test": {
@@ -1625,6 +1626,7 @@
       "dev_segment_regressions": [],
       "history_margin": 0.25,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -1784,6 +1786,7 @@
       "dev_segment_regressions": [],
       "history_margin": 0.6,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -1981,6 +1984,7 @@
       ],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2168,6 +2172,7 @@
       "dev_segment_regressions": [],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2362,6 +2367,7 @@
       ],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2527,6 +2533,7 @@
       "history_overlay_acts": [
         "directive"
       ],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2678,6 +2685,7 @@
       "dev_segment_regressions": [],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -2829,6 +2837,7 @@
       "dev_segment_regressions": [],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -3060,6 +3069,7 @@
       ],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.25,
       "test": {
         "median_latency_ms": 90,
@@ -3306,6 +3316,7 @@
       ],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.5,
       "test": {
         "median_latency_ms": 90,
@@ -3559,6 +3570,7 @@
       ],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 0.75,
       "test": {
         "median_latency_ms": 90,
@@ -3812,6 +3824,7 @@
       ],
       "history_margin": 0.0,
       "history_overlay_acts": [],
+      "history_preserved_acts": [],
       "learned_weight": 1.0,
       "test": {
         "median_latency_ms": 90,
@@ -3986,6 +3999,7 @@
         "directive",
         "question"
       ],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -4147,6 +4161,7 @@
       "history_overlay_acts": [
         "question"
       ],
+      "history_preserved_acts": [],
       "learned_weight": 0.0,
       "test": {
         "median_latency_ms": 90,
@@ -4167,6 +4182,170 @@
       "train": {
         "median_latency_ms": 90,
         "p_at_1": 0.604,
+        "top_3_recall": 0.996,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "transition_overlay_act": null,
+      "transition_overlay_margin": 0.0,
+      "transition_protected_acts": [
+        "directive",
+        "question"
+      ],
+      "transition_weight": 1.0,
+      "use_history_ranker": true
+    },
+    "safe_question_act_rhythm_contextual": {
+      "cross_validation": {
+        "fold_count": 5,
+        "folds": [
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.47,
+              "top_3_recall": 0.92,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.54,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 1,
+            "p_at_1_gain": 0.07,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.07,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 2,
+            "p_at_1_gain": 0.1,
+            "segment_regressions": [
+              {
+                "baseline_p_at_1": 0.714,
+                "candidate_p_at_1": 0.696,
+                "name": "inform",
+                "p_at_1_delta": -0.018,
+                "segment": "expected_act"
+              }
+            ],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.42,
+              "top_3_recall": 0.91,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.56,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 3,
+            "p_at_1_gain": 0.14,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.53,
+              "top_3_recall": 0.9,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.64,
+              "top_3_recall": 0.99,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 4,
+            "p_at_1_gain": 0.11,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.09,
+            "validation_turns": 100
+          },
+          {
+            "baseline": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.52,
+              "top_3_recall": 0.96,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "candidate": {
+              "median_latency_ms": 90,
+              "p_at_1": 0.61,
+              "top_3_recall": 1.0,
+              "total_turns": 100,
+              "tts_readiness_rate": 1.0
+            },
+            "fold": 5,
+            "p_at_1_gain": 0.09,
+            "segment_regressions": [],
+            "top_3_recall_gain": 0.04,
+            "validation_turns": 100
+          }
+        ],
+        "mean_p_at_1_gain": 0.102,
+        "mean_top_3_recall_gain": 0.076,
+        "min_p_at_1_gain": 0.07,
+        "min_top_3_recall_gain": 0.04,
+        "segment_regression_count": 1
+      },
+      "dev": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.474,
+        "top_3_recall": 0.972,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "dev_segment_regressions": [],
+      "history_margin": 0.25,
+      "history_overlay_acts": [
+        "question"
+      ],
+      "history_preserved_acts": [
+        "directive"
+      ],
+      "learned_weight": 0.0,
+      "test": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.514,
+        "top_3_recall": 0.97,
+        "total_turns": 500,
+        "tts_readiness_rate": 1.0
+      },
+      "test_segment_regressions": [],
+      "train": {
+        "median_latency_ms": 90,
+        "p_at_1": 0.598,
         "top_3_recall": 0.996,
         "total_turns": 500,
         "tts_readiness_rate": 1.0

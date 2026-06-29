@@ -312,6 +312,7 @@ def build_probability_pack(
     history_ranker: ConversationHistoryRanker | None = None,
     history_margin: float = 0.0,
     history_overlay_acts: tuple[str, ...] = tuple(),
+    history_preserved_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> ConversationProbabilityPack:
     branches = generate_conversation_branches(
@@ -328,6 +329,7 @@ def build_probability_pack(
         history_ranker=history_ranker,
         history_margin=history_margin,
         history_overlay_acts=history_overlay_acts,
+        history_preserved_acts=history_preserved_acts,
         scoring_variant=scoring_variant,
     )
     drafts = tuple(
@@ -365,6 +367,7 @@ def generate_conversation_branches(
     history_ranker: ConversationHistoryRanker | None = None,
     history_margin: float = 0.0,
     history_overlay_acts: tuple[str, ...] = tuple(),
+    history_preserved_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     if top_k <= 0:
@@ -381,6 +384,8 @@ def generate_conversation_branches(
         raise ValueError("transition_protected_acts must be known conversation acts")
     if any(act not in CONVERSATION_ACTS for act in history_overlay_acts):
         raise ValueError("history_overlay_acts must be known conversation acts")
+    if any(act not in CONVERSATION_ACTS for act in history_preserved_acts):
+        raise ValueError("history_preserved_acts must be known conversation acts")
     if scoring_variant == "heuristic" and act_ranker and learned_weight == 1.0:
         scoring_variant = "learned"
     if scoring_variant == "heuristic" and transition_ranker and transition_weight == 1.0:
@@ -416,6 +421,7 @@ def generate_conversation_branches(
             history_scores=history_ranker.score(turn),
             margin_min=history_margin,
             overlay_acts=history_overlay_acts,
+            preserved_acts=history_preserved_acts,
         )
     if transition_ranker and transition_overlay_act:
         scores = transition_overlay_scores(
@@ -503,6 +509,7 @@ def act_history_overlay_scores(
     history_scores: dict[str, float],
     margin_min: float,
     overlay_acts: tuple[str, ...] = tuple(),
+    preserved_acts: tuple[str, ...] = tuple(),
 ) -> dict[str, float]:
     ranked_history = sorted(
         history_scores.items(),
@@ -517,6 +524,9 @@ def act_history_overlay_scores(
     if (top_score - second_score) < margin_min:
         return current_scores
     if overlay_acts and top_act not in overlay_acts:
+        return current_scores
+    current_top_act = max(current_scores, key=current_scores.get)
+    if current_top_act in preserved_acts and top_act != current_top_act:
         return current_scores
 
     scores = dict(current_scores)
@@ -924,6 +934,7 @@ def score_conversation_turns(
     history_ranker: ConversationHistoryRanker | None = None,
     history_margin: float = 0.0,
     history_overlay_acts: tuple[str, ...] = tuple(),
+    history_preserved_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
@@ -942,6 +953,7 @@ def score_conversation_turns(
             history_ranker=history_ranker,
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
+            history_preserved_acts=history_preserved_acts,
             scoring_variant=scoring_variant,
         )
         rank_1 = pack.top_branches[0]
@@ -1008,6 +1020,10 @@ def run_conversation_act_ranker_bakeoff(
             str(act)
             for act in variant.get("history_overlay_acts", ())
         )
+        history_preserved_acts = tuple(
+            str(act)
+            for act in variant.get("history_preserved_acts", ())
+        )
         use_history_ranker = bool(variant.get("use_history_ranker", False))
         train_rows = score_conversation_turns(
             train_turns,
@@ -1023,6 +1039,7 @@ def run_conversation_act_ranker_bakeoff(
             history_ranker=history_ranker if use_history_ranker else None,
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
+            history_preserved_acts=history_preserved_acts,
             scoring_variant=name,
         )
         dev_rows = score_conversation_turns(
@@ -1039,6 +1056,7 @@ def run_conversation_act_ranker_bakeoff(
             history_ranker=history_ranker if use_history_ranker else None,
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
+            history_preserved_acts=history_preserved_acts,
             scoring_variant=name,
         )
         test_rows = score_conversation_turns(
@@ -1055,6 +1073,7 @@ def run_conversation_act_ranker_bakeoff(
             history_ranker=history_ranker if use_history_ranker else None,
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
+            history_preserved_acts=history_preserved_acts,
             scoring_variant=name,
         )
         cross_validation = (
@@ -1076,6 +1095,7 @@ def run_conversation_act_ranker_bakeoff(
             "use_history_ranker": use_history_ranker,
             "history_margin": history_margin,
             "history_overlay_acts": history_overlay_acts,
+            "history_preserved_acts": history_preserved_acts,
             "train": summarize_conversation_rows(train_rows, train_turns),
             "dev": summarize_conversation_rows(dev_rows, dev_turns),
             "test": summarize_conversation_rows(test_rows, test_turns),
@@ -1106,6 +1126,10 @@ def run_conversation_act_ranker_bakeoff(
         str(act)
         for act in selected.get("history_overlay_acts", ())
     )
+    selected_history_preserved_acts = tuple(
+        str(act)
+        for act in selected.get("history_preserved_acts", ())
+    )
     selected_train_rows = score_conversation_turns(
         train_turns,
         top_k=top_k,
@@ -1120,6 +1144,7 @@ def run_conversation_act_ranker_bakeoff(
         history_ranker=history_ranker if selected_use_history_ranker else None,
         history_margin=selected_history_margin,
         history_overlay_acts=selected_history_overlay_acts,
+        history_preserved_acts=selected_history_preserved_acts,
         scoring_variant=selected_name,
     )
     selected_dev_rows = score_conversation_turns(
@@ -1136,6 +1161,7 @@ def run_conversation_act_ranker_bakeoff(
         history_ranker=history_ranker if selected_use_history_ranker else None,
         history_margin=selected_history_margin,
         history_overlay_acts=selected_history_overlay_acts,
+        history_preserved_acts=selected_history_preserved_acts,
         scoring_variant=selected_name,
     )
     selected_test_rows = score_conversation_turns(
@@ -1152,6 +1178,7 @@ def run_conversation_act_ranker_bakeoff(
         history_ranker=history_ranker if selected_use_history_ranker else None,
         history_margin=selected_history_margin,
         history_overlay_acts=selected_history_overlay_acts,
+        history_preserved_acts=selected_history_preserved_acts,
         scoring_variant=selected_name,
     )
     train_guided = summarize_conversation_rows(selected_train_rows, train_turns)
@@ -1179,6 +1206,7 @@ def run_conversation_act_ranker_bakeoff(
             "use_history_ranker": selected_use_history_ranker,
             "history_margin": selected_history_margin,
             "history_overlay_acts": selected_history_overlay_acts,
+            "history_preserved_acts": selected_history_preserved_acts,
             "cross_validation": selected["cross_validation"],
             "train": train_guided,
             "dev": dev_guided,
@@ -1278,6 +1306,16 @@ def conversation_bakeoff_variants() -> tuple[dict[str, object], ...]:
             "use_history_ranker": True,
             "history_margin": 0.25,
             "history_overlay_acts": ("question",),
+        },
+        {
+            "name": "safe_question_act_rhythm_contextual",
+            "learned_weight": 0.0,
+            "transition_weight": 1.0,
+            "transition_protected_acts": ("directive", "question"),
+            "use_history_ranker": True,
+            "history_margin": 0.25,
+            "history_overlay_acts": ("question",),
+            "history_preserved_acts": ("directive",),
         },
         {
             "name": "directive_act_rhythm_contextual",
@@ -1405,6 +1443,10 @@ def score_conversation_variant_fold(
         history_overlay_acts=tuple(
             str(act)
             for act in variant.get("history_overlay_acts", ())
+        ),
+        history_preserved_acts=tuple(
+            str(act)
+            for act in variant.get("history_preserved_acts", ())
         ),
         scoring_variant=str(variant["name"]),
     )

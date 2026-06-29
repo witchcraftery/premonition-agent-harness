@@ -392,3 +392,21 @@ Verification:
 - Segment signal: held-out `directive` top-1 improved from `0.053` to `0.116`, while held-out `question` top-1 stayed at `0.047` and question top-3 recall rose to `1.0`.
 - Diagnostic higher-score variants remain blocked: `protected_act_rhythm_contextual` reached test `p_at_1=0.514` and `question_act_rhythm_contextual` reached `0.512`, but each had `1` internal segment regression.
 - Result: the lever produced a small stable promoted gain and identified the next focus as question-specialist stability.
+
+## Safe Question Specialist Stabilization
+
+- [x] Add a question-rhythm specialist that preserves current `directive` reads.
+- [x] Prove the specialist can boost question rhythm without reducing directive accuracy.
+- [x] Rerun the DailyDialog bake-off and compare against `directive_act_rhythm_contextual`.
+- [x] Report whether the safe question specialist promotes, stays diagnostic, or exposes the next weak segment.
+- [x] Document the next lever based on benchmark evidence.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py -v` failed because `history_preserved_acts` and `safe_question_act_rhythm_contextual` did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 29 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_sample.jsonl --conversation-dev-input data/dailydialog_validation_sample.jsonl --conversation-test-input data/dailydialog_test_sample.jsonl --conversation-bakeoff-report runs/dailydialog_act_ranker_bakeoff.json`: completed.
+- Selected variant stayed `directive_act_rhythm_contextual`; validation `p_at_1=0.466`, held-out test `p_at_1=0.504`, held-out top-3 recall `0.970`, and cross-validation segment regressions `0`.
+- Safe question specialist result: held-out test `p_at_1=0.514`, no held-out act segment regressions, and no directive regression, but `1` internal cross-validation `inform` segment regression.
+- Margin/preservation sweep found stable question configurations only at `p_at_1=0.502`, below the current promoted `0.504`, so the safe question specialist remains diagnostic.
+- Result: the lever removed the obvious directive failure but exposed `inform` stability as the blocker. Next focus is question-specific evidence/features, not another guard.

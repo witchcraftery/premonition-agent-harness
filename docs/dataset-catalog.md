@@ -57,8 +57,8 @@ repeatable benchmark.
 - Cross-validation signal: the selected directive specialist has mean internal `p_at_1` gain `0.104`, minimum fold gain `0.090`, and `0` segment regressions.
 - Raw transition signal: full contextual transition reached test `p_at_1=0.534` and `top_3_recall=0.970`, but regressed `directive` and `question` top-1 accuracy to `0.0`, so it remains diagnostic rather than promoted behavior.
 - Diagnostic signal: `act_rhythm_contextual_strict` reached held-out test `p_at_1=0.508`, cross-validation mean gain `0.112`, and minimum fold gain `0.100`, but it showed `1` internal act-segment regression, so it remains diagnostic rather than promoted behavior.
-- Specialist signal: the combined protected-act specialist reached held-out test `p_at_1=0.514`, and the question-only specialist reached `0.512`, but both showed `1` internal cross-validation segment regression. The directive-only specialist is promoted because it is smaller but stable.
-- Limitation: first 500 turns from each split; the next lever is stabilizing the question specialist without reducing directive accuracy.
+- Specialist signal: the combined protected-act specialist reached held-out test `p_at_1=0.514`, and the question-only specialist reached `0.512`, but both showed `1` internal cross-validation segment regression. A safer question-only variant that preserves current `directive` reads reached held-out test `p_at_1=0.514` with no held-out act segment regressions, but it still regressed `inform` in one internal fold, so it remains diagnostic.
+- Limitation: first 500 turns from each split; the next lever is adding question-specific evidence that improves question top-1 without regressing `inform` or `directive`.
 
 ## Human Conversation Candidates
 

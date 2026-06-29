@@ -276,7 +276,11 @@ showed `1` internal cross-validation segment regression. The directive-only
 specialist is smaller but stable: it improved held-out `directive` top-1 from
 `0.053` to `0.116`, kept question top-1 flat while raising question top-3
 recall to `1.0`, and passed the zero-regression cross-validation gate. The next
-lever is targeted question-specialist stability, not broad rhythm promotion.
+question pass added a safer question-only variant that preserves current
+`directive` reads. It reached held-out test `p_at_1=0.514` with no held-out act
+segment regressions, but it still showed `1` internal `inform` segment
+regression during cross-validation, so it remains diagnostic. The next lever is
+better question evidence, not another broad rhythm promotion.
 
 ## Replay Data Format
 
@@ -304,10 +308,10 @@ label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
 For conversational voice-agent foresight, the next meaningful step is to import
-larger and more representative DailyDialog slices, then make the question
-specialist stable under the same cross-validation gate. After that, add
-EmpatheticDialogues for emotional readiness and Taskmaster or SpokenWOZ for
-practical spoken-assistant flows.
+larger and more representative DailyDialog slices, then add question-specific
+features or examples that distinguish genuine follow-up questions from
+informative continuations. After that, add EmpatheticDialogues for emotional
+readiness and Taskmaster or SpokenWOZ for practical spoken-assistant flows.
 
 Useful expansion points:
 
@@ -317,7 +321,7 @@ Useful expansion points:
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 - Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
-- Stabilize the question specialist without reducing directive accuracy, then rerun the same cross-fold promotion gate.
+- Add question-specific evidence that improves top-1 question accuracy without regressing `inform` or `directive`.
 
 ## Benchmark Loop
 
