@@ -17,9 +17,11 @@ from foresight_harness.conversation_probability import (
     run_conversation_act_ranker_bakeoff,
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
+    score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
     train_conversation_act_ranker,
     train_conversation_history_ranker,
+    train_conversation_question_evidence_ranker,
     train_conversation_transition_ranker,
     write_conversation_turns,
 )
@@ -486,6 +488,88 @@ def test_question_specialist_preserves_current_directive_read():
     assert branches[0]["act"] == "directive"
 
 
+def test_question_evidence_ranker_promotes_question_language_beyond_history():
+    train_turns = (
+        conversation_turn(
+            "train-question-1",
+            "The curiouscue detail is unresolved.",
+            "question",
+            observed_acts=("directive",),
+        ),
+        conversation_turn(
+            "train-question-2",
+            "That curiouscue plan still feels unclear.",
+            "question",
+            observed_acts=("directive",),
+        ),
+        conversation_turn(
+            "train-inform-1",
+            "Anything else?",
+            "inform",
+            observed_acts=("directive",),
+        ),
+        conversation_turn(
+            "train-inform-2",
+            "Where next?",
+            "inform",
+            observed_acts=("directive",),
+        ),
+    )
+    transition_ranker = train_conversation_transition_ranker(train_turns)
+    question_evidence_ranker = train_conversation_question_evidence_ranker(train_turns)
+    turn = conversation_turn(
+        "test-question-evidence",
+        "The curiouscue result is still unclear.",
+        "question",
+        observed_acts=("directive",),
+    )
+
+    without_evidence = generate_conversation_branches(
+        turn,
+        top_k=3,
+        transition_ranker=transition_ranker,
+        transition_weight=1.0,
+    )
+    with_evidence = generate_conversation_branches(
+        turn,
+        top_k=3,
+        transition_ranker=transition_ranker,
+        transition_weight=1.0,
+        question_evidence_ranker=question_evidence_ranker,
+        question_evidence_margin=0.0,
+        scoring_variant="question_evidence_contextual",
+    )
+
+    assert without_evidence[0]["act"] == "inform"
+    assert with_evidence[0]["act"] == "question"
+    assert with_evidence[0]["scoring_variant"] == "question_evidence_contextual"
+
+
+def test_question_evidence_overlay_preserves_current_directive_read():
+    train_turns = (
+        conversation_turn("train-question-1", "curiouscue unresolved", "question"),
+        conversation_turn("train-question-2", "curiouscue unclear", "question"),
+        conversation_turn("train-inform", "finished report", "inform"),
+    )
+    question_evidence_ranker = train_conversation_question_evidence_ranker(train_turns)
+    turn = conversation_turn(
+        "test-directive-preserved",
+        "What should we do about curiouscue?",
+        "directive",
+    )
+
+    branches = generate_conversation_branches(
+        turn,
+        top_k=3,
+        question_evidence_ranker=question_evidence_ranker,
+        question_evidence_margin=0.0,
+        question_evidence_preserved_acts=("directive",),
+        scoring_variant="safe_question_evidence",
+    )
+
+    assert branches[0]["act"] == "directive"
+
+
 def test_bakeoff_variants_include_protected_act_specialists():
     variants = {
         str(variant["name"]): variant
@@ -508,6 +592,61 @@ def test_bakeoff_variants_include_protected_act_specialists():
     assert variants["safe_question_act_rhythm_contextual"]["history_preserved_acts"] == (
         "directive",
     )
+    assert variants["safe_question_evidence_act_rhythm_contextual"][
+        "use_question_evidence_ranker"
+    ] is True
+    assert variants["safe_question_evidence_act_rhythm_contextual"][
+        "question_evidence_preserved_acts"
+    ] == ("directive",)
+    assert variants["deep_protected_act_rhythm_contextual"]["history_window_size"] == 8
+
+
+def test_variant_fold_scoring_uses_deeper_history_window():
+    turns = (
+        conversation_turn(
+            "validation-question",
+            "The plain status changed.",
+            "question",
+            observed_acts=("commissive", "inform", "question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "train-question",
+            "The plain status changed.",
+            "question",
+            observed_acts=("commissive", "inform", "question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "validation-inform",
+            "The plain status changed.",
+            "inform",
+            observed_acts=("directive", "inform", "question", "inform", "directive"),
+        ),
+        conversation_turn(
+            "train-inform",
+            "The plain status changed.",
+            "inform",
+            observed_acts=("directive", "inform", "question", "inform", "directive"),
+        ),
+    )
+    variant = {
+        "name": "deep_question_window",
+        "learned_weight": 0.0,
+        "transition_weight": 0.0,
+        "use_history_ranker": True,
+        "history_window_size": 5,
+        "history_margin": 0.0,
+        "history_overlay_acts": ("question",),
+    }
+
+    fold = score_conversation_variant_fold(
+        turns=turns,
+        variant=variant,
+        fold_index=0,
+        fold_count=2,
+        top_k=3,
+    )
+
+    assert fold["candidate"]["p_at_1"] > fold["baseline"]["p_at_1"]
 
 
 def test_conversation_act_ranker_bakeoff_includes_contextual_transition_variant():

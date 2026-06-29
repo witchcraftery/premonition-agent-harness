@@ -465,3 +465,23 @@ Verification:
 - Segment result: held-out `question` top-1 improved from `0.026` to `0.134`, and held-out `directive` top-1 stayed at `0.077`, with no held-out act-segment regressions.
 - Diagnostic note: `protected_act_rhythm_contextual` reached a slightly higher held-out `p_at_1=0.542`, but had tiny `directive` regressions on dev, held-out test, and internal folds, so it was not promoted.
 - Result: scaling to full test depth improved the selected safe specialist score, but the broader protected specialist started to plateau against the directive guard. Next lever is adding question-specific evidence beyond act history.
+
+## Question Evidence Lever
+
+- [x] Add a learned question-evidence ranker that uses language cues beyond act-history rhythm.
+- [x] Add a safe question-evidence overlay that can promote likely questions while preserving current directive reads.
+- [x] Include question-evidence variants in the train/dev/test bake-off and cross-validation path.
+- [x] Add protected deep-rhythm variants after the evidence distribution showed raw language cues were weak on DailyDialog.
+- [x] Rerun the full-depth 6,740 DailyDialog benchmark and compare selected variant, question segment, directive segment, and regressions.
+- [x] Update README/catalog/tracker with whether the lever produced a real held-out improvement.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_question_evidence_ranker_promotes_question_language_beyond_history tests/test_conversation_probability.py::test_question_evidence_overlay_preserves_current_directive_read tests/test_conversation_probability.py::test_bakeoff_variants_include_protected_act_specialists -v` failed because `train_conversation_question_evidence_ranker` and the safe evidence variant did not exist.
+- Second red check: `python3 -m pytest tests/test_conversation_probability.py::test_bakeoff_variants_include_protected_act_specialists tests/test_conversation_probability.py::test_variant_fold_scoring_uses_deeper_history_window -v` failed because `deep_protected_act_rhythm_contextual` and variant-specific `history_window_size` support did not exist.
+- `python3 -m pytest tests/test_conversation_probability.py -v`: 34 passed.
+- `foresight-replay --conversation-train-input data/dailydialog_train_6740_sample.jsonl --conversation-dev-input data/dailydialog_validation_6740_sample.jsonl --conversation-test-input data/dailydialog_test_6740_sample.jsonl --conversation-bakeoff-report runs/dailydialog_6740_act_ranker_bakeoff.json`: completed.
+- Selected full-depth variant: `deep_protected_act_rhythm_contextual`; held-out test `p_at_1` improved from `0.408` to `0.545`, held-out top-3 recall improved from `0.881` to `0.982`, cross-validation mean gain `0.105`, minimum fold gain `0.089`, and `0` cross-fold segment regressions.
+- Segment result: held-out `question` top-1 improved from `0.026` to `0.163`, held-out `directive` top-1 improved from `0.077` to `0.090`, and no held-out act segment regressed.
+- Diagnostic note: question-evidence variants are implemented and safe at conservative margins, but did not beat the protected rhythm baseline on DailyDialog. The real lift came from extending protected dialogue rhythm to an 8-act history window.
+- Result: the harness now supports language-evidence overlays and variant-specific history depth. DailyDialog suggests the next dataset should test whether protected sequence memory generalizes to emotional or task-oriented spoken conversations.

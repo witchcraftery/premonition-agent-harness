@@ -375,16 +375,17 @@ foresight-replay \
   --conversation-bakeoff-report runs/dailydialog_6740_act_ranker_bakeoff.json
 ```
 
-On the 6740/6740/6740 samples, the safe question specialist becomes the stable
-promotion again. The selected variant is `safe_question_act_rhythm_contextual`:
-held-out test `p_at_1` improves from `0.408` to `0.541`, held-out
-`top_3_recall` improves from `0.881` to `0.982`, cross-validation mean gain is
-`0.104`, minimum fold gain is `0.083`, and both cross-fold and held-out
-act-segment regressions stay at `0`. The broader protected specialist reaches a
-slightly higher held-out `p_at_1=0.542`, but it shows tiny `directive`
-regressions on dev, held-out test, and internal folds, so it remains diagnostic.
-Held-out `question` top-1 improves from `0.026` to `0.134`; held-out
-`directive` top-1 is preserved at `0.077`.
+On the 6740/6740/6740 samples, the question-evidence lever taught an important
+negative lesson: raw language evidence for "the next move is a question" is not
+separable enough in DailyDialog to promote safely. Conservative evidence
+variants stay diagnostic. The real promoted lift came from a deeper protected
+dialogue-rhythm window. The selected variant is now
+`deep_protected_act_rhythm_contextual`: held-out test `p_at_1` improves from
+`0.408` to `0.545`, held-out `top_3_recall` improves from `0.881` to `0.982`,
+cross-validation mean gain is `0.105`, minimum fold gain is `0.089`, and both
+cross-fold and held-out act-segment regressions stay at `0`. Held-out
+`question` top-1 improves from `0.026` to `0.163`; held-out `directive` top-1
+improves from `0.077` to `0.090`.
 
 ## Replay Data Format
 
@@ -411,10 +412,11 @@ meaningful step is to replay 300-500 real or tau-bench-style support turns,
 label branch-match grades, and compare the harness against the baseline variants
 using the same report schema.
 
-For conversational voice-agent foresight, the next meaningful step is to add
-question-specific features that improve top-1 without relying only on act
-history. After that, add EmpatheticDialogues for emotional readiness and
-Taskmaster or SpokenWOZ for practical spoken-assistant flows.
+For conversational voice-agent foresight, the next meaningful step is to move
+beyond DailyDialog by adding EmpatheticDialogues for emotional readiness and
+Taskmaster or SpokenWOZ for practical spoken-assistant flows. The DailyDialog
+result suggests deeper protected sequence memory helps more than generic
+question-language cues on this dataset.
 
 Useful expansion points:
 
@@ -424,7 +426,7 @@ Useful expansion points:
 - Add a real semantic scorer after the deterministic benchmark is stable.
 - Add perceived-latency metrics for TTS prewarming once a voice runtime is attached.
 - Add segment-aware promotion gates for conversational acts, so aggregate gains do not hide brittle regressions.
-- Add question-specific evidence that improves top-1 question accuracy without relying only on act history.
+- Add dataset-specific evidence channels only when they beat the protected rhythm baseline on held-out and cross-fold segment checks.
 
 ## Benchmark Loop
 

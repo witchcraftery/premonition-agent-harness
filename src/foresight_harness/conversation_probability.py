@@ -165,6 +165,30 @@ class ConversationHistoryRanker:
 
 
 @dataclass(frozen=True)
+class ConversationQuestionEvidenceRanker:
+    feature_log_odds: dict[str, float]
+    question_turn_count: int
+    non_question_turn_count: int
+
+    def score(self, turn: ConversationTurn) -> float:
+        evidence = sorted(
+            (
+                self.feature_log_odds.get(feature, 0.0)
+                for feature in conversation_features(turn)
+            ),
+            reverse=True,
+        )
+        return round(sum(score for score in evidence[:4] if score > 0), 3)
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "feature_count": len(self.feature_log_odds),
+            "question_turn_count": self.question_turn_count,
+            "non_question_turn_count": self.non_question_turn_count,
+        }
+
+
+@dataclass(frozen=True)
 class ConversationProbabilityPack:
     pack_id: str
     turn_id: str
@@ -314,6 +338,9 @@ def build_probability_pack(
     history_margin: float = 0.0,
     history_overlay_acts: tuple[str, ...] = tuple(),
     history_preserved_acts: tuple[str, ...] = tuple(),
+    question_evidence_ranker: ConversationQuestionEvidenceRanker | None = None,
+    question_evidence_margin: float = 0.0,
+    question_evidence_preserved_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> ConversationProbabilityPack:
     branches = generate_conversation_branches(
@@ -331,6 +358,9 @@ def build_probability_pack(
         history_margin=history_margin,
         history_overlay_acts=history_overlay_acts,
         history_preserved_acts=history_preserved_acts,
+        question_evidence_ranker=question_evidence_ranker,
+        question_evidence_margin=question_evidence_margin,
+        question_evidence_preserved_acts=question_evidence_preserved_acts,
         scoring_variant=scoring_variant,
     )
     drafts = tuple(
@@ -369,6 +399,9 @@ def generate_conversation_branches(
     history_margin: float = 0.0,
     history_overlay_acts: tuple[str, ...] = tuple(),
     history_preserved_acts: tuple[str, ...] = tuple(),
+    question_evidence_ranker: ConversationQuestionEvidenceRanker | None = None,
+    question_evidence_margin: float = 0.0,
+    question_evidence_preserved_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     if top_k <= 0:
@@ -381,12 +414,16 @@ def generate_conversation_branches(
         raise ValueError("transition_overlay_margin must be non-negative")
     if history_margin < 0:
         raise ValueError("history_margin must be non-negative")
+    if question_evidence_margin < 0:
+        raise ValueError("question_evidence_margin must be non-negative")
     if any(act not in CONVERSATION_ACTS for act in transition_protected_acts):
         raise ValueError("transition_protected_acts must be known conversation acts")
     if any(act not in CONVERSATION_ACTS for act in history_overlay_acts):
         raise ValueError("history_overlay_acts must be known conversation acts")
     if any(act not in CONVERSATION_ACTS for act in history_preserved_acts):
         raise ValueError("history_preserved_acts must be known conversation acts")
+    if any(act not in CONVERSATION_ACTS for act in question_evidence_preserved_acts):
+        raise ValueError("question_evidence_preserved_acts must be known conversation acts")
     if scoring_variant == "heuristic" and act_ranker and learned_weight == 1.0:
         scoring_variant = "learned"
     if scoring_variant == "heuristic" and transition_ranker and transition_weight == 1.0:
@@ -423,6 +460,13 @@ def generate_conversation_branches(
             margin_min=history_margin,
             overlay_acts=history_overlay_acts,
             preserved_acts=history_preserved_acts,
+        )
+    if question_evidence_ranker:
+        scores = question_evidence_overlay_scores(
+            current_scores=scores,
+            question_evidence_score=question_evidence_ranker.score(turn),
+            margin_min=question_evidence_margin,
+            preserved_acts=question_evidence_preserved_acts,
         )
     if transition_ranker and transition_overlay_act:
         scores = transition_overlay_scores(
@@ -532,6 +576,23 @@ def act_history_overlay_scores(
 
     scores = dict(current_scores)
     scores[top_act] = max(scores.values()) + 0.002
+    return scores
+
+
+def question_evidence_overlay_scores(
+    current_scores: dict[str, float],
+    question_evidence_score: float,
+    margin_min: float,
+    preserved_acts: tuple[str, ...] = tuple(),
+) -> dict[str, float]:
+    if question_evidence_score < margin_min:
+        return current_scores
+    current_top_act = max(current_scores, key=current_scores.get)
+    if current_top_act in preserved_acts and current_top_act != "question":
+        return current_scores
+
+    scores = dict(current_scores)
+    scores["question"] = max(scores.values()) + 0.003
     return scores
 
 
@@ -664,6 +725,40 @@ def train_conversation_history_ranker(
             for history, counts in history_counts.items()
         },
         global_scores=normalize_counts(global_counts),
+    )
+
+
+def train_conversation_question_evidence_ranker(
+    turns: tuple[ConversationTurn, ...],
+) -> ConversationQuestionEvidenceRanker:
+    if not turns:
+        raise ValueError("training turns are required")
+
+    feature_counts: dict[str, dict[str, int]] = {}
+    question_turn_count = 0
+    non_question_turn_count = 0
+    for turn in turns:
+        is_question = turn.expected_act == "question"
+        if is_question:
+            question_turn_count += 1
+        else:
+            non_question_turn_count += 1
+        bucket = "question" if is_question else "other"
+        for feature in conversation_features(turn):
+            feature_counts.setdefault(feature, {"question": 0, "other": 0})
+            feature_counts[feature][bucket] += 1
+
+    question_denominator = question_turn_count + 2
+    other_denominator = non_question_turn_count + 2
+    feature_log_odds = {
+        feature: math.log((counts["question"] + 1) / question_denominator)
+        - math.log((counts["other"] + 1) / other_denominator)
+        for feature, counts in feature_counts.items()
+    }
+    return ConversationQuestionEvidenceRanker(
+        feature_log_odds=feature_log_odds,
+        question_turn_count=question_turn_count,
+        non_question_turn_count=non_question_turn_count,
     )
 
 
@@ -936,6 +1031,9 @@ def score_conversation_turns(
     history_margin: float = 0.0,
     history_overlay_acts: tuple[str, ...] = tuple(),
     history_preserved_acts: tuple[str, ...] = tuple(),
+    question_evidence_ranker: ConversationQuestionEvidenceRanker | None = None,
+    question_evidence_margin: float = 0.0,
+    question_evidence_preserved_acts: tuple[str, ...] = tuple(),
     scoring_variant: str = "heuristic",
 ) -> tuple[dict[str, object], ...]:
     rows: list[dict[str, object]] = []
@@ -955,6 +1053,9 @@ def score_conversation_turns(
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
             history_preserved_acts=history_preserved_acts,
+            question_evidence_ranker=question_evidence_ranker,
+            question_evidence_margin=question_evidence_margin,
+            question_evidence_preserved_acts=question_evidence_preserved_acts,
             scoring_variant=scoring_variant,
         )
         rank_1 = pack.top_branches[0]
@@ -984,7 +1085,19 @@ def run_conversation_act_ranker_bakeoff(
 
     ranker = train_conversation_act_ranker(train_turns)
     transition_ranker = train_conversation_transition_ranker(train_turns)
-    history_ranker = train_conversation_history_ranker(train_turns, window_size=4)
+    history_rankers: dict[int, ConversationHistoryRanker] = {}
+
+    def history_ranker_for(window_size: int) -> ConversationHistoryRanker:
+        if window_size <= 0:
+            raise ValueError("history_window_size must be positive")
+        if window_size not in history_rankers:
+            history_rankers[window_size] = train_conversation_history_ranker(
+                train_turns,
+                window_size=window_size,
+            )
+        return history_rankers[window_size]
+
+    question_evidence_ranker = train_conversation_question_evidence_ranker(train_turns)
     empty_guidance = ConversationGuidance(act_keywords={})
     train_baseline_rows = score_conversation_turns(
         train_turns,
@@ -1025,6 +1138,16 @@ def run_conversation_act_ranker_bakeoff(
             str(act)
             for act in variant.get("history_preserved_acts", ())
         )
+        history_window_size = int(variant.get("history_window_size", 4))
+        variant_history_ranker = history_ranker_for(history_window_size)
+        use_question_evidence_ranker = bool(
+            variant.get("use_question_evidence_ranker", False)
+        )
+        question_evidence_margin = float(variant.get("question_evidence_margin", 0.0))
+        question_evidence_preserved_acts = tuple(
+            str(act)
+            for act in variant.get("question_evidence_preserved_acts", ())
+        )
         use_history_ranker = bool(variant.get("use_history_ranker", False))
         train_rows = score_conversation_turns(
             train_turns,
@@ -1037,10 +1160,15 @@ def run_conversation_act_ranker_bakeoff(
             transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
             transition_overlay_margin=transition_overlay_margin,
             transition_protected_acts=transition_protected_acts,
-            history_ranker=history_ranker if use_history_ranker else None,
+            history_ranker=variant_history_ranker if use_history_ranker else None,
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
             history_preserved_acts=history_preserved_acts,
+            question_evidence_ranker=(
+                question_evidence_ranker if use_question_evidence_ranker else None
+            ),
+            question_evidence_margin=question_evidence_margin,
+            question_evidence_preserved_acts=question_evidence_preserved_acts,
             scoring_variant=name,
         )
         dev_rows = score_conversation_turns(
@@ -1054,10 +1182,15 @@ def run_conversation_act_ranker_bakeoff(
             transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
             transition_overlay_margin=transition_overlay_margin,
             transition_protected_acts=transition_protected_acts,
-            history_ranker=history_ranker if use_history_ranker else None,
+            history_ranker=variant_history_ranker if use_history_ranker else None,
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
             history_preserved_acts=history_preserved_acts,
+            question_evidence_ranker=(
+                question_evidence_ranker if use_question_evidence_ranker else None
+            ),
+            question_evidence_margin=question_evidence_margin,
+            question_evidence_preserved_acts=question_evidence_preserved_acts,
             scoring_variant=name,
         )
         test_rows = score_conversation_turns(
@@ -1071,10 +1204,15 @@ def run_conversation_act_ranker_bakeoff(
             transition_overlay_act=str(transition_overlay_act) if transition_overlay_act else None,
             transition_overlay_margin=transition_overlay_margin,
             transition_protected_acts=transition_protected_acts,
-            history_ranker=history_ranker if use_history_ranker else None,
+            history_ranker=variant_history_ranker if use_history_ranker else None,
             history_margin=history_margin,
             history_overlay_acts=history_overlay_acts,
             history_preserved_acts=history_preserved_acts,
+            question_evidence_ranker=(
+                question_evidence_ranker if use_question_evidence_ranker else None
+            ),
+            question_evidence_margin=question_evidence_margin,
+            question_evidence_preserved_acts=question_evidence_preserved_acts,
             scoring_variant=name,
         )
         cross_validation = (
@@ -1094,9 +1232,13 @@ def run_conversation_act_ranker_bakeoff(
             "transition_overlay_margin": transition_overlay_margin,
             "transition_protected_acts": transition_protected_acts,
             "use_history_ranker": use_history_ranker,
+            "history_window_size": history_window_size,
             "history_margin": history_margin,
             "history_overlay_acts": history_overlay_acts,
             "history_preserved_acts": history_preserved_acts,
+            "use_question_evidence_ranker": use_question_evidence_ranker,
+            "question_evidence_margin": question_evidence_margin,
+            "question_evidence_preserved_acts": question_evidence_preserved_acts,
             "train": summarize_conversation_rows(train_rows, train_turns),
             "dev": summarize_conversation_rows(dev_rows, dev_turns),
             "test": summarize_conversation_rows(test_rows, test_turns),
@@ -1131,6 +1273,18 @@ def run_conversation_act_ranker_bakeoff(
         str(act)
         for act in selected.get("history_preserved_acts", ())
     )
+    selected_history_window_size = int(selected.get("history_window_size", 4))
+    selected_history_ranker = history_ranker_for(selected_history_window_size)
+    selected_use_question_evidence_ranker = bool(
+        selected.get("use_question_evidence_ranker", False)
+    )
+    selected_question_evidence_margin = float(
+        selected.get("question_evidence_margin", 0.0)
+    )
+    selected_question_evidence_preserved_acts = tuple(
+        str(act)
+        for act in selected.get("question_evidence_preserved_acts", ())
+    )
     selected_train_rows = score_conversation_turns(
         train_turns,
         top_k=top_k,
@@ -1142,10 +1296,15 @@ def run_conversation_act_ranker_bakeoff(
         transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
         transition_overlay_margin=selected_overlay_margin,
         transition_protected_acts=selected_protected_acts,
-        history_ranker=history_ranker if selected_use_history_ranker else None,
+        history_ranker=selected_history_ranker if selected_use_history_ranker else None,
         history_margin=selected_history_margin,
         history_overlay_acts=selected_history_overlay_acts,
         history_preserved_acts=selected_history_preserved_acts,
+        question_evidence_ranker=(
+            question_evidence_ranker if selected_use_question_evidence_ranker else None
+        ),
+        question_evidence_margin=selected_question_evidence_margin,
+        question_evidence_preserved_acts=selected_question_evidence_preserved_acts,
         scoring_variant=selected_name,
     )
     selected_dev_rows = score_conversation_turns(
@@ -1159,10 +1318,15 @@ def run_conversation_act_ranker_bakeoff(
         transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
         transition_overlay_margin=selected_overlay_margin,
         transition_protected_acts=selected_protected_acts,
-        history_ranker=history_ranker if selected_use_history_ranker else None,
+        history_ranker=selected_history_ranker if selected_use_history_ranker else None,
         history_margin=selected_history_margin,
         history_overlay_acts=selected_history_overlay_acts,
         history_preserved_acts=selected_history_preserved_acts,
+        question_evidence_ranker=(
+            question_evidence_ranker if selected_use_question_evidence_ranker else None
+        ),
+        question_evidence_margin=selected_question_evidence_margin,
+        question_evidence_preserved_acts=selected_question_evidence_preserved_acts,
         scoring_variant=selected_name,
     )
     selected_test_rows = score_conversation_turns(
@@ -1176,10 +1340,15 @@ def run_conversation_act_ranker_bakeoff(
         transition_overlay_act=str(selected_overlay_act) if selected_overlay_act else None,
         transition_overlay_margin=selected_overlay_margin,
         transition_protected_acts=selected_protected_acts,
-        history_ranker=history_ranker if selected_use_history_ranker else None,
+        history_ranker=selected_history_ranker if selected_use_history_ranker else None,
         history_margin=selected_history_margin,
         history_overlay_acts=selected_history_overlay_acts,
         history_preserved_acts=selected_history_preserved_acts,
+        question_evidence_ranker=(
+            question_evidence_ranker if selected_use_question_evidence_ranker else None
+        ),
+        question_evidence_margin=selected_question_evidence_margin,
+        question_evidence_preserved_acts=selected_question_evidence_preserved_acts,
         scoring_variant=selected_name,
     )
     train_guided = summarize_conversation_rows(selected_train_rows, train_turns)
@@ -1195,7 +1364,12 @@ def run_conversation_act_ranker_bakeoff(
         },
         "ranker": ranker.to_dict(),
         "transition_ranker": transition_ranker.to_dict(),
-        "history_ranker": history_ranker.to_dict(),
+        "history_ranker": history_ranker_for(4).to_dict(),
+        "history_rankers": {
+            str(window_size): ranker.to_dict()
+            for window_size, ranker in sorted(history_rankers.items())
+        },
+        "question_evidence_ranker": question_evidence_ranker.to_dict(),
         "variants": variants,
         "selected_variant": {
             "name": selected_name,
@@ -1205,9 +1379,13 @@ def run_conversation_act_ranker_bakeoff(
             "transition_overlay_margin": selected_overlay_margin,
             "transition_protected_acts": selected_protected_acts,
             "use_history_ranker": selected_use_history_ranker,
+            "history_window_size": selected_history_window_size,
             "history_margin": selected_history_margin,
             "history_overlay_acts": selected_history_overlay_acts,
             "history_preserved_acts": selected_history_preserved_acts,
+            "use_question_evidence_ranker": selected_use_question_evidence_ranker,
+            "question_evidence_margin": selected_question_evidence_margin,
+            "question_evidence_preserved_acts": selected_question_evidence_preserved_acts,
             "cross_validation": selected["cross_validation"],
             "train": train_guided,
             "dev": dev_guided,
@@ -1319,6 +1497,41 @@ def conversation_bakeoff_variants() -> tuple[dict[str, object], ...]:
             "history_preserved_acts": ("directive",),
         },
         {
+            "name": "question_evidence_act_rhythm_contextual",
+            "learned_weight": 0.0,
+            "transition_weight": 1.0,
+            "transition_protected_acts": ("directive", "question"),
+            "use_history_ranker": True,
+            "history_margin": 0.25,
+            "history_overlay_acts": ("question",),
+            "use_question_evidence_ranker": True,
+            "question_evidence_margin": 4.0,
+        },
+        {
+            "name": "safe_question_evidence_act_rhythm_contextual",
+            "learned_weight": 0.0,
+            "transition_weight": 1.0,
+            "transition_protected_acts": ("directive", "question"),
+            "use_history_ranker": True,
+            "history_margin": 0.25,
+            "history_overlay_acts": ("question",),
+            "history_preserved_acts": ("directive",),
+            "use_question_evidence_ranker": True,
+            "question_evidence_margin": 4.0,
+            "question_evidence_preserved_acts": ("directive",),
+        },
+        {
+            "name": "deep_protected_act_rhythm_contextual",
+            "learned_weight": 0.0,
+            "transition_weight": 1.0,
+            "transition_protected_acts": ("directive", "question"),
+            "use_history_ranker": True,
+            "history_window_size": 8,
+            "history_margin": 0.25,
+            "history_overlay_acts": ("directive", "question"),
+            "history_preserved_acts": ("directive",),
+        },
+        {
             "name": "directive_act_rhythm_contextual",
             "learned_weight": 0.0,
             "transition_weight": 1.0,
@@ -1409,7 +1622,11 @@ def score_conversation_variant_fold(
     )
     ranker = train_conversation_act_ranker(train_turns)
     transition_ranker = train_conversation_transition_ranker(train_turns)
-    history_ranker = train_conversation_history_ranker(train_turns, window_size=4)
+    history_ranker = train_conversation_history_ranker(
+        train_turns,
+        window_size=int(variant.get("history_window_size", 4)),
+    )
+    question_evidence_ranker = train_conversation_question_evidence_ranker(train_turns)
     empty_guidance = ConversationGuidance(act_keywords={})
 
     baseline_rows = score_conversation_turns(
@@ -1448,6 +1665,16 @@ def score_conversation_variant_fold(
         history_preserved_acts=tuple(
             str(act)
             for act in variant.get("history_preserved_acts", ())
+        ),
+        question_evidence_ranker=(
+            question_evidence_ranker
+            if bool(variant.get("use_question_evidence_ranker", False))
+            else None
+        ),
+        question_evidence_margin=float(variant.get("question_evidence_margin", 0.0)),
+        question_evidence_preserved_acts=tuple(
+            str(act)
+            for act in variant.get("question_evidence_preserved_acts", ())
         ),
         scoring_variant=str(variant["name"]),
     )
