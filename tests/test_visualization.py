@@ -39,6 +39,18 @@ def test_render_response_mode_dashboard_includes_quality_ready_recovery_panel():
                 }
             },
         },
+        "probability_pack_replay_baseline_quality_aware": {
+            "prepared_hit_rate": 0.546,
+            "semantic_prepared_hit_rate": 0.0,
+            "quality_ready_rate": 0.546,
+            "background_recovery_hit_rate": 0.0,
+            "segments": {
+                "expected_response_mode": {
+                    "disclose": {"prepared_hit_rate": 0.0, "quality_ready_rate": 0.0},
+                    "inform": {"prepared_hit_rate": 0.0, "quality_ready_rate": 0.0},
+                }
+            },
+        },
         "probability_pack_replay": {
             "prepared_hit_rate": 0.765,
             "semantic_prepared_hit_rate": 0.0,
@@ -58,6 +70,8 @@ def test_render_response_mode_dashboard_includes_quality_ready_recovery_panel():
     assert "<title>Premonition Response-Mode Recovery</title>" in html
     assert "Quality-Ready Recovery" in html
     assert "Raw Semantic Coverage" in html
+    assert "Quality-Aware Gate" in html
+    assert "0.546 -> 0.765" in html
     assert "recover_disclose_inform_other" in html
     assert "disclose" in html
 

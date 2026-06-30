@@ -3079,9 +3079,16 @@ def run_response_mode_ranker_bakeoff(
         test_turns,
         baseline_probability_packs,
     )
+    baseline_probability_pack_replay_quality_aware = (
+        score_response_mode_probability_pack_replay(
+            test_turns,
+            baseline_probability_packs,
+            min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
+        )
+    )
     background_recovery_policy = response_mode_recovery_policy_for_replay(
         background_recovery_policy,
-        baseline_probability_pack_replay,
+        baseline_probability_pack_replay_quality_aware,
     )
     probability_packs = build_response_mode_probability_packs(
         test_turns,
@@ -3099,7 +3106,7 @@ def run_response_mode_ranker_bakeoff(
         min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
     )
     background_recovery_evaluation = response_mode_background_recovery_evaluation(
-        baseline_probability_pack_replay,
+        baseline_probability_pack_replay_quality_aware,
         recovery_candidate_replay,
         background_recovery_policy,
     )
@@ -3135,6 +3142,7 @@ def run_response_mode_ranker_bakeoff(
         "background_recovery_calibration": background_recovery_calibration,
         "background_recovery_evaluation": background_recovery_evaluation,
         "probability_pack_replay_baseline": baseline_probability_pack_replay,
+        "probability_pack_replay_baseline_quality_aware": baseline_probability_pack_replay_quality_aware,
         "probability_pack_replay_recovery_candidate": recovery_candidate_replay,
         "probability_pack_replay": promoted_probability_pack_replay,
         "promotion": response_mode_promotion_summary(
@@ -3222,6 +3230,9 @@ def run_response_mode_recovery_stress_test(
                 top_k=top_k,
             )
             baseline = bakeoff["probability_pack_replay_baseline"]
+            baseline_quality_aware = bakeoff[
+                "probability_pack_replay_baseline_quality_aware"
+            ]
             active = bakeoff["probability_pack_replay"]
             calibration = bakeoff["background_recovery_calibration"]
             evaluation = bakeoff["background_recovery_evaluation"]
@@ -3257,6 +3268,9 @@ def run_response_mode_recovery_stress_test(
                         active["background_recovery_hit_rate"]
                     ),
                     "baseline": response_mode_recovery_stress_metrics(baseline),
+                    "baseline_quality_aware": response_mode_recovery_stress_metrics(
+                        baseline_quality_aware
+                    ),
                     "active": response_mode_recovery_stress_metrics(active),
                     "target_modes": response_mode_recovery_stress_segments(
                         baseline,

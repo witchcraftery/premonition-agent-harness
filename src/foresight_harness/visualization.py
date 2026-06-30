@@ -323,6 +323,9 @@ def write_benchmark_dashboard(report: dict[str, object], output_path: Path) -> N
 def render_response_mode_dashboard(report: dict[str, object]) -> str:
     summary = dict(report["summary"])
     baseline = dict(report["probability_pack_replay_baseline"])
+    quality_aware_baseline = dict(
+        report.get("probability_pack_replay_baseline_quality_aware", baseline)
+    )
     active = dict(report["probability_pack_replay"])
     calibration = dict(report["background_recovery_calibration"])
     evaluation = dict(report["background_recovery_evaluation"])
@@ -341,6 +344,11 @@ def render_response_mode_dashboard(report: dict[str, object]) -> str:
         float(baseline["quality_ready_rate"]),
         float(active["quality_ready_rate"]),
     )
+    quality_aware_gate = comparison_metric_card(
+        "Quality-Aware Gate",
+        float(quality_aware_baseline["quality_ready_rate"]),
+        float(active["quality_ready_rate"]),
+    )
     raw_semantic = comparison_metric_card(
         "Raw Semantic Coverage",
         float(baseline["semantic_prepared_hit_rate"]),
@@ -354,6 +362,17 @@ def render_response_mode_dashboard(report: dict[str, object]) -> str:
     promoted = simple_card(
         "Held-Out Promoted",
         "yes" if bool(evaluation.get("promoted", False)) else "no",
+    )
+    metric_cards = "\n".join(
+        card.strip()
+        for card in (
+            prepared,
+            quality_ready,
+            quality_aware_gate,
+            raw_semantic,
+            background,
+            promoted,
+        )
     )
     rows = "\n".join(response_mode_dashboard_row(row) for row in mode_rows)
 
@@ -397,7 +416,7 @@ def render_response_mode_dashboard(report: dict[str, object]) -> str:
     }}
     h1 {{ margin: 0; font-size: 34px; line-height: 1.08; }}
     .status {{ color: var(--muted); font-size: 14px; line-height: 1.45; text-align: right; }}
-    .metrics {{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }}
+    .metrics {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }}
     .metric, .panel {{ background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }}
     .metric {{ padding: 18px; min-height: 118px; }}
     .metric span {{ display: block; color: var(--muted); font-size: 13px; font-weight: 650; margin-bottom: 16px; }}
@@ -430,11 +449,7 @@ def render_response_mode_dashboard(report: dict[str, object]) -> str:
       </div>
     </header>
     <section class="metrics">
-      {prepared}
-      {quality_ready}
-      {raw_semantic}
-      {background}
-      {promoted}
+{metric_cards}
     </section>
     <section class="panel">
       <h2>Quality-Ready Recovery By Mode</h2>

@@ -670,4 +670,6 @@ foresight-replay \
 
 Each split report also includes segment analytics and focus areas. These make it possible to track whether improvements are broad or concentrated in a few topics, and to identify the next areas that deserve new data or better guidance.
 
+The recovery promotion gate compares recovery candidates against a quality-aware held-out baseline, while still reporting the raw baseline separately. In the current ESConv stress artifact, this stabilizes promotion on `5/6` shuffled folds with mean quality-ready gain `+0.054`; the remaining fold selects no recovery policy, rather than falsely rejecting a useful recovery candidate.
+
 Candidate benchmark families are tracked in `docs/dataset-catalog.md`.

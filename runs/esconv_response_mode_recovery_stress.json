@@ -2,18 +2,18 @@
   "aggregates": {
     "background_recovery_hit_rate": {
       "max": 0.079,
-      "mean": 0.038,
+      "mean": 0.054,
       "min": 0.0
     },
     "prepared_hit_gain": {
       "max": 0.037,
-      "mean": 0.018,
+      "mean": 0.02,
       "min": 0.0
     },
-    "promotion_rate": 0.5,
+    "promotion_rate": 0.833,
     "quality_ready_gain": {
       "max": 0.079,
-      "mean": 0.038,
+      "mean": 0.054,
       "min": 0.0
     },
     "selected_policy_counts": {
@@ -25,14 +25,14 @@
   "runs": [
     {
       "active": {
-        "average_quality_score": 0.965,
-        "background_recovery_hit_rate": 0.0,
-        "prepared_hit_rate": 0.578,
-        "quality_ready_rate": 0.537,
-        "semantic_prepared_hit_rate": 0.041
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.049,
+        "prepared_hit_rate": 0.586,
+        "quality_ready_rate": 0.586,
+        "semantic_prepared_hit_rate": 0.0
       },
       "active_policy": "recover_inform",
-      "background_recovery_hit_rate": 0.0,
+      "background_recovery_hit_rate": 0.049,
       "baseline": {
         "average_quality_score": 0.965,
         "background_recovery_hit_rate": 0.0,
@@ -40,19 +40,26 @@
         "quality_ready_rate": 0.537,
         "semantic_prepared_hit_rate": 0.041
       },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.537,
+        "quality_ready_rate": 0.537,
+        "semantic_prepared_hit_rate": 0.0
+      },
       "calibration_promoted": true,
       "dev_turns": 3429,
       "fold": 1,
-      "heldout_promoted": false,
-      "prepared_hit_gain": 0.0,
-      "promoted": false,
-      "quality_ready_gain": 0.0,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.008,
+      "promoted": true,
+      "quality_ready_gain": 0.049,
       "seed": 0,
       "selected_policy": "recover_inform",
       "target_modes": {
         "inform": {
-          "active_prepared_hit_rate": 0.0,
-          "active_quality_ready_rate": 0.0,
+          "active_prepared_hit_rate": 0.711,
+          "active_quality_ready_rate": 0.711,
           "baseline_prepared_hit_rate": 0.0
         }
       },
@@ -75,6 +82,13 @@
         "prepared_hit_rate": 0.621,
         "quality_ready_rate": 0.577,
         "semantic_prepared_hit_rate": 0.045
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.577,
+        "quality_ready_rate": 0.577,
+        "semantic_prepared_hit_rate": 0.0
       },
       "calibration_promoted": false,
       "dev_turns": 3429,
@@ -106,6 +120,13 @@
         "quality_ready_rate": 0.545,
         "semantic_prepared_hit_rate": 0.042
       },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.545,
+        "quality_ready_rate": 0.545,
+        "semantic_prepared_hit_rate": 0.0
+      },
       "calibration_promoted": true,
       "dev_turns": 3430,
       "fold": 3,
@@ -132,14 +153,14 @@
     },
     {
       "active": {
-        "average_quality_score": 0.964,
-        "background_recovery_hit_rate": 0.0,
-        "prepared_hit_rate": 0.596,
-        "quality_ready_rate": 0.552,
-        "semantic_prepared_hit_rate": 0.044
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.049,
+        "prepared_hit_rate": 0.601,
+        "quality_ready_rate": 0.601,
+        "semantic_prepared_hit_rate": 0.0
       },
       "active_policy": "recover_inform",
-      "background_recovery_hit_rate": 0.0,
+      "background_recovery_hit_rate": 0.049,
       "baseline": {
         "average_quality_score": 0.964,
         "background_recovery_hit_rate": 0.0,
@@ -147,19 +168,26 @@
         "quality_ready_rate": 0.552,
         "semantic_prepared_hit_rate": 0.044
       },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.552,
+        "quality_ready_rate": 0.552,
+        "semantic_prepared_hit_rate": 0.0
+      },
       "calibration_promoted": true,
       "dev_turns": 3429,
       "fold": 1,
-      "heldout_promoted": false,
-      "prepared_hit_gain": 0.0,
-      "promoted": false,
-      "quality_ready_gain": 0.0,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.005,
+      "promoted": true,
+      "quality_ready_gain": 0.049,
       "seed": 1,
       "selected_policy": "recover_inform",
       "target_modes": {
         "inform": {
-          "active_prepared_hit_rate": 0.0,
-          "active_quality_ready_rate": 0.0,
+          "active_prepared_hit_rate": 0.759,
+          "active_quality_ready_rate": 0.759,
           "baseline_prepared_hit_rate": 0.0
         }
       },
@@ -182,6 +210,13 @@
         "prepared_hit_rate": 0.575,
         "quality_ready_rate": 0.535,
         "semantic_prepared_hit_rate": 0.041
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.535,
+        "quality_ready_rate": 0.535,
+        "semantic_prepared_hit_rate": 0.0
       },
       "calibration_promoted": true,
       "dev_turns": 3429,
@@ -223,6 +258,13 @@
         "prepared_hit_rate": 0.601,
         "quality_ready_rate": 0.56,
         "semantic_prepared_hit_rate": 0.041
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.56,
+        "quality_ready_rate": 0.56,
+        "semantic_prepared_hit_rate": 0.0
       },
       "calibration_promoted": true,
       "dev_turns": 3430,

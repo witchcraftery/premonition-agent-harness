@@ -427,6 +427,7 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "probability_pack_replay" in report
     assert "prepared_hit_rate" in report["probability_pack_replay"]
     assert "probability_pack_replay_baseline" in report
+    assert "probability_pack_replay_baseline_quality_aware" in report
     assert "background_recovery_policy" in report
     assert "background_recovery_calibration" in report
     assert "candidate_evaluations" in report["background_recovery_calibration"]
@@ -467,6 +468,7 @@ def test_response_mode_recovery_stress_test_reports_seed_fold_stability():
     assert "prepared_hit_gain" in report["aggregates"]
     assert "selected_policy_counts" in report["aggregates"]
     assert all("quality_ready_gain" in run for run in report["runs"])
+    assert all("baseline_quality_aware" in run for run in report["runs"])
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():

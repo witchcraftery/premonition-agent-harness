@@ -38,7 +38,7 @@
     }
     h1 { margin: 0; font-size: 34px; line-height: 1.08; }
     .status { color: var(--muted); font-size: 14px; line-height: 1.45; text-align: right; }
-    .metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
     .metric, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
     .metric { padding: 18px; min-height: 118px; }
     .metric span { display: block; color: var(--muted); font-size: 13px; font-weight: 650; margin-bottom: 16px; }
@@ -71,41 +71,36 @@
       </div>
     </header>
     <section class="metrics">
-      
-    <article class="metric">
+<article class="metric">
       <span>Prepared Hit Rate</span>
       <strong>0.577 -> 0.765</strong>
       <em>+0.188 gain</em>
     </article>
-    
-      
-    <article class="metric">
+<article class="metric">
       <span>Quality-Ready Recovery</span>
       <strong>0.546 -> 0.765</strong>
       <em>+0.219 gain</em>
     </article>
-    
-      
-    <article class="metric">
+<article class="metric">
+      <span>Quality-Aware Gate</span>
+      <strong>0.546 -> 0.765</strong>
+      <em>+0.219 gain</em>
+    </article>
+<article class="metric">
       <span>Raw Semantic Coverage</span>
       <strong>0.031 -> 0.000</strong>
       <em>-0.031 gain</em>
     </article>
-    
-      
-    <article class="metric">
+<article class="metric">
       <span>Background Recovery</span>
       <strong>0.000 -> 0.219</strong>
       <em>+0.219 gain</em>
     </article>
-    
-      
-    <article class="metric">
+<article class="metric">
       <span>Held-Out Promoted</span>
       <strong>yes</strong>
       <em>current run</em>
     </article>
-    
     </section>
     <section class="panel">
       <h2>Quality-Ready Recovery By Mode</h2>

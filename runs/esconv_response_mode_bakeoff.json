@@ -2199,12 +2199,12 @@
     }
   },
   "background_recovery_evaluation": {
-    "baseline_average_quality_score": 0.974,
+    "baseline_average_quality_score": 1.0,
     "candidate_average_quality_score": 1.0,
     "first_speech_preserved": true,
-    "prepared_hit_gain": 0.188,
+    "prepared_hit_gain": 0.219,
     "promoted": true,
-    "quality_floor": 0.974,
+    "quality_floor": 1.0,
     "quality_floor_met": true,
     "quality_ready_gain": 0.219,
     "reason": "recovery passed target-mode, first-speech, and quality gates",
@@ -2236,7 +2236,7 @@
     },
     "name": "recover_disclose_inform_other",
     "preparation_role": "background_recovery",
-    "quality_floor": 0.974,
+    "quality_floor": 1.0,
     "target_modes": [
       "disclose",
       "inform",
@@ -4439,6 +4439,114 @@
       }
     },
     "semantic_prepared_hit_rate": 0.031,
+    "total_turns": 1748
+  },
+  "probability_pack_replay_baseline_quality_aware": {
+    "average_quality_score": 1.0,
+    "background_hit_rate": 0.329,
+    "background_recovery_hit_rate": 0.0,
+    "exact_prepared_hit_rate": 0.546,
+    "first_speech_hit_rate": 0.217,
+    "median_latency_ms": 90,
+    "median_latency_saved_ms": 560,
+    "prepared_hit_rate": 0.546,
+    "quality_ready_rate": 0.546,
+    "segments": {
+      "expected_response_mode": {
+        "ask_followup": {
+          "average_quality_score": 1.0,
+          "background_hit_rate": 0.224,
+          "background_recovery_hit_rate": 0.0,
+          "exact_prepared_hit_rate": 0.833,
+          "first_speech_hit_rate": 0.609,
+          "median_latency_ms": 90,
+          "median_latency_saved_ms": 560,
+          "prepared_hit_rate": 0.833,
+          "quality_ready_rate": 0.833,
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 335
+        },
+        "disclose": {
+          "average_quality_score": 0.0,
+          "background_hit_rate": 0.0,
+          "background_recovery_hit_rate": 0.0,
+          "exact_prepared_hit_rate": 0.0,
+          "first_speech_hit_rate": 0.0,
+          "median_latency_ms": 650,
+          "median_latency_saved_ms": 0,
+          "prepared_hit_rate": 0.0,
+          "quality_ready_rate": 0.0,
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 176
+        },
+        "inform": {
+          "average_quality_score": 0.0,
+          "background_hit_rate": 0.0,
+          "background_recovery_hit_rate": 0.0,
+          "exact_prepared_hit_rate": 0.0,
+          "first_speech_hit_rate": 0.0,
+          "median_latency_ms": 650,
+          "median_latency_saved_ms": 0,
+          "prepared_hit_rate": 0.0,
+          "quality_ready_rate": 0.0,
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 138
+        },
+        "other": {
+          "average_quality_score": 0.0,
+          "background_hit_rate": 0.0,
+          "background_recovery_hit_rate": 0.0,
+          "exact_prepared_hit_rate": 0.0,
+          "first_speech_hit_rate": 0.0,
+          "median_latency_ms": 650,
+          "median_latency_saved_ms": 0,
+          "prepared_hit_rate": 0.0,
+          "quality_ready_rate": 0.0,
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 278
+        },
+        "reassure": {
+          "average_quality_score": 1.0,
+          "background_hit_rate": 0.993,
+          "background_recovery_hit_rate": 0.0,
+          "exact_prepared_hit_rate": 0.993,
+          "first_speech_hit_rate": 0.0,
+          "median_latency_ms": 90,
+          "median_latency_saved_ms": 560,
+          "prepared_hit_rate": 0.993,
+          "quality_ready_rate": 0.993,
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 285
+        },
+        "suggest": {
+          "average_quality_score": 1.0,
+          "background_hit_rate": 0.368,
+          "background_recovery_hit_rate": 0.0,
+          "exact_prepared_hit_rate": 0.651,
+          "first_speech_hit_rate": 0.284,
+          "median_latency_ms": 90,
+          "median_latency_saved_ms": 560,
+          "prepared_hit_rate": 0.651,
+          "quality_ready_rate": 0.651,
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 261
+        },
+        "validate": {
+          "average_quality_score": 1.0,
+          "background_hit_rate": 0.44,
+          "background_recovery_hit_rate": 0.0,
+          "exact_prepared_hit_rate": 0.811,
+          "first_speech_hit_rate": 0.371,
+          "median_latency_ms": 90,
+          "median_latency_saved_ms": 560,
+          "prepared_hit_rate": 0.811,
+          "quality_ready_rate": 0.811,
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 275
+        }
+      }
+    },
+    "semantic_prepared_hit_rate": 0.0,
     "total_turns": 1748
   },
   "probability_pack_replay_recovery_candidate": {

@@ -774,3 +774,25 @@ Verification:
 - Final suite: `python3 -m pytest -v`: 134 passed.
 - `git diff --check`: passed.
 - Next lever: improve `recover_disclose_inform` stability on shuffled zero-gain folds before expanding to more seeds/folds.
+
+## Quality-Aware Stress Stabilization
+
+- [x] Add failing checks that bakeoff and stress reports expose the quality-aware held-out baseline.
+- [x] Compare held-out recovery candidates against the quality-aware baseline used by the recovery gate, while preserving raw baseline metrics for gain reporting.
+- [x] Add the quality-aware gate to the response-mode dashboard.
+- [x] Regenerate ESConv bakeoff, stress, and dashboard artifacts.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_conversation_probability.py::test_response_mode_recovery_stress_test_reports_seed_fold_stability -v` failed because reports did not expose the quality-aware held-out baseline.
+- Focused green check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_conversation_probability.py::test_response_mode_recovery_stress_test_reports_seed_fold_stability -v`: 2 passed.
+- Dashboard red check: `python3 -m pytest tests/test_visualization.py::test_render_response_mode_dashboard_includes_quality_ready_recovery_panel -v` failed because the quick-reference page did not show the quality-aware gate.
+- Dashboard green check: `python3 -m pytest tests/test_visualization.py::test_render_response_mode_dashboard_includes_quality_ready_recovery_panel -v`: 1 passed.
+- Stress run: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json --response-mode-stress-seeds 2 --folds 3`: completed.
+- Stress result: promotion rate `0.833` across `6` shuffled folds; mean prepared-hit gain `+0.020`, mean quality-ready gain `+0.054`, max quality-ready gain `+0.079`, worst-fold gain `0.000`, and selected policies `recover_disclose_inform=3`, `recover_inform=2`, `none=1`.
+- Dashboard generation: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json --dashboard-report runs/esconv_response_mode_dashboard.html`: completed.
+- Dashboard static check: `rg -n "Quality-Aware Gate|0\\.546 -> 0\\.765|Premonition Response-Mode Recovery" runs/esconv_response_mode_dashboard.html`: passed.
+- Final suite: `python3 -m pytest -v`: 134 passed.
+- `git diff --check`: passed.
+- Next lever: run a larger seed/fold stress pass and target the single no-policy fold with better validation-time target discovery.
