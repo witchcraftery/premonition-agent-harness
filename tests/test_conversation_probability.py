@@ -1299,6 +1299,48 @@ def test_response_mode_background_recovery_evaluation_blocks_quality_drop():
     assert evaluation["first_speech_preserved"] is True
 
 
+def test_response_mode_background_recovery_evaluation_blocks_raw_prepared_drop():
+    baseline = {
+        "prepared_hit_rate": 0.536,
+        "quality_ready_rate": 0.536,
+        "first_speech_hit_rate": 0.225,
+        "average_quality_score": 1.0,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.0},
+            }
+        },
+    }
+    candidate = {
+        "prepared_hit_rate": 0.576,
+        "quality_ready_rate": 0.576,
+        "first_speech_hit_rate": 0.225,
+        "average_quality_score": 1.0,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.609},
+            }
+        },
+    }
+    policy = {
+        "target_modes": ["inform"],
+        "quality_floor": 1.0,
+        "prepared_hit_floor": 0.582,
+        "first_speech_locked": True,
+    }
+
+    evaluation = response_mode_background_recovery_evaluation(
+        baseline,
+        candidate,
+        policy,
+    )
+
+    assert evaluation["promoted"] is False
+    assert evaluation["prepared_hit_floor_met"] is False
+    assert evaluation["quality_ready_gain"] == 0.04
+    assert evaluation["raw_prepared_hit_gain"] == -0.006
+
+
 def test_response_mode_background_recovery_policy_candidates_include_mode_subsets():
     policy = {
         "target_modes": ["disclose", "inform", "other"],

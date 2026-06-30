@@ -670,6 +670,6 @@ foresight-replay \
 
 Each split report also includes segment analytics and focus areas. These make it possible to track whether improvements are broad or concentrated in a few topics, and to identify the next areas that deserve new data or better guidance.
 
-The recovery promotion gate compares recovery candidates against a quality-aware held-out baseline, while still reporting the raw baseline separately. In the current ESConv stress artifact, this stabilizes promotion on `15/15` shuffled folds with mean quality-ready gain `+0.074` and minimum quality-ready gain `+0.040`. The raw prepared-hit gain can dip slightly when low-quality semantic drafts are removed, but quality-ready coverage improves across every fold.
+The recovery promotion gate compares recovery candidates against a quality-aware held-out baseline and a raw prepared-hit floor, while still reporting the raw baseline separately. In the current ESConv stress artifact, this promotes on `13/15` shuffled folds, keeps minimum raw prepared-hit gain at `0.000`, and preserves mean quality-ready gain at `+0.068`. The two held-back folds are both `recover_inform` cases where the candidate improved quality-ready coverage but would have reduced raw prepared coverage below the original baseline.
 
 Candidate benchmark families are tracked in `docs/dataset-catalog.md`.

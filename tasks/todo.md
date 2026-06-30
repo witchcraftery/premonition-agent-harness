@@ -813,3 +813,23 @@ Verification:
 - Interpretation: every fold improved quality-ready coverage. The small raw prepared-hit dip happens because the active pack refuses low-quality semantic drafts that the raw baseline previously counted as prepared.
 - Final suite: `python3 -m pytest -v`: 134 passed.
 - `git diff --check`: passed.
+
+## Raw Prepared Floor Recovery Gate
+
+- [x] Add a failing promotion-gate test for candidates that improve quality-ready coverage but drop below the raw prepared baseline.
+- [x] Add a raw prepared-hit floor to held-out recovery evaluation while keeping the quality-aware baseline gate.
+- [x] Regenerate ESConv bakeoff, dashboard, and larger stress artifacts.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_evaluation_blocks_raw_prepared_drop -v` failed because the recovery candidate promoted despite falling below `prepared_hit_floor`.
+- Focused green check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_evaluation_blocks_raw_prepared_drop tests/test_conversation_probability.py::test_response_mode_background_recovery_evaluation_blocks_quality_drop tests/test_conversation_probability.py::test_response_mode_recovery_policy_for_replay_uses_local_baseline_quality_floor tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v`: 4 passed.
+- Bakeoff/dashboard generation: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json --dashboard-report runs/esconv_response_mode_dashboard.html`: completed.
+- Single-split gate result: held-out recovery still promotes with `prepared_hit_floor=0.577`, `raw_prepared_hit_gain=+0.188`, `quality_ready_gain=+0.219`, and `prepared_hit_floor_met=true`.
+- Stress run: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json --response-mode-stress-seeds 3 --folds 5`: completed.
+- Stress result: promotion rate `0.867` across `15` shuffled folds; mean prepared-hit gain `+0.032`, mean quality-ready gain `+0.068`, minimum prepared-hit gain `0.000`, minimum quality-ready gain `0.000`, and selected policies `recover_disclose_inform=8`, `recover_inform=6`, `recover_other=1`.
+- Held-back folds: seed `1` fold `1` and seed `2` fold `3`, both `recover_inform`, now stay on baseline because the candidate would have improved quality-ready coverage while reducing raw prepared coverage.
+- Final suite: `python3 -m pytest -v`: 135 passed.
+- `git diff --check`: passed.
+- Next lever: improve `recover_inform` candidate strength so those two folds can clear both floors, not relax the floor.

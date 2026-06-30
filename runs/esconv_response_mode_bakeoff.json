@@ -1141,11 +1141,14 @@
         "baseline_average_quality_score": 1.0,
         "candidate_average_quality_score": 1.0,
         "first_speech_preserved": true,
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
         "prepared_hit_gain": 0.046,
         "promoted": true,
         "quality_floor": 1.0,
         "quality_floor_met": true,
         "quality_ready_gain": 0.046,
+        "raw_prepared_hit_gain": 0.046,
         "reason": "recovery passed target-mode, first-speech, and quality gates",
         "target_mode_results": {
           "disclose": {
@@ -1160,11 +1163,14 @@
         "baseline_average_quality_score": 1.0,
         "candidate_average_quality_score": 1.0,
         "first_speech_preserved": true,
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
         "prepared_hit_gain": 0.09,
         "promoted": true,
         "quality_floor": 1.0,
         "quality_floor_met": true,
         "quality_ready_gain": 0.09,
+        "raw_prepared_hit_gain": 0.09,
         "reason": "recovery passed target-mode, first-speech, and quality gates",
         "target_mode_results": {
           "disclose": {
@@ -1184,11 +1190,14 @@
         "baseline_average_quality_score": 1.0,
         "candidate_average_quality_score": 1.0,
         "first_speech_preserved": true,
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
         "prepared_hit_gain": 0.222,
         "promoted": true,
         "quality_floor": 1.0,
         "quality_floor_met": true,
         "quality_ready_gain": 0.222,
+        "raw_prepared_hit_gain": 0.222,
         "reason": "recovery passed target-mode, first-speech, and quality gates",
         "target_mode_results": {
           "disclose": {
@@ -1213,11 +1222,14 @@
         "baseline_average_quality_score": 1.0,
         "candidate_average_quality_score": 1.0,
         "first_speech_preserved": true,
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
         "prepared_hit_gain": 0.178,
         "promoted": true,
         "quality_floor": 1.0,
         "quality_floor_met": true,
         "quality_ready_gain": 0.178,
+        "raw_prepared_hit_gain": 0.178,
         "reason": "recovery passed target-mode, first-speech, and quality gates",
         "target_mode_results": {
           "disclose": {
@@ -1237,11 +1249,14 @@
         "baseline_average_quality_score": 1.0,
         "candidate_average_quality_score": 1.0,
         "first_speech_preserved": true,
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
         "prepared_hit_gain": 0.044,
         "promoted": true,
         "quality_floor": 1.0,
         "quality_floor_met": true,
         "quality_ready_gain": 0.044,
+        "raw_prepared_hit_gain": 0.044,
         "reason": "recovery passed target-mode, first-speech, and quality gates",
         "target_mode_results": {
           "inform": {
@@ -1256,11 +1271,14 @@
         "baseline_average_quality_score": 1.0,
         "candidate_average_quality_score": 1.0,
         "first_speech_preserved": true,
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
         "prepared_hit_gain": 0.175,
         "promoted": true,
         "quality_floor": 1.0,
         "quality_floor_met": true,
         "quality_ready_gain": 0.175,
+        "raw_prepared_hit_gain": 0.175,
         "reason": "recovery passed target-mode, first-speech, and quality gates",
         "target_mode_results": {
           "inform": {
@@ -1280,11 +1298,14 @@
         "baseline_average_quality_score": 1.0,
         "candidate_average_quality_score": 1.0,
         "first_speech_preserved": true,
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
         "prepared_hit_gain": 0.131,
         "promoted": true,
         "quality_floor": 1.0,
         "quality_floor_met": true,
         "quality_ready_gain": 0.131,
+        "raw_prepared_hit_gain": 0.131,
         "reason": "recovery passed target-mode, first-speech, and quality gates",
         "target_mode_results": {
           "other": {
@@ -2156,11 +2177,14 @@
       "baseline_average_quality_score": 1.0,
       "candidate_average_quality_score": 1.0,
       "first_speech_preserved": true,
+      "prepared_hit_floor": 0.542,
+      "prepared_hit_floor_met": true,
       "prepared_hit_gain": 0.222,
       "promoted": true,
       "quality_floor": 1.0,
       "quality_floor_met": true,
       "quality_ready_gain": 0.222,
+      "raw_prepared_hit_gain": 0.222,
       "reason": "recovery passed target-mode, first-speech, and quality gates",
       "target_mode_results": {
         "disclose": {
@@ -2202,11 +2226,14 @@
     "baseline_average_quality_score": 1.0,
     "candidate_average_quality_score": 1.0,
     "first_speech_preserved": true,
+    "prepared_hit_floor": 0.577,
+    "prepared_hit_floor_met": true,
     "prepared_hit_gain": 0.219,
     "promoted": true,
     "quality_floor": 1.0,
     "quality_floor_met": true,
     "quality_ready_gain": 0.219,
+    "raw_prepared_hit_gain": 0.188,
     "reason": "recovery passed target-mode, first-speech, and quality gates",
     "target_mode_results": {
       "disclose": {
@@ -2236,6 +2263,7 @@
     },
     "name": "recover_disclose_inform_other",
     "preparation_role": "background_recovery",
+    "prepared_hit_floor": 0.577,
     "quality_floor": 1.0,
     "target_modes": [
       "disclose",

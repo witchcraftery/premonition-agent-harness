@@ -1203,7 +1203,18 @@ def response_mode_background_recovery_evaluation(
     quality_floor_met = float(candidate_replay["average_quality_score"]) >= float(
         recovery_policy["quality_floor"]
     )
-    promoted = target_modes_improved and first_speech_preserved and quality_floor_met
+    prepared_hit_floor = float(
+        recovery_policy.get("prepared_hit_floor", baseline_replay["prepared_hit_rate"])
+    )
+    prepared_hit_floor_met = (
+        float(candidate_replay["prepared_hit_rate"]) >= prepared_hit_floor
+    )
+    promoted = (
+        target_modes_improved
+        and first_speech_preserved
+        and quality_floor_met
+        and prepared_hit_floor_met
+    )
     return {
         "promoted": promoted,
         "reason": (
@@ -1215,9 +1226,15 @@ def response_mode_background_recovery_evaluation(
         "first_speech_preserved": first_speech_preserved,
         "quality_floor_met": quality_floor_met,
         "quality_floor": float(recovery_policy["quality_floor"]),
+        "prepared_hit_floor_met": prepared_hit_floor_met,
+        "prepared_hit_floor": prepared_hit_floor,
         "prepared_hit_gain": round(
             float(candidate_replay["prepared_hit_rate"])
             - float(baseline_replay["prepared_hit_rate"]),
+            3,
+        ),
+        "raw_prepared_hit_gain": round(
+            float(candidate_replay["prepared_hit_rate"]) - prepared_hit_floor,
             3,
         ),
         "quality_ready_gain": round(
@@ -3090,6 +3107,10 @@ def run_response_mode_ranker_bakeoff(
         background_recovery_policy,
         baseline_probability_pack_replay_quality_aware,
     )
+    background_recovery_policy = {
+        **background_recovery_policy,
+        "prepared_hit_floor": float(baseline_probability_pack_replay["prepared_hit_rate"]),
+    }
     probability_packs = build_response_mode_probability_packs(
         test_turns,
         policy=probability_pack_policy,
