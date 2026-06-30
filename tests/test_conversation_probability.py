@@ -430,6 +430,7 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "background_recovery_calibration" in report
     assert "candidate_evaluations" in report["background_recovery_calibration"]
     assert "selected_policy" in report["background_recovery_calibration"]
+    assert report["background_recovery_calibration"]["min_quality_score"] == 0.75
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():
@@ -1064,6 +1065,70 @@ def test_response_mode_probability_pack_replay_counts_background_recovery_hits()
         ]
         == 1.0
     )
+
+
+def test_response_mode_probability_pack_replay_can_ignore_low_quality_semantic_hits():
+    disclose_turn = conversation_turn(
+        "low-quality-disclose-semantic",
+        "I feel alone in this.",
+        "inform",
+        expected_response_mode="disclose",
+    )
+    inform_turn = conversation_turn(
+        "quality-inform-exact",
+        "What should I know?",
+        "inform",
+        expected_response_mode="inform",
+    )
+    policy = {
+        "first_speech_variant": "response_mode_hybrid_75",
+        "first_speech_delivery": "confirm_before_delivery",
+        "background_readiness_variant": "calibrated_minority_specialist_coverage",
+        "background_preparation": "prewarm_tts",
+        "confirmation_mode": "confirm_first_speech_then_stream_prepared_background",
+    }
+    packs = (
+        build_response_mode_probability_pack(
+            disclose_turn,
+            first_speech_branches=(
+                response_mode_branch("ask_followup", "response_mode_hybrid_75", 0.7),
+            ),
+            background_readiness_branches=(
+                response_mode_branch("ask_followup", "calibrated_minority_specialist_coverage", 0.5),
+                response_mode_branch("inform", "calibrated_minority_specialist_coverage", 0.49),
+            ),
+            policy=policy,
+        ),
+        build_response_mode_probability_pack(
+            inform_turn,
+            first_speech_branches=(
+                response_mode_branch("ask_followup", "response_mode_hybrid_75", 0.7),
+            ),
+            background_readiness_branches=(
+                response_mode_branch("ask_followup", "calibrated_minority_specialist_coverage", 0.5),
+                response_mode_branch("inform", "calibrated_minority_specialist_coverage", 0.49),
+            ),
+            policy=policy,
+        ),
+    )
+
+    raw_summary = score_response_mode_probability_pack_replay(
+        (disclose_turn, inform_turn),
+        packs,
+        prepared_latency_ms=90,
+    )
+    quality_aware_summary = score_response_mode_probability_pack_replay(
+        (disclose_turn, inform_turn),
+        packs,
+        prepared_latency_ms=90,
+        min_quality_score=0.75,
+    )
+
+    assert raw_summary["prepared_hit_rate"] == 1.0
+    assert raw_summary["semantic_prepared_hit_rate"] == 0.5
+    assert quality_aware_summary["prepared_hit_rate"] == 0.5
+    assert quality_aware_summary["semantic_prepared_hit_rate"] == 0.0
+    assert quality_aware_summary["exact_prepared_hit_rate"] == 0.5
 
 
 def test_response_mode_background_recovery_policy_targets_zero_hit_modes_only():

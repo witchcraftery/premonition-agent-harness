@@ -559,6 +559,16 @@ First-speech hit rate remains locked at `0.217`. The recovered `other` slice
 now reaches `0.723` prepared-hit rate; `disclose` and `inform` remain the next
 weak modes.
 
+The quality-aware recovery pass makes the calibration stricter and stronger:
+recovery candidates are scored with a `0.75` TTS-readiness floor, so low-quality
+semantic-family drafts do not count as prepared speech. With that filter,
+validation promotes the full `recover_disclose_inform_other` policy. Held-out
+test accepts it: active prepared-hit rate rises from `0.577` to `0.765`,
+quality-ready coverage rises from `0.546` to `0.765`, background recovery adds
+`0.219`, and average prepared-draft quality reaches `1.000`. First-speech hit
+rate stays locked at `0.217`. The previously blank slices now show exact
+quality-ready recovery: `disclose=0.449`, `inform=0.739`, and `other=0.723`.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:

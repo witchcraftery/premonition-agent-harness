@@ -133,6 +133,8 @@ RESPONSE_MODE_TEMPLATES = {
     "other": "I can keep a neutral supportive response ready.",
 }
 
+RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE = 0.75
+
 ESCONV_STRATEGY_RESPONSE_MODES = {
     "question": "ask_followup",
     "affirmation and reassurance": "reassure",
@@ -976,6 +978,7 @@ def score_response_mode_probability_pack_replay(
     turns: tuple[ConversationTurn, ...],
     packs: tuple[ConversationProbabilityPack, ...],
     prepared_latency_ms: int = 90,
+    min_quality_score: float = 0.0,
 ) -> dict[str, object]:
     if len(turns) != len(packs):
         raise ValueError("turns and packs must have the same length")
@@ -985,6 +988,7 @@ def score_response_mode_probability_pack_replay(
             turn,
             pack,
             prepared_latency_ms=prepared_latency_ms,
+            min_quality_score=min_quality_score,
         )
         for turn, pack in zip(turns, packs)
     )
@@ -1061,6 +1065,7 @@ def score_response_mode_probability_pack_turn(
     turn: ConversationTurn,
     pack: ConversationProbabilityPack,
     prepared_latency_ms: int,
+    min_quality_score: float = 0.0,
 ) -> dict[str, object]:
     best: dict[str, object] | None = None
     for draft in pack.prepared_drafts:
@@ -1070,14 +1075,17 @@ def score_response_mode_probability_pack_turn(
         )
         if grade == "miss":
             continue
+        quality_score = response_mode_draft_quality_score(
+            draft,
+            expected_response_mode=turn.expected_response_mode,
+        )
+        if quality_score < min_quality_score:
+            continue
         candidate = {
             "match_grade": grade,
             "preparation_role": draft["preparation_role"],
             "response_mode": draft["response_mode"],
-            "quality_score": response_mode_draft_quality_score(
-                draft,
-                expected_response_mode=turn.expected_response_mode,
-            ),
+            "quality_score": quality_score,
         }
         if best is None or response_mode_match_rank(grade) > response_mode_match_rank(
             str(best["match_grade"])
@@ -3000,9 +3008,14 @@ def run_response_mode_ranker_bakeoff(
         specialists=specialists,
         top_k=top_k,
     )
+    dev_baseline_probability_pack_replay_raw = score_response_mode_probability_pack_replay(
+        dev_turns,
+        dev_baseline_probability_packs,
+    )
     dev_baseline_probability_pack_replay = score_response_mode_probability_pack_replay(
         dev_turns,
         dev_baseline_probability_packs,
+        min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
     )
     dev_recovery_policy = response_mode_background_recovery_policy(
         dev_baseline_probability_pack_replay,
@@ -3028,6 +3041,7 @@ def run_response_mode_ranker_bakeoff(
             score_response_mode_probability_pack_replay(
                 dev_turns,
                 dev_recovery_candidate_packs,
+                min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
             )
         )
     background_recovery_calibration = (
@@ -3046,8 +3060,10 @@ def run_response_mode_ranker_bakeoff(
     background_recovery_calibration = {
         **background_recovery_calibration,
         "baseline_replay": dev_baseline_probability_pack_replay,
+        "baseline_replay_raw": dev_baseline_probability_pack_replay_raw,
         "candidate_replays": dev_recovery_candidate_replays,
         "candidate_policies": recovery_policy_candidates,
+        "min_quality_score": RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
     }
     baseline_probability_packs = build_response_mode_probability_packs(
         test_turns,
@@ -3079,6 +3095,7 @@ def run_response_mode_ranker_bakeoff(
     recovery_candidate_replay = score_response_mode_probability_pack_replay(
         test_turns,
         probability_packs,
+        min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
     )
     background_recovery_evaluation = response_mode_background_recovery_evaluation(
         baseline_probability_pack_replay,

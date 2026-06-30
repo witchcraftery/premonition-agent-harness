@@ -731,3 +731,25 @@ Verification:
 - Final suite: `python3 -m pytest -v`: 130 passed.
 - `git diff --check`: passed.
 - Next lever: draft-quality-aware recovery generation for `disclose` and `inform`.
+
+## Quality-Aware Recovery Promotion
+
+- [x] Add recovery scoring that ignores low-quality semantic-family drafts below the TTS readiness floor.
+- [x] Use quality-aware scoring for validation recovery candidates and held-out recovery replay while preserving the existing raw replay metrics.
+- [x] Rerun ESConv and document whether `inform` or `inform+other` can now promote without `disclose` quality spillover.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_probability_pack_replay_can_ignore_low_quality_semantic_hits -v` failed because `score_response_mode_probability_pack_replay` did not accept `min_quality_score`.
+- Integration red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v` failed because `background_recovery_calibration` had no `min_quality_score` field.
+- Focused green check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_probability_pack_replay_can_ignore_low_quality_semantic_hits tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v`: 2 passed.
+- Conversation suite: `python3 -m pytest tests/test_conversation_probability.py -v`: 66 passed.
+- Full pre-benchmark suite: `python3 -m pytest -v`: 131 passed.
+- `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json`: completed.
+- Calibration uses `min_quality_score=0.75` and promotes `recover_disclose_inform_other`; lower-quality semantic-family spillover no longer counts as prepared speech in recovery promotion.
+- Held-out test accepted the promoted recovery policy: active `prepared_hit_rate` rose from `0.577` to `0.765`, `quality_ready_rate` from `0.546` to `0.765`, `background_hit_rate` from `0.360` to `0.547`, `background_recovery_hit_rate` from `0.000` to `0.219`, and `average_quality_score` from `0.974` to `1.000`; `first_speech_hit_rate` stayed locked at `0.217`.
+- Weak-slice exact quality-ready recovery: `disclose=0.449`, `inform=0.739`, and `other=0.723`.
+- Final suite: `python3 -m pytest -v`: 131 passed.
+- `git diff --check`: passed.
+- Next lever: seed/fold stress test plus dashboard panel contrasting raw semantic coverage with quality-ready prepared coverage.
