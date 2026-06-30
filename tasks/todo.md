@@ -796,3 +796,20 @@ Verification:
 - Final suite: `python3 -m pytest -v`: 134 passed.
 - `git diff --check`: passed.
 - Next lever: run a larger seed/fold stress pass and target the single no-policy fold with better validation-time target discovery.
+
+## Larger Recovery Stress Pass
+
+- [x] Run a larger response-mode recovery stress pass with more seeds and more folds.
+- [x] Inspect aggregate stability, weakest folds, and selected recovery policy distribution.
+- [x] Update README, dataset notes, and the canonical stress artifact with the larger result.
+- [x] Verify, commit, and push.
+
+Verification:
+
+- Clean-start check: `git status --short`: clean.
+- Stress run: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json --response-mode-stress-seeds 3 --folds 5`: completed.
+- Stress result: promotion rate `1.000` across `15` shuffled folds; mean prepared-hit gain `+0.032`, mean quality-ready gain `+0.074`, minimum quality-ready gain `+0.040`, max quality-ready gain `+0.164`, and selected policies `recover_disclose_inform=8`, `recover_inform=6`, `recover_other=1`.
+- Weakest quality-ready fold: seed `1`, fold `1`, selected `recover_inform`, prepared-hit gain `-0.006`, quality-ready gain `+0.040`, and background-recovery hit rate `0.039`.
+- Interpretation: every fold improved quality-ready coverage. The small raw prepared-hit dip happens because the active pack refuses low-quality semantic drafts that the raw baseline previously counted as prepared.
+- Final suite: `python3 -m pytest -v`: 134 passed.
+- `git diff --check`: passed.

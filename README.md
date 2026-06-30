@@ -664,12 +664,12 @@ foresight-replay \
   --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl \
   --conversation-test-input data/esconv_test_response_modes_sample.jsonl \
   --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json \
-  --response-mode-stress-seeds 2 \
-  --folds 3
+  --response-mode-stress-seeds 3 \
+  --folds 5
 ```
 
 Each split report also includes segment analytics and focus areas. These make it possible to track whether improvements are broad or concentrated in a few topics, and to identify the next areas that deserve new data or better guidance.
 
-The recovery promotion gate compares recovery candidates against a quality-aware held-out baseline, while still reporting the raw baseline separately. In the current ESConv stress artifact, this stabilizes promotion on `5/6` shuffled folds with mean quality-ready gain `+0.054`; the remaining fold selects no recovery policy, rather than falsely rejecting a useful recovery candidate.
+The recovery promotion gate compares recovery candidates against a quality-aware held-out baseline, while still reporting the raw baseline separately. In the current ESConv stress artifact, this stabilizes promotion on `15/15` shuffled folds with mean quality-ready gain `+0.074` and minimum quality-ready gain `+0.040`. The raw prepared-hit gain can dip slightly when low-quality semantic drafts are removed, but quality-ready coverage improves across every fold.
 
 Candidate benchmark families are tracked in `docs/dataset-catalog.md`.
