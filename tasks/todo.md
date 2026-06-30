@@ -833,3 +833,29 @@ Verification:
 - Final suite: `python3 -m pytest -v`: 135 passed.
 - `git diff --check`: passed.
 - Next lever: improve `recover_inform` candidate strength so those two folds can clear both floors, not relax the floor.
+
+## Premonition Swarm Outcome Visualization
+
+- [x] Assess the current Premonition swarm outcome against the original base state.
+- [x] Add a reproducible outcome visualization renderer.
+- [x] Generate `runs/premonition_swarm_outcome.html`.
+- [x] Verify desktop and mobile rendering with browser screenshots.
+- [x] Verify full suite, commit, and push.
+
+Assessment:
+
+- Base state: first-speech readiness is `0.217`, meaning the system can immediately serve only the confirmed first branch.
+- Probability Pack baseline: quality-ready preparedness reaches `0.546` while raw prepared coverage is `0.577`.
+- Current guarded swarm: quality-ready preparedness reaches `0.765`, a `+0.219` lift over the pack baseline and `+0.548` over first-speech base readiness.
+- Stress proof: larger 3-seed x 5-fold stress promotes `13/15` folds with no raw prepared-hit regression below baseline; mean quality-ready gain is `+0.068`.
+- Interpretation: the concept has moved from plausible scaffold to a measured guarded prewarming layer. It is not yet universal, but it is now useful enough to guide the next backend-swarm experiment.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_visualization.py::test_render_premonition_outcome_dashboard_compares_base_and_swarm -v` failed because `render_premonition_outcome_dashboard` did not exist.
+- Focused green check: `python3 -m pytest tests/test_visualization.py::test_render_premonition_outcome_dashboard_compares_base_and_swarm -v`: 1 passed.
+- Generated artifact: `python3 - <<'PY' ... write_premonition_outcome_dashboard(...) ... PY`: wrote `runs/premonition_swarm_outcome.html`.
+- Static content check: `rg -n "Premonition Swarm Outcome|Base State|Current Guarded Swarm|0\\.217 -> 0\\.765|13 / 15|recover_inform|Not prophecy" runs/premonition_swarm_outcome.html`: passed.
+- Browser verification: Playwright loaded `http://127.0.0.1:8766/runs/premonition_swarm_outcome.html`, confirmed title `Premonition Swarm Outcome`, captured desktop and mobile screenshots in `output/playwright/`, and reported only the local `favicon.ico` 404.
+- Final suite: `python3 -m pytest -v`: 136 passed.
+- `git diff --check`: passed.

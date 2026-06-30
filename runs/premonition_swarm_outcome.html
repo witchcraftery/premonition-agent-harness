@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Premonition Swarm Outcome</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7f4;
+      --ink: #17211e;
+      --muted: #66746f;
+      --line: #d9e0da;
+      --panel: #ffffff;
+      --green: #176b5b;
+      --blue: #315f86;
+      --amber: #b7791f;
+      --soft-green: #dbeee9;
+      --soft-blue: #dbe8f2;
+      --soft-amber: #f2e4c8;
+      --track: #edf1ed;
+      --shadow: 0 18px 55px rgba(23, 33, 30, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    main {
+      width: min(1180px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 38px;
+      line-height: 1.05;
+    }
+    .subtitle {
+      color: var(--muted);
+      margin: 10px 0 0;
+      max-width: 760px;
+      line-height: 1.5;
+    }
+    .status {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: right;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .metric, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .metric {
+      padding: 18px;
+      min-height: 116px;
+    }
+    .metric span, .kicker {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .metric strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .metric em {
+      display: block;
+      margin-top: 10px;
+      color: var(--green);
+      font-style: normal;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.85fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .panel {
+      padding: 22px;
+    }
+    .wide { grid-column: 1 / -1; }
+    h2 {
+      margin: 0 0 16px;
+      font-size: 18px;
+    }
+    .ladder {
+      display: grid;
+      gap: 14px;
+    }
+    .stage {
+      display: grid;
+      grid-template-columns: 190px 1fr 76px;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+    .stage:first-child { border-top: 0; }
+    .stage h3 {
+      margin: 0 0 5px;
+      font-size: 15px;
+    }
+    .stage p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .track {
+      height: 18px;
+      background: var(--track);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .fill {
+      display: block;
+      height: 100%;
+      background: var(--green);
+      border-radius: 999px;
+    }
+    .stage-value {
+      text-align: right;
+      font-weight: 760;
+      font-variant-numeric: tabular-nums;
+    }
+    .note {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.55;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border-top: 1px solid var(--line);
+      padding: 12px 8px;
+      text-align: left;
+      font-variant-numeric: tabular-nums;
+    }
+    th {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .policy-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .policy-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+    .policy-list li:first-child { border-top: 0; }
+    .assessment {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .assessment div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfcfa;
+    }
+    .assessment strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+    @media (max-width: 900px) {
+      header { grid-template-columns: 1fr; }
+      .status { text-align: left; }
+      .metrics, .grid, .assessment { grid-template-columns: 1fr; }
+      .stage { grid-template-columns: 1fr; }
+      .stage-value { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Premonition Swarm Outcome</h1>
+        <p class="subtitle">Not prophecy. This is measured preparedness: how often the backend can have useful, voice-ready branches waiting before the conversational frontend confirms the next move.</p>
+      </div>
+      <div class="status">
+        ESConv response-mode benchmark<br>
+        1748 held-out turns · 3 seeds x 5 folds
+      </div>
+    </header>
+    <section class="metrics">
+<article class="metric">
+      <span>Readiness Reach</span>
+      <strong>0.217 -> 0.765</strong>
+      <em>+0.548 from first-speech base</em>
+    </article>
+<article class="metric">
+      <span>Quality-Ready Lift</span>
+      <strong>0.546 -> 0.765</strong>
+      <em>+0.219 over pack baseline</em>
+    </article>
+<article class="metric">
+      <span>Stress Promotion</span>
+      <strong>13 / 15</strong>
+      <em>0.867 gated pass rate</em>
+    </article>
+<article class="metric">
+      <span>Raw Floor</span>
+      <strong>+0.000</strong>
+      <em>minimum raw prepared-hit gain</em>
+    </article>
+    </section>
+    <section class="grid">
+      <div class="panel">
+        <h2>Preparedness Maturity</h2>
+        <div class="ladder">
+    <section class="stage">
+      <div>
+        <h3>Base State</h3>
+        <p>Single confirmed next response.</p>
+      </div>
+      <div>
+        <div class="track"><span class="fill" style="width: 21.7%"></span></div>
+        <p>Only the first-speech branch is ready for immediate delivery.</p>
+      </div>
+      <div class="stage-value">0.217</div>
+    </section>
+    
+
+    <section class="stage">
+      <div>
+        <h3>Probability Pack Baseline</h3>
+        <p>Background branches are prepared, but some are semantic-only.</p>
+      </div>
+      <div>
+        <div class="track"><span class="fill" style="width: 54.6%"></span></div>
+        <p>Raw prepared coverage is 0.577; voice-ready coverage is 0.546.</p>
+      </div>
+      <div class="stage-value">0.546</div>
+    </section>
+    
+
+    <section class="stage">
+      <div>
+        <h3>Current Guarded Swarm</h3>
+        <p>Background recovery adds protected drafts behind the voice.</p>
+      </div>
+      <div>
+        <div class="track"><span class="fill" style="width: 76.5%"></span></div>
+        <p>Prepared coverage is 0.765; recovery adds 0.219 behind the first response.</p>
+      </div>
+      <div class="stage-value">0.765</div>
+    </section>
+    </div>
+      </div>
+      <div class="panel">
+        <h2>Stress Gate</h2>
+        <p class="note">13 of 15 shuffled folds promoted under both the quality-aware gate and raw prepared-hit floor. Mean quality-ready gain was +0.068; mean background recovery was 0.068.</p>
+        <ol class="policy-list"><li><span>recover_disclose_inform</span><strong>8</strong></li>
+<li><span>recover_inform</span><strong>6</strong></li>
+<li><span>recover_other</span><strong>1</strong></li></ol>
+      </div>
+      <div class="panel">
+        <h2>Recovered Response Mechanisms</h2>
+        <table>
+          <thead><tr><th>Mode</th><th>Prepared Gain</th></tr></thead>
+          <tbody>
+    <tr>
+      <td>disclose</td>
+      <td>+0.449</td>
+    </tr>
+    
+
+    <tr>
+      <td>inform</td>
+      <td>+0.739</td>
+    </tr>
+    
+
+    <tr>
+      <td>other</td>
+      <td>+0.723</td>
+    </tr>
+    </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2>Voice-Agent Meaning</h2>
+        <p class="note">The backend is now useful as a guarded prewarming layer: it can prepare likely response mechanisms behind the voice while preserving first-speech behavior, draft quality, and the raw prepared baseline. Median saved latency remains 560 ms when a prepared branch is selected.</p>
+      </div>
+      <div class="panel wide">
+        <h2>Assessment</h2>
+        <div class="assessment">
+          <div><strong>What works</strong><span>Quality-ready preparedness rises from 0.546 to 0.765, and target recovery adds 0.219 behind the confirmed first response.</span></div>
+          <div><strong>What changed from base</strong><span>The base state had 0.217 immediate first-speech readiness. The current swarm keeps that path while preparing broader background branches.</span></div>
+          <div><strong>What remains</strong><span>The `recover_inform` slice still has two held-back stress folds. The next improvement should strengthen that candidate, not relax the gates.</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

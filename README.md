@@ -656,6 +656,10 @@ foresight-replay \
   --dashboard-report runs/esconv_response_mode_dashboard.html
 ```
 
+The current outcome summary is captured in `runs/premonition_swarm_outcome.html`.
+It compares the original first-speech base state, the Probability Pack baseline,
+and the current guarded Premonition swarm against the larger stress gate.
+
 For shuffled stability checks, run the response-mode recovery stress report:
 
 ```bash
