@@ -15,6 +15,7 @@ from foresight_harness.conversation_probability import (
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
+    run_response_mode_recovery_stress_test,
     write_conversation_turns,
 )
 from foresight_harness.evaluator import load_replay_turns, run_replay, run_replay_turn_log
@@ -152,6 +153,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional JSON path for learned response-mode ranker bake-off output.",
     )
     parser.add_argument(
+        "--response-mode-stress-report",
+        type=Path,
+        help="Optional JSON path for quality-aware response-mode recovery stress output.",
+    )
+    parser.add_argument(
+        "--response-mode-stress-seeds",
+        type=positive_int,
+        default=3,
+        help="Number of deterministic shuffle seeds for response-mode stress mode.",
+    )
+    parser.add_argument(
         "--dailydialog-dir",
         type=Path,
         help="Path to one DailyDialog split directory containing dialogues.txt and label files.",
@@ -282,6 +294,18 @@ def main() -> None:
         train_turns = load_conversation_turns(args.conversation_train_input)
         dev_turns = load_conversation_turns(args.conversation_dev_input)
         test_turns = load_conversation_turns(args.conversation_test_input)
+        if args.response_mode_stress_report:
+            report = run_response_mode_recovery_stress_test(
+                train_turns + dev_turns + test_turns,
+                seeds=tuple(range(args.response_mode_stress_seeds)),
+                fold_count=args.folds,
+                top_k=args.top_k,
+            )
+            with args.response_mode_stress_report.open("w", encoding="utf-8") as handle:
+                json.dump(report, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+            print(json.dumps(report, indent=2, sort_keys=True))
+            return
         if args.response_mode_bakeoff_report:
             report = run_response_mode_ranker_bakeoff(
                 train_turns=train_turns,
@@ -292,6 +316,8 @@ def main() -> None:
             with args.response_mode_bakeoff_report.open("w", encoding="utf-8") as handle:
                 json.dump(report, handle, indent=2, sort_keys=True)
                 handle.write("\n")
+            if args.dashboard_report:
+                write_benchmark_dashboard(report, args.dashboard_report)
             print(json.dumps(report, indent=2, sort_keys=True))
             return
         if args.conversation_bakeoff_report:

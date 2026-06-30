@@ -753,3 +753,24 @@ Verification:
 - Final suite: `python3 -m pytest -v`: 131 passed.
 - `git diff --check`: passed.
 - Next lever: seed/fold stress test plus dashboard panel contrasting raw semantic coverage with quality-ready prepared coverage.
+
+## Response-Mode Recovery Stress Dashboard
+
+- [x] Add a seed/fold stress runner for quality-aware response-mode recovery promotion.
+- [x] Expose the stress runner through the CLI and write a JSON artifact.
+- [x] Add a response-mode dashboard panel that contrasts raw semantic coverage with quality-ready prepared coverage.
+- [x] Run an ESConv stress pass and render the quick-reference HTML dashboard.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_recovery_stress_test_reports_seed_fold_stability tests/test_visualization.py::test_render_response_mode_dashboard_includes_quality_ready_recovery_panel -v` failed because `run_response_mode_recovery_stress_test` did not exist.
+- Focused green check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_recovery_stress_test_reports_seed_fold_stability tests/test_visualization.py::test_render_response_mode_dashboard_includes_quality_ready_recovery_panel tests/test_cli.py::test_cli_runs_response_mode_recovery_stress_report -v`: 3 passed.
+- Full pre-artifact suite: `python3 -m pytest -v`: 134 passed.
+- Dashboard generation: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json --dashboard-report runs/esconv_response_mode_dashboard.html`: completed.
+- Browser verification: Playwright loaded `http://127.0.0.1:8765/runs/esconv_response_mode_dashboard.html`, confirmed title `Premonition Response-Mode Recovery`, and showed the quality-ready recovery panel. The only console error was a local `favicon.ico` 404.
+- Stress run: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json --response-mode-stress-seeds 2 --folds 3`: completed.
+- Stress result: promotion rate `0.5` across `6` shuffled folds; mean prepared-hit gain `+0.018`, mean quality-ready gain `+0.038`, max quality-ready gain `+0.079`, worst-fold gain `0.000`, and selected policies `recover_disclose_inform=3`, `recover_inform=2`, `none=1`.
+- Final suite: `python3 -m pytest -v`: 134 passed.
+- `git diff --check`: passed.
+- Next lever: improve `recover_disclose_inform` stability on shuffled zero-gain folds before expanding to more seeds/folds.

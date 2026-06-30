@@ -1,0 +1,260 @@
+{
+  "aggregates": {
+    "background_recovery_hit_rate": {
+      "max": 0.079,
+      "mean": 0.038,
+      "min": 0.0
+    },
+    "prepared_hit_gain": {
+      "max": 0.037,
+      "mean": 0.018,
+      "min": 0.0
+    },
+    "promotion_rate": 0.5,
+    "quality_ready_gain": {
+      "max": 0.079,
+      "mean": 0.038,
+      "min": 0.0
+    },
+    "selected_policy_counts": {
+      "none": 1,
+      "recover_disclose_inform": 3,
+      "recover_inform": 2
+    }
+  },
+  "runs": [
+    {
+      "active": {
+        "average_quality_score": 0.965,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.578,
+        "quality_ready_rate": 0.537,
+        "semantic_prepared_hit_rate": 0.041
+      },
+      "active_policy": "recover_inform",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 0.965,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.578,
+        "quality_ready_rate": 0.537,
+        "semantic_prepared_hit_rate": 0.041
+      },
+      "calibration_promoted": true,
+      "dev_turns": 3429,
+      "fold": 1,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 0,
+      "selected_policy": "recover_inform",
+      "target_modes": {
+        "inform": {
+          "active_prepared_hit_rate": 0.0,
+          "active_quality_ready_rate": 0.0,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 3430,
+      "train_turns": 3429
+    },
+    {
+      "active": {
+        "average_quality_score": 0.965,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.621,
+        "quality_ready_rate": 0.577,
+        "semantic_prepared_hit_rate": 0.045
+      },
+      "active_policy": "",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 0.965,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.621,
+        "quality_ready_rate": 0.577,
+        "semantic_prepared_hit_rate": 0.045
+      },
+      "calibration_promoted": false,
+      "dev_turns": 3429,
+      "fold": 2,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 0,
+      "selected_policy": "",
+      "target_modes": {},
+      "test_turns": 3429,
+      "train_turns": 3430
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.079,
+        "prepared_hit_rate": 0.624,
+        "quality_ready_rate": 0.624,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.079,
+      "baseline": {
+        "average_quality_score": 0.965,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.587,
+        "quality_ready_rate": 0.545,
+        "semantic_prepared_hit_rate": 0.042
+      },
+      "calibration_promoted": true,
+      "dev_turns": 3430,
+      "fold": 3,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.037,
+      "promoted": true,
+      "quality_ready_gain": 0.079,
+      "seed": 0,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.29,
+          "active_quality_ready_rate": 0.29,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.752,
+          "active_quality_ready_rate": 0.752,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 3429,
+      "train_turns": 3429
+    },
+    {
+      "active": {
+        "average_quality_score": 0.964,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.596,
+        "quality_ready_rate": 0.552,
+        "semantic_prepared_hit_rate": 0.044
+      },
+      "active_policy": "recover_inform",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 0.964,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.596,
+        "quality_ready_rate": 0.552,
+        "semantic_prepared_hit_rate": 0.044
+      },
+      "calibration_promoted": true,
+      "dev_turns": 3429,
+      "fold": 1,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 1,
+      "selected_policy": "recover_inform",
+      "target_modes": {
+        "inform": {
+          "active_prepared_hit_rate": 0.0,
+          "active_quality_ready_rate": 0.0,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 3430,
+      "train_turns": 3429
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.074,
+        "prepared_hit_rate": 0.609,
+        "quality_ready_rate": 0.609,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.074,
+      "baseline": {
+        "average_quality_score": 0.965,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.575,
+        "quality_ready_rate": 0.535,
+        "semantic_prepared_hit_rate": 0.041
+      },
+      "calibration_promoted": true,
+      "dev_turns": 3429,
+      "fold": 2,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.034,
+      "promoted": true,
+      "quality_ready_gain": 0.074,
+      "seed": 1,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.251,
+          "active_quality_ready_rate": 0.251,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.683,
+          "active_quality_ready_rate": 0.683,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 3429,
+      "train_turns": 3430
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.076,
+        "prepared_hit_rate": 0.636,
+        "quality_ready_rate": 0.636,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.076,
+      "baseline": {
+        "average_quality_score": 0.966,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.601,
+        "quality_ready_rate": 0.56,
+        "semantic_prepared_hit_rate": 0.041
+      },
+      "calibration_promoted": true,
+      "dev_turns": 3430,
+      "fold": 3,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.035,
+      "promoted": true,
+      "quality_ready_gain": 0.076,
+      "seed": 1,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.319,
+          "active_quality_ready_rate": 0.319,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.722,
+          "active_quality_ready_rate": 0.722,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 3429,
+      "train_turns": 3429
+    }
+  ],
+  "summary": {
+    "fold_count": 3,
+    "min_quality_score": 0.75,
+    "run_count": 6,
+    "seed_count": 2,
+    "top_k": 3,
+    "total_turns": 10288
+  }
+}

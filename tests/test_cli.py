@@ -345,6 +345,84 @@ def test_cli_runs_response_mode_ranker_bakeoff(tmp_path):
     assert report["selected_variant"]["test"]["p_at_1"] == 1.0
 
 
+def test_cli_runs_response_mode_recovery_stress_report(tmp_path):
+    train_path = tmp_path / "train.jsonl"
+    dev_path = tmp_path / "dev.jsonl"
+    test_path = tmp_path / "test.jsonl"
+    output = tmp_path / "response-mode-stress.json"
+    rows = {
+        train_path: [
+            ("train-validate-1", "drainingcue heavy", "validate"),
+            ("train-validate-2", "drainingcue overwhelming", "validate"),
+            ("train-ask-1", "unclear details", "ask_followup"),
+            ("train-ask-2", "unclear next step", "ask_followup"),
+        ],
+        dev_path: [
+            ("dev-validate-1", "drainingcue difficult", "validate"),
+            ("dev-ask-1", "unclear plan", "ask_followup"),
+            ("dev-validate-2", "drainingcue hard", "validate"),
+            ("dev-ask-2", "unclear situation", "ask_followup"),
+        ],
+        test_path: [
+            ("test-validate-1", "drainingcue moment", "validate"),
+            ("test-ask-1", "unclear question", "ask_followup"),
+            ("test-validate-2", "drainingcue day", "validate"),
+            ("test-ask-2", "unclear details", "ask_followup"),
+        ],
+    }
+    for path, split_rows in rows.items():
+        path.write_text(
+            "\n".join(
+                json.dumps(
+                    {
+                        "turn_id": turn_id,
+                        "conversation": [
+                            {"role": "speaker_a", "content": context}
+                        ],
+                        "next_speaker": "speaker_b",
+                        "actual_next_utterance": "Okay.",
+                        "expected_act": "inform",
+                        "expected_emotion": "no_emotion",
+                        "expected_response_mode": mode,
+                    }
+                )
+                for turn_id, context, mode in split_rows
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "foresight_harness.cli",
+            "--conversation-train-input",
+            str(train_path),
+            "--conversation-dev-input",
+            str(dev_path),
+            "--conversation-test-input",
+            str(test_path),
+            "--response-mode-stress-report",
+            str(output),
+            "--response-mode-stress-seeds",
+            "1",
+            "--folds",
+            "3",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    report = json.loads(completed.stdout)
+    saved = json.loads(output.read_text(encoding="utf-8"))
+
+    assert saved == report
+    assert report["summary"]["run_count"] == 3
+    assert "prepared_hit_gain" in report["aggregates"]
+
+
 def test_console_entrypoint_is_declared():
     from pathlib import Path
 

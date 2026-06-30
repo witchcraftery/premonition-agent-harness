@@ -5,6 +5,9 @@ from pathlib import Path
 
 
 def render_benchmark_dashboard(report: dict[str, object]) -> str:
+    if "probability_pack_replay" in report and "background_recovery_calibration" in report:
+        return render_response_mode_dashboard(report)
+
     summary = report["summary"]
     aggregates = report["aggregates"]
     test_harness = aggregates["test"]["harness"]
@@ -315,6 +318,188 @@ def render_benchmark_dashboard(report: dict[str, object]) -> str:
 
 def write_benchmark_dashboard(report: dict[str, object], output_path: Path) -> None:
     output_path.write_text(render_benchmark_dashboard(report), encoding="utf-8")
+
+
+def render_response_mode_dashboard(report: dict[str, object]) -> str:
+    summary = dict(report["summary"])
+    baseline = dict(report["probability_pack_replay_baseline"])
+    active = dict(report["probability_pack_replay"])
+    calibration = dict(report["background_recovery_calibration"])
+    evaluation = dict(report["background_recovery_evaluation"])
+    selected_policy = calibration.get("selected_policy") or {}
+    selected_policy_name = str(dict(selected_policy).get("name", "none"))
+    min_quality_score = float(calibration.get("min_quality_score", 0.0))
+    mode_rows = response_mode_rows(baseline, active)
+
+    prepared = comparison_metric_card(
+        "Prepared Hit Rate",
+        float(baseline["prepared_hit_rate"]),
+        float(active["prepared_hit_rate"]),
+    )
+    quality_ready = comparison_metric_card(
+        "Quality-Ready Recovery",
+        float(baseline["quality_ready_rate"]),
+        float(active["quality_ready_rate"]),
+    )
+    raw_semantic = comparison_metric_card(
+        "Raw Semantic Coverage",
+        float(baseline["semantic_prepared_hit_rate"]),
+        float(active["semantic_prepared_hit_rate"]),
+    )
+    background = comparison_metric_card(
+        "Background Recovery",
+        float(baseline["background_recovery_hit_rate"]),
+        float(active["background_recovery_hit_rate"]),
+    )
+    promoted = simple_card(
+        "Held-Out Promoted",
+        "yes" if bool(evaluation.get("promoted", False)) else "no",
+    )
+    rows = "\n".join(response_mode_dashboard_row(row) for row in mode_rows)
+
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Premonition Response-Mode Recovery</title>
+  <style>
+    :root {{
+      color-scheme: light;
+      --bg: #f6f7f5;
+      --ink: #17211e;
+      --muted: #69746f;
+      --line: #dce2dc;
+      --panel: #ffffff;
+      --green: #176b5b;
+      --blue: #315f86;
+      --shadow: 0 18px 55px rgba(23, 33, 30, 0.08);
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }}
+    main {{
+      width: min(1120px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 36px 0 48px;
+    }}
+    header {{
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 24px;
+    }}
+    h1 {{ margin: 0; font-size: 34px; line-height: 1.08; }}
+    .status {{ color: var(--muted); font-size: 14px; line-height: 1.45; text-align: right; }}
+    .metrics {{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }}
+    .metric, .panel {{ background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }}
+    .metric {{ padding: 18px; min-height: 118px; }}
+    .metric span {{ display: block; color: var(--muted); font-size: 13px; font-weight: 650; margin-bottom: 16px; }}
+    .metric strong {{ display: block; font-size: 24px; line-height: 1; }}
+    .metric em {{ display: block; margin-top: 10px; color: var(--green); font-style: normal; font-size: 13px; font-weight: 700; }}
+    .panel {{ padding: 22px; }}
+    h2 {{ margin: 0 0 16px; font-size: 18px; }}
+    table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
+    th, td {{ border-top: 1px solid var(--line); text-align: left; padding: 12px 8px; font-variant-numeric: tabular-nums; }}
+    th {{ color: var(--muted); font-size: 12px; }}
+    .mode {{ font-weight: 750; }}
+    .gain {{ color: var(--green); font-weight: 750; }}
+    .note {{ color: var(--muted); margin: 0; line-height: 1.55; max-width: 760px; }}
+    @media (max-width: 900px) {{
+      header {{ align-items: start; flex-direction: column; }}
+      .status {{ text-align: left; }}
+      .metrics {{ grid-template-columns: 1fr; }}
+    }}
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Premonition Response-Mode Recovery</h1>
+      </div>
+      <div class="status">
+        {summary.get("test_turns", 0)} held-out turns · top-{summary.get("top_k", 3)} branches<br>
+        selected: {escape(selected_policy_name)} · quality floor {min_quality_score:.2f}
+      </div>
+    </header>
+    <section class="metrics">
+      {prepared}
+      {quality_ready}
+      {raw_semantic}
+      {background}
+      {promoted}
+    </section>
+    <section class="panel">
+      <h2>Quality-Ready Recovery By Mode</h2>
+      <p class="note">Raw semantic coverage can look useful before it is voice-ready. This view contrasts baseline prepared coverage with the active quality-filtered recovery pack.</p>
+      <table>
+        <thead>
+          <tr><th>Mode</th><th>Baseline Prepared</th><th>Active Prepared</th><th>Quality-Ready</th><th>Recovery Hit</th><th>Gain</th></tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
+"""
+
+
+def response_mode_rows(
+    baseline: dict[str, object],
+    active: dict[str, object],
+) -> list[dict[str, float | str]]:
+    baseline_modes = dict(dict(baseline["segments"])["expected_response_mode"])  # type: ignore[index]
+    active_modes = dict(dict(active["segments"])["expected_response_mode"])  # type: ignore[index]
+    rows = []
+    for mode in sorted(set(baseline_modes) | set(active_modes)):
+        baseline_segment = dict(baseline_modes.get(mode, {}))
+        active_segment = dict(active_modes.get(mode, {}))
+        baseline_prepared = float(baseline_segment.get("prepared_hit_rate", 0.0))
+        active_prepared = float(active_segment.get("prepared_hit_rate", 0.0))
+        rows.append(
+            {
+                "mode": mode,
+                "baseline_prepared": baseline_prepared,
+                "active_prepared": active_prepared,
+                "quality_ready": float(active_segment.get("quality_ready_rate", 0.0)),
+                "background_recovery": float(
+                    active_segment.get("background_recovery_hit_rate", 0.0)
+                ),
+                "gain": round(active_prepared - baseline_prepared, 3),
+            }
+        )
+    return sorted(rows, key=lambda row: (float(row["gain"]), str(row["mode"])), reverse=True)
+
+
+def response_mode_dashboard_row(row: dict[str, float | str]) -> str:
+    return f"""
+    <tr>
+      <td class="mode">{escape(str(row["mode"]))}</td>
+      <td>{float(row["baseline_prepared"]):.3f}</td>
+      <td>{float(row["active_prepared"]):.3f}</td>
+      <td>{float(row["quality_ready"]):.3f}</td>
+      <td>{float(row["background_recovery"]):.3f}</td>
+      <td class="gain">{float(row["gain"]):+.3f}</td>
+    </tr>
+    """
+
+
+def comparison_metric_card(label: str, baseline: float, active: float) -> str:
+    return f"""
+    <article class="metric">
+      <span>{escape(label)}</span>
+      <strong>{baseline:.3f} -> {active:.3f}</strong>
+      <em>{active - baseline:+.3f} gain</em>
+    </article>
+    """
 
 
 def metric_card(label: str, metric: dict[str, float]) -> str:

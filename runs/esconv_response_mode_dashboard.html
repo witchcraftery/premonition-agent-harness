@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Premonition Response-Mode Recovery</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f5;
+      --ink: #17211e;
+      --muted: #69746f;
+      --line: #dce2dc;
+      --panel: #ffffff;
+      --green: #176b5b;
+      --blue: #315f86;
+      --shadow: 0 18px 55px rgba(23, 33, 30, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    main {
+      width: min(1120px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 36px 0 48px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+    h1 { margin: 0; font-size: 34px; line-height: 1.08; }
+    .status { color: var(--muted); font-size: 14px; line-height: 1.45; text-align: right; }
+    .metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .metric, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+    .metric { padding: 18px; min-height: 118px; }
+    .metric span { display: block; color: var(--muted); font-size: 13px; font-weight: 650; margin-bottom: 16px; }
+    .metric strong { display: block; font-size: 24px; line-height: 1; }
+    .metric em { display: block; margin-top: 10px; color: var(--green); font-style: normal; font-size: 13px; font-weight: 700; }
+    .panel { padding: 22px; }
+    h2 { margin: 0 0 16px; font-size: 18px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-top: 1px solid var(--line); text-align: left; padding: 12px 8px; font-variant-numeric: tabular-nums; }
+    th { color: var(--muted); font-size: 12px; }
+    .mode { font-weight: 750; }
+    .gain { color: var(--green); font-weight: 750; }
+    .note { color: var(--muted); margin: 0; line-height: 1.55; max-width: 760px; }
+    @media (max-width: 900px) {
+      header { align-items: start; flex-direction: column; }
+      .status { text-align: left; }
+      .metrics { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Premonition Response-Mode Recovery</h1>
+      </div>
+      <div class="status">
+        1748 held-out turns · top-3 branches<br>
+        selected: recover_disclose_inform_other · quality floor 0.75
+      </div>
+    </header>
+    <section class="metrics">
+      
+    <article class="metric">
+      <span>Prepared Hit Rate</span>
+      <strong>0.577 -> 0.765</strong>
+      <em>+0.188 gain</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>Quality-Ready Recovery</span>
+      <strong>0.546 -> 0.765</strong>
+      <em>+0.219 gain</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>Raw Semantic Coverage</span>
+      <strong>0.031 -> 0.000</strong>
+      <em>-0.031 gain</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>Background Recovery</span>
+      <strong>0.000 -> 0.219</strong>
+      <em>+0.219 gain</em>
+    </article>
+    
+      
+    <article class="metric">
+      <span>Held-Out Promoted</span>
+      <strong>yes</strong>
+      <em>current run</em>
+    </article>
+    
+    </section>
+    <section class="panel">
+      <h2>Quality-Ready Recovery By Mode</h2>
+      <p class="note">Raw semantic coverage can look useful before it is voice-ready. This view contrasts baseline prepared coverage with the active quality-filtered recovery pack.</p>
+      <table>
+        <thead>
+          <tr><th>Mode</th><th>Baseline Prepared</th><th>Active Prepared</th><th>Quality-Ready</th><th>Recovery Hit</th><th>Gain</th></tr>
+        </thead>
+        <tbody>
+    <tr>
+      <td class="mode">inform</td>
+      <td>0.000</td>
+      <td>0.739</td>
+      <td>0.739</td>
+      <td>0.739</td>
+      <td class="gain">+0.739</td>
+    </tr>
+    
+
+    <tr>
+      <td class="mode">other</td>
+      <td>0.000</td>
+      <td>0.723</td>
+      <td>0.723</td>
+      <td>0.723</td>
+      <td class="gain">+0.723</td>
+    </tr>
+    
+
+    <tr>
+      <td class="mode">disclose</td>
+      <td>0.000</td>
+      <td>0.449</td>
+      <td>0.449</td>
+      <td>0.449</td>
+      <td class="gain">+0.449</td>
+    </tr>
+    
+
+    <tr>
+      <td class="mode">suggest</td>
+      <td>0.651</td>
+      <td>0.651</td>
+      <td>0.651</td>
+      <td>0.000</td>
+      <td class="gain">+0.000</td>
+    </tr>
+    
+
+    <tr>
+      <td class="mode">ask_followup</td>
+      <td>0.833</td>
+      <td>0.833</td>
+      <td>0.833</td>
+      <td>0.000</td>
+      <td class="gain">+0.000</td>
+    </tr>
+    
+
+    <tr>
+      <td class="mode">reassure</td>
+      <td>1.000</td>
+      <td>0.993</td>
+      <td>0.993</td>
+      <td>0.000</td>
+      <td class="gain">-0.007</td>
+    </tr>
+    
+
+    <tr>
+      <td class="mode">validate</td>
+      <td>1.000</td>
+      <td>0.811</td>
+      <td>0.811</td>
+      <td>0.000</td>
+      <td class="gain">-0.189</td>
+    </tr>
+    </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

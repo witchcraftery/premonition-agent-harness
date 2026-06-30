@@ -569,6 +569,14 @@ quality-ready coverage rises from `0.546` to `0.765`, background recovery adds
 rate stays locked at `0.217`. The previously blank slices now show exact
 quality-ready recovery: `disclose=0.449`, `inform=0.739`, and `other=0.723`.
 
+The first shuffled stress pass makes the result more honest. A 2-seed x 3-fold
+ESConv stress run promotes quality-aware recovery on `3/6` folds, with mean
+prepared-hit gain `+0.018`, mean quality-ready gain `+0.038`, and worst-fold
+gain `0.000` instead of a regression. The dominant promoted policy is
+`recover_disclose_inform`; `recover_inform` appears in two validation selections
+but does not clear held-out promotion. This says the recovery idea is real but
+not yet universally stable across shuffled train/dev/test boundaries.
+
 ## Replay Data Format
 
 Replay input is JSONL. Each line is one conversation turn:
@@ -636,6 +644,29 @@ data path, so visual peeks and JSON analysis stay aligned. When the backend
 baseline absorbs previous guidance wins, the dashboard makes that visible
 through flat guided gains, high baseline scores, lower promotion rate, and
 zero-regression fold rows.
+
+Response-mode bake-offs can also render a quick-reference dashboard:
+
+```bash
+foresight-replay \
+  --conversation-train-input data/esconv_train_response_modes_sample.jsonl \
+  --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl \
+  --conversation-test-input data/esconv_test_response_modes_sample.jsonl \
+  --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json \
+  --dashboard-report runs/esconv_response_mode_dashboard.html
+```
+
+For shuffled stability checks, run the response-mode recovery stress report:
+
+```bash
+foresight-replay \
+  --conversation-train-input data/esconv_train_response_modes_sample.jsonl \
+  --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl \
+  --conversation-test-input data/esconv_test_response_modes_sample.jsonl \
+  --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json \
+  --response-mode-stress-seeds 2 \
+  --folds 3
+```
 
 Each split report also includes segment analytics and focus areas. These make it possible to track whether improvements are broad or concentrated in a few topics, and to identify the next areas that deserve new data or better guidance.
 

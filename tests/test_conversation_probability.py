@@ -25,6 +25,7 @@ from foresight_harness.conversation_probability import (
     run_conversation_probability_loop,
     run_conversation_train_dev_test_loop,
     run_response_mode_ranker_bakeoff,
+    run_response_mode_recovery_stress_test,
     response_mode_bakeoff_variants,
     response_mode_background_recovery_evaluation,
     response_mode_background_recovery_policy,
@@ -431,6 +432,41 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "candidate_evaluations" in report["background_recovery_calibration"]
     assert "selected_policy" in report["background_recovery_calibration"]
     assert report["background_recovery_calibration"]["min_quality_score"] == 0.75
+
+
+def test_response_mode_recovery_stress_test_reports_seed_fold_stability():
+    turns = tuple(
+        conversation_turn(
+            f"stress-validate-{index}",
+            "drainingcue emotionally heavy",
+            "inform",
+            expected_response_mode="validate",
+        )
+        for index in range(6)
+    ) + tuple(
+        conversation_turn(
+            f"stress-ask-{index}",
+            "unclear details",
+            "question",
+            expected_response_mode="ask_followup",
+        )
+        for index in range(6)
+    )
+
+    report = run_response_mode_recovery_stress_test(
+        turns,
+        seeds=(0, 1),
+        fold_count=3,
+        top_k=3,
+    )
+
+    assert report["summary"]["seed_count"] == 2
+    assert report["summary"]["fold_count"] == 3
+    assert report["summary"]["run_count"] == 6
+    assert len(report["runs"]) == 6
+    assert "prepared_hit_gain" in report["aggregates"]
+    assert "selected_policy_counts" in report["aggregates"]
+    assert all("quality_ready_gain" in run for run in report["runs"])
 
 
 def test_response_mode_specialist_promotes_target_mode_from_metadata():

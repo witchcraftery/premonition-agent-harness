@@ -4,6 +4,7 @@ import csv
 from itertools import combinations
 import json
 import math
+import random
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import median
@@ -3188,6 +3189,189 @@ def run_response_mode_ranker_bakeoff(
             test_baseline_rows,
             selected_rows,
         ),
+    }
+
+
+def run_response_mode_recovery_stress_test(
+    turns: tuple[ConversationTurn, ...],
+    seeds: tuple[int, ...] = (0, 1, 2),
+    fold_count: int = 3,
+    top_k: int = 3,
+) -> dict[str, object]:
+    if fold_count < 3:
+        raise ValueError("fold_count must be at least 3")
+    if len(turns) < fold_count:
+        raise ValueError("turn count must be at least fold_count")
+    if not seeds:
+        raise ValueError("at least one seed is required")
+
+    runs = []
+    for seed in seeds:
+        shuffled_turns = list(turns)
+        random.Random(seed).shuffle(shuffled_turns)
+        for fold_index in range(fold_count):
+            train_turns, dev_turns, test_turns = split_response_mode_stress_fold(
+                tuple(shuffled_turns),
+                fold_index=fold_index,
+                fold_count=fold_count,
+            )
+            bakeoff = run_response_mode_ranker_bakeoff(
+                train_turns=train_turns,
+                dev_turns=dev_turns,
+                test_turns=test_turns,
+                top_k=top_k,
+            )
+            baseline = bakeoff["probability_pack_replay_baseline"]
+            active = bakeoff["probability_pack_replay"]
+            calibration = bakeoff["background_recovery_calibration"]
+            evaluation = bakeoff["background_recovery_evaluation"]
+            policy = bakeoff["background_recovery_policy"]
+            selected_policy = calibration.get("selected_policy")
+            selected_policy_name = (
+                str(dict(selected_policy)["name"]) if selected_policy else ""
+            )
+            runs.append(
+                {
+                    "seed": seed,
+                    "fold": fold_index + 1,
+                    "train_turns": len(train_turns),
+                    "dev_turns": len(dev_turns),
+                    "test_turns": len(test_turns),
+                    "selected_policy": selected_policy_name,
+                    "active_policy": str(dict(policy).get("name", "")),
+                    "calibration_promoted": bool(calibration["promoted"]),
+                    "heldout_promoted": bool(evaluation["promoted"]),
+                    "promoted": bool(calibration["promoted"])
+                    and bool(evaluation["promoted"]),
+                    "prepared_hit_gain": round(
+                        float(active["prepared_hit_rate"])
+                        - float(baseline["prepared_hit_rate"]),
+                        3,
+                    ),
+                    "quality_ready_gain": round(
+                        float(active["quality_ready_rate"])
+                        - float(baseline["quality_ready_rate"]),
+                        3,
+                    ),
+                    "background_recovery_hit_rate": float(
+                        active["background_recovery_hit_rate"]
+                    ),
+                    "baseline": response_mode_recovery_stress_metrics(baseline),
+                    "active": response_mode_recovery_stress_metrics(active),
+                    "target_modes": response_mode_recovery_stress_segments(
+                        baseline,
+                        active,
+                        target_modes=tuple(str(mode) for mode in dict(policy).get("target_modes", ())),
+                    ),
+                }
+            )
+
+    return {
+        "summary": {
+            "total_turns": len(turns),
+            "seed_count": len(seeds),
+            "fold_count": fold_count,
+            "run_count": len(runs),
+            "top_k": top_k,
+            "min_quality_score": RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
+        },
+        "aggregates": aggregate_response_mode_recovery_stress_runs(runs),
+        "runs": runs,
+    }
+
+
+def split_response_mode_stress_fold(
+    turns: tuple[ConversationTurn, ...],
+    fold_index: int,
+    fold_count: int,
+) -> tuple[
+    tuple[ConversationTurn, ...],
+    tuple[ConversationTurn, ...],
+    tuple[ConversationTurn, ...],
+]:
+    test_slot = fold_index
+    dev_slot = (fold_index + 1) % fold_count
+    train_turns = []
+    dev_turns = []
+    test_turns = []
+    for index, turn in enumerate(turns):
+        slot = index % fold_count
+        if slot == test_slot:
+            test_turns.append(turn)
+        elif slot == dev_slot:
+            dev_turns.append(turn)
+        else:
+            train_turns.append(turn)
+    return tuple(train_turns), tuple(dev_turns), tuple(test_turns)
+
+
+def response_mode_recovery_stress_metrics(
+    replay: dict[str, object],
+) -> dict[str, float]:
+    return {
+        "prepared_hit_rate": float(replay["prepared_hit_rate"]),
+        "quality_ready_rate": float(replay["quality_ready_rate"]),
+        "semantic_prepared_hit_rate": float(replay["semantic_prepared_hit_rate"]),
+        "background_recovery_hit_rate": float(replay["background_recovery_hit_rate"]),
+        "average_quality_score": float(replay["average_quality_score"]),
+    }
+
+
+def response_mode_recovery_stress_segments(
+    baseline: dict[str, object],
+    active: dict[str, object],
+    target_modes: tuple[str, ...],
+) -> dict[str, object]:
+    baseline_modes = dict(dict(baseline["segments"])["expected_response_mode"])  # type: ignore[index]
+    active_modes = dict(dict(active["segments"])["expected_response_mode"])  # type: ignore[index]
+    return {
+        mode: {
+            "baseline_prepared_hit_rate": float(
+                dict(baseline_modes.get(mode, {})).get("prepared_hit_rate", 0.0)
+            ),
+            "active_prepared_hit_rate": float(
+                dict(active_modes.get(mode, {})).get("prepared_hit_rate", 0.0)
+            ),
+            "active_quality_ready_rate": float(
+                dict(active_modes.get(mode, {})).get("quality_ready_rate", 0.0)
+            ),
+        }
+        for mode in target_modes
+    }
+
+
+def aggregate_response_mode_recovery_stress_runs(
+    runs: list[dict[str, object]],
+) -> dict[str, object]:
+    selected_policy_counts: dict[str, int] = {}
+    for run in runs:
+        policy = str(run.get("selected_policy", "")) or "none"
+        selected_policy_counts[policy] = selected_policy_counts.get(policy, 0) + 1
+    return {
+        "promotion_rate": round(
+            sum(bool(run["promoted"]) for run in runs) / max(len(runs), 1),
+            3,
+        ),
+        "prepared_hit_gain": aggregate_float_values(
+            [float(run["prepared_hit_gain"]) for run in runs]
+        ),
+        "quality_ready_gain": aggregate_float_values(
+            [float(run["quality_ready_gain"]) for run in runs]
+        ),
+        "background_recovery_hit_rate": aggregate_float_values(
+            [float(run["background_recovery_hit_rate"]) for run in runs]
+        ),
+        "selected_policy_counts": selected_policy_counts,
+    }
+
+
+def aggregate_float_values(values: list[float]) -> dict[str, float]:
+    if not values:
+        return {"mean": 0.0, "min": 0.0, "max": 0.0}
+    return {
+        "mean": round(sum(values) / len(values), 3),
+        "min": round(min(values), 3),
+        "max": round(max(values), 3),
     }
 
 
