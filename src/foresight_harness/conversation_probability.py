@@ -1152,6 +1152,7 @@ def response_mode_background_recovery_policy(
         if float(dict(segment)["prepared_hit_rate"]) == 0.0
     ]
     mode_variants: dict[str, str] = {}
+    buffer_modes: list[str] = []
     if coverage_projection is not None:
         projection_modes = dict(
             dict(coverage_projection)["expected_response_mode"]  # type: ignore[index]
@@ -1160,8 +1161,34 @@ def response_mode_background_recovery_policy(
             projection = dict(projection_modes.get(mode, {}))
             if float(projection.get("best_top_3_gain", 0.0)) > 0:
                 mode_variants[mode] = str(projection["best_top_3_variant"])
+        if len(target_modes) == 1:
+            buffer_candidates = []
+            for mode, segment in sorted(mode_segments.items()):
+                if mode in target_modes:
+                    continue
+                prepared_hit_rate = float(dict(segment)["prepared_hit_rate"])
+                projection = dict(projection_modes.get(mode, {}))
+                best_top_3_gain = float(projection.get("best_top_3_gain", 0.0))
+                if (
+                    0.0 < prepared_hit_rate < 1.0
+                    and best_top_3_gain > 0
+                    and projection.get("best_top_3_variant")
+                ):
+                    buffer_candidates.append(
+                        (
+                            best_top_3_gain,
+                            prepared_hit_rate,
+                            mode,
+                            str(projection["best_top_3_variant"]),
+                        )
+                    )
+            if buffer_candidates:
+                _, _, mode, variant = max(buffer_candidates)
+                buffer_modes.append(mode)
+                mode_variants[mode] = variant
     return {
         "target_modes": target_modes,
+        "buffer_modes": buffer_modes,
         "mode_variants": mode_variants,
         "preparation_role": "background_recovery",
         "first_speech_locked": True,
@@ -1256,6 +1283,7 @@ def response_mode_background_recovery_policy_candidates(
     recovery_policy: dict[str, object],
 ) -> tuple[dict[str, object], ...]:
     target_modes = [str(mode) for mode in recovery_policy.get("target_modes", ())]
+    buffer_modes = [str(mode) for mode in recovery_policy.get("buffer_modes", ())]
     mode_variants = {
         str(mode): str(variant)
         for mode, variant in dict(recovery_policy.get("mode_variants", {})).items()
@@ -1276,6 +1304,23 @@ def response_mode_background_recovery_policy_candidates(
                     },
                 }
             )
+            if buffer_modes:
+                candidates.append(
+                    {
+                        **recovery_policy,
+                        "name": (
+                            f"recover_{'_'.join(subset)}_buffer_"
+                            f"{'_'.join(buffer_modes)}"
+                        ),
+                        "target_modes": subset,
+                        "buffer_modes": buffer_modes,
+                        "mode_variants": {
+                            mode: mode_variants[mode]
+                            for mode in (*subset, *buffer_modes)
+                            if mode in mode_variants
+                        },
+                    }
+                )
     return tuple(candidates)
 
 
@@ -1299,23 +1344,21 @@ def select_response_mode_background_recovery_candidate(
         for name, evaluation in candidate_evaluations.items()
         if bool(evaluation["promoted"])
     ]
+    ranked_promoted_names = sorted(
+        promoted_names,
+        key=lambda name: response_mode_recovery_candidate_sort_key(
+            name,
+            candidate_evaluations=candidate_evaluations,
+            candidate_replays=candidate_replays,
+        ),
+        reverse=True,
+    )
     selected_name = (
-        max(
-            promoted_names,
-            key=lambda name: (
-                float(candidate_evaluations[name]["prepared_hit_gain"]),
-                float(candidate_evaluations[name]["quality_ready_gain"]),
-                float(candidate_replays[name]["average_quality_score"]),
-                len(
-                    list(
-                        dict(candidate_evaluations[name]["target_mode_results"]).keys()
-                    )
-                ),
-            ),
-        )
-        if promoted_names
+        ranked_promoted_names[0]
+        if ranked_promoted_names
         else None
     )
+    policies_by_name = {str(policy["name"]): policy for policy in candidate_policies}
     selected_policy = next(
         (
             policy
@@ -1333,7 +1376,33 @@ def select_response_mode_background_recovery_candidate(
             else None
         ),
         "candidate_evaluations": candidate_evaluations,
+        "promotion_ladder": tuple(
+            policies_by_name[name]
+            for name in ranked_promoted_names
+            if name in policies_by_name
+        ),
+        "promotion_ladder_evaluations": tuple(
+            {
+                "name": name,
+                **candidate_evaluations[name],
+            }
+            for name in ranked_promoted_names
+        ),
     }
+
+
+def response_mode_recovery_candidate_sort_key(
+    name: str,
+    *,
+    candidate_evaluations: dict[str, dict[str, object]],
+    candidate_replays: dict[str, dict[str, object]],
+) -> tuple[float, float, float, int]:
+    return (
+        float(candidate_evaluations[name]["prepared_hit_gain"]),
+        float(candidate_evaluations[name]["quality_ready_gain"]),
+        float(candidate_replays[name]["average_quality_score"]),
+        len(list(dict(candidate_evaluations[name]["target_mode_results"]).keys())),
+    )
 
 
 def response_mode_recovery_policy_for_replay(
@@ -1343,6 +1412,55 @@ def response_mode_recovery_policy_for_replay(
     return {
         **selected_policy,
         "quality_floor": float(baseline_replay["average_quality_score"]),
+    }
+
+
+def select_response_mode_heldout_recovery_ladder(
+    *,
+    raw_baseline_replay: dict[str, object],
+    quality_aware_baseline_replay: dict[str, object],
+    candidate_replays: dict[str, dict[str, object]],
+    candidate_policies: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    attempts = []
+    for candidate_policy in candidate_policies:
+        candidate_name = str(candidate_policy["name"])
+        if candidate_name not in candidate_replays:
+            continue
+        local_policy = response_mode_recovery_policy_for_replay(
+            candidate_policy,
+            quality_aware_baseline_replay,
+        )
+        local_policy = {
+            **local_policy,
+            "prepared_hit_floor": float(raw_baseline_replay["prepared_hit_rate"]),
+        }
+        evaluation = response_mode_background_recovery_evaluation(
+            quality_aware_baseline_replay,
+            candidate_replays[candidate_name],
+            local_policy,
+        )
+        attempt = {
+            "name": candidate_name,
+            "policy": local_policy,
+            "evaluation": evaluation,
+            "replay": candidate_replays[candidate_name],
+        }
+        attempts.append(attempt)
+        if bool(evaluation["promoted"]):
+            return {
+                "promoted": True,
+                "selected_policy": local_policy,
+                "selected_evaluation": evaluation,
+                "selected_replay": candidate_replays[candidate_name],
+                "attempts": tuple(attempts),
+            }
+    return {
+        "promoted": False,
+        "selected_policy": None,
+        "selected_evaluation": None,
+        "selected_replay": None,
+        "attempts": tuple(attempts),
     }
 
 
@@ -1410,7 +1528,13 @@ def response_mode_recovery_branches(
         str(mode): str(variant)
         for mode, variant in dict(recovery_policy.get("mode_variants", {})).items()
     }
-    for mode in recovery_policy.get("target_modes", ()):
+    recovery_modes = tuple(
+        dict.fromkeys(
+            [str(mode) for mode in recovery_policy.get("target_modes", ())]
+            + [str(mode) for mode in recovery_policy.get("buffer_modes", ())]
+        )
+    )
+    for mode in recovery_modes:
         target_mode = str(mode)
         variant_name = mode_variants.get(target_mode)
         if not variant_name or variant_name not in variants:
@@ -3103,38 +3227,84 @@ def run_response_mode_ranker_bakeoff(
             min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
         )
     )
-    background_recovery_policy = response_mode_recovery_policy_for_replay(
-        background_recovery_policy,
-        baseline_probability_pack_replay_quality_aware,
+    heldout_recovery_candidate_policies = tuple(
+        dict(policy)
+        for policy in background_recovery_calibration.get("promotion_ladder", ())
     )
-    background_recovery_policy = {
-        **background_recovery_policy,
-        "prepared_hit_floor": float(baseline_probability_pack_replay["prepared_hit_rate"]),
-    }
-    probability_packs = build_response_mode_probability_packs(
-        test_turns,
-        policy=probability_pack_policy,
-        variants=variants,
-        ranker=ranker,
-        balanced_prior_ranker=balanced_prior_ranker,
-        specialists=specialists,
-        top_k=top_k,
-        recovery_policy=background_recovery_policy,
+    if (
+        not heldout_recovery_candidate_policies
+        and selected_recovery_policy is not None
+    ):
+        heldout_recovery_candidate_policies = (dict(background_recovery_policy),)
+    heldout_recovery_candidate_replays = {}
+    for candidate_policy in heldout_recovery_candidate_policies:
+        candidate_name = str(candidate_policy["name"])
+        candidate_probability_packs = build_response_mode_probability_packs(
+            test_turns,
+            policy=probability_pack_policy,
+            variants=variants,
+            ranker=ranker,
+            balanced_prior_ranker=balanced_prior_ranker,
+            specialists=specialists,
+            top_k=top_k,
+            recovery_policy=candidate_policy,
+        )
+        heldout_recovery_candidate_replays[candidate_name] = (
+            score_response_mode_probability_pack_replay(
+                test_turns,
+                candidate_probability_packs,
+                min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
+            )
+        )
+    heldout_recovery_selection = select_response_mode_heldout_recovery_ladder(
+        raw_baseline_replay=baseline_probability_pack_replay,
+        quality_aware_baseline_replay=baseline_probability_pack_replay_quality_aware,
+        candidate_replays=heldout_recovery_candidate_replays,
+        candidate_policies=heldout_recovery_candidate_policies,
     )
-    recovery_candidate_replay = score_response_mode_probability_pack_replay(
-        test_turns,
-        probability_packs,
-        min_quality_score=RESPONSE_MODE_RECOVERY_MIN_QUALITY_SCORE,
+    first_ladder_attempt = next(
+        iter(tuple(heldout_recovery_selection["attempts"])),
+        None,
     )
-    background_recovery_evaluation = response_mode_background_recovery_evaluation(
-        baseline_probability_pack_replay_quality_aware,
-        recovery_candidate_replay,
-        background_recovery_policy,
+    background_recovery_policy = (
+        heldout_recovery_selection["selected_policy"]
+        if heldout_recovery_selection["selected_policy"] is not None
+        else dict(first_ladder_attempt["policy"])
+        if first_ladder_attempt is not None
+        else response_mode_recovery_policy_for_replay(
+            background_recovery_policy,
+            baseline_probability_pack_replay_quality_aware,
+        )
+    )
+    if "prepared_hit_floor" not in background_recovery_policy:
+        background_recovery_policy = {
+            **background_recovery_policy,
+            "prepared_hit_floor": float(
+                baseline_probability_pack_replay["prepared_hit_rate"]
+            ),
+        }
+    background_recovery_evaluation = (
+        heldout_recovery_selection["selected_evaluation"]
+        if heldout_recovery_selection["selected_evaluation"] is not None
+        else dict(first_ladder_attempt["evaluation"])
+        if first_ladder_attempt is not None
+        else response_mode_background_recovery_evaluation(
+            baseline_probability_pack_replay_quality_aware,
+            baseline_probability_pack_replay_quality_aware,
+            background_recovery_policy,
+        )
+    )
+    recovery_candidate_replay = (
+        heldout_recovery_selection["selected_replay"]
+        if heldout_recovery_selection["selected_replay"] is not None
+        else dict(first_ladder_attempt["replay"])
+        if first_ladder_attempt is not None
+        else baseline_probability_pack_replay_quality_aware
     )
     promoted_probability_pack_replay = (
         recovery_candidate_replay
         if bool(background_recovery_calibration["promoted"])
-        and bool(background_recovery_evaluation["promoted"])
+        and bool(heldout_recovery_selection["promoted"])
         else baseline_probability_pack_replay
     )
 
@@ -3162,6 +3332,7 @@ def run_response_mode_ranker_bakeoff(
         "background_recovery_policy": background_recovery_policy,
         "background_recovery_calibration": background_recovery_calibration,
         "background_recovery_evaluation": background_recovery_evaluation,
+        "background_recovery_ladder": heldout_recovery_selection,
         "probability_pack_replay_baseline": baseline_probability_pack_replay,
         "probability_pack_replay_baseline_quality_aware": baseline_probability_pack_replay_quality_aware,
         "probability_pack_replay_recovery_candidate": recovery_candidate_replay,

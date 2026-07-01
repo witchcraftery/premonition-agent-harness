@@ -1319,6 +1319,7 @@
     },
     "candidate_policies": [
       {
+        "buffer_modes": [],
         "first_speech_locked": true,
         "mode_variants": {
           "disclose": "learned_response_mode",
@@ -1335,6 +1336,7 @@
         ]
       },
       {
+        "buffer_modes": [],
         "first_speech_locked": true,
         "mode_variants": {
           "disclose": "learned_response_mode",
@@ -1349,6 +1351,7 @@
         ]
       },
       {
+        "buffer_modes": [],
         "first_speech_locked": true,
         "mode_variants": {
           "disclose": "learned_response_mode",
@@ -1363,6 +1366,7 @@
         ]
       },
       {
+        "buffer_modes": [],
         "first_speech_locked": true,
         "mode_variants": {
           "inform": "balanced_response_mode_50",
@@ -1377,6 +1381,7 @@
         ]
       },
       {
+        "buffer_modes": [],
         "first_speech_locked": true,
         "mode_variants": {
           "disclose": "learned_response_mode"
@@ -1389,6 +1394,7 @@
         ]
       },
       {
+        "buffer_modes": [],
         "first_speech_locked": true,
         "mode_variants": {
           "inform": "balanced_response_mode_50"
@@ -1401,6 +1407,7 @@
         ]
       },
       {
+        "buffer_modes": [],
         "first_speech_locked": true,
         "mode_variants": {
           "other": "protected_minority_specialist_coverage_low_margin"
@@ -2173,6 +2180,297 @@
     },
     "min_quality_score": 0.75,
     "promoted": true,
+    "promotion_ladder": [
+      {
+        "buffer_modes": [],
+        "first_speech_locked": true,
+        "mode_variants": {
+          "disclose": "learned_response_mode",
+          "inform": "balanced_response_mode_50",
+          "other": "protected_minority_specialist_coverage_low_margin"
+        },
+        "name": "recover_disclose_inform_other",
+        "preparation_role": "background_recovery",
+        "quality_floor": 1.0,
+        "target_modes": [
+          "disclose",
+          "inform",
+          "other"
+        ]
+      },
+      {
+        "buffer_modes": [],
+        "first_speech_locked": true,
+        "mode_variants": {
+          "disclose": "learned_response_mode",
+          "other": "protected_minority_specialist_coverage_low_margin"
+        },
+        "name": "recover_disclose_other",
+        "preparation_role": "background_recovery",
+        "quality_floor": 1.0,
+        "target_modes": [
+          "disclose",
+          "other"
+        ]
+      },
+      {
+        "buffer_modes": [],
+        "first_speech_locked": true,
+        "mode_variants": {
+          "inform": "balanced_response_mode_50",
+          "other": "protected_minority_specialist_coverage_low_margin"
+        },
+        "name": "recover_inform_other",
+        "preparation_role": "background_recovery",
+        "quality_floor": 1.0,
+        "target_modes": [
+          "inform",
+          "other"
+        ]
+      },
+      {
+        "buffer_modes": [],
+        "first_speech_locked": true,
+        "mode_variants": {
+          "other": "protected_minority_specialist_coverage_low_margin"
+        },
+        "name": "recover_other",
+        "preparation_role": "background_recovery",
+        "quality_floor": 1.0,
+        "target_modes": [
+          "other"
+        ]
+      },
+      {
+        "buffer_modes": [],
+        "first_speech_locked": true,
+        "mode_variants": {
+          "disclose": "learned_response_mode",
+          "inform": "balanced_response_mode_50"
+        },
+        "name": "recover_disclose_inform",
+        "preparation_role": "background_recovery",
+        "quality_floor": 1.0,
+        "target_modes": [
+          "disclose",
+          "inform"
+        ]
+      },
+      {
+        "buffer_modes": [],
+        "first_speech_locked": true,
+        "mode_variants": {
+          "disclose": "learned_response_mode"
+        },
+        "name": "recover_disclose",
+        "preparation_role": "background_recovery",
+        "quality_floor": 1.0,
+        "target_modes": [
+          "disclose"
+        ]
+      },
+      {
+        "buffer_modes": [],
+        "first_speech_locked": true,
+        "mode_variants": {
+          "inform": "balanced_response_mode_50"
+        },
+        "name": "recover_inform",
+        "preparation_role": "background_recovery",
+        "quality_floor": 1.0,
+        "target_modes": [
+          "inform"
+        ]
+      }
+    ],
+    "promotion_ladder_evaluations": [
+      {
+        "baseline_average_quality_score": 1.0,
+        "candidate_average_quality_score": 1.0,
+        "first_speech_preserved": true,
+        "name": "recover_disclose_inform_other",
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
+        "prepared_hit_gain": 0.222,
+        "promoted": true,
+        "quality_floor": 1.0,
+        "quality_floor_met": true,
+        "quality_ready_gain": 0.222,
+        "raw_prepared_hit_gain": 0.222,
+        "reason": "recovery passed target-mode, first-speech, and quality gates",
+        "target_mode_results": {
+          "disclose": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.435,
+            "prepared_hit_gain": 0.435
+          },
+          "inform": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.775,
+            "prepared_hit_gain": 0.775
+          },
+          "other": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.798,
+            "prepared_hit_gain": 0.798
+          }
+        },
+        "target_modes_improved": true
+      },
+      {
+        "baseline_average_quality_score": 1.0,
+        "candidate_average_quality_score": 1.0,
+        "first_speech_preserved": true,
+        "name": "recover_disclose_other",
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
+        "prepared_hit_gain": 0.178,
+        "promoted": true,
+        "quality_floor": 1.0,
+        "quality_floor_met": true,
+        "quality_ready_gain": 0.178,
+        "raw_prepared_hit_gain": 0.178,
+        "reason": "recovery passed target-mode, first-speech, and quality gates",
+        "target_mode_results": {
+          "disclose": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.435,
+            "prepared_hit_gain": 0.435
+          },
+          "other": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.798,
+            "prepared_hit_gain": 0.798
+          }
+        },
+        "target_modes_improved": true
+      },
+      {
+        "baseline_average_quality_score": 1.0,
+        "candidate_average_quality_score": 1.0,
+        "first_speech_preserved": true,
+        "name": "recover_inform_other",
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
+        "prepared_hit_gain": 0.175,
+        "promoted": true,
+        "quality_floor": 1.0,
+        "quality_floor_met": true,
+        "quality_ready_gain": 0.175,
+        "raw_prepared_hit_gain": 0.175,
+        "reason": "recovery passed target-mode, first-speech, and quality gates",
+        "target_mode_results": {
+          "inform": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.775,
+            "prepared_hit_gain": 0.775
+          },
+          "other": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.798,
+            "prepared_hit_gain": 0.798
+          }
+        },
+        "target_modes_improved": true
+      },
+      {
+        "baseline_average_quality_score": 1.0,
+        "candidate_average_quality_score": 1.0,
+        "first_speech_preserved": true,
+        "name": "recover_other",
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
+        "prepared_hit_gain": 0.131,
+        "promoted": true,
+        "quality_floor": 1.0,
+        "quality_floor_met": true,
+        "quality_ready_gain": 0.131,
+        "raw_prepared_hit_gain": 0.131,
+        "reason": "recovery passed target-mode, first-speech, and quality gates",
+        "target_mode_results": {
+          "other": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.798,
+            "prepared_hit_gain": 0.798
+          }
+        },
+        "target_modes_improved": true
+      },
+      {
+        "baseline_average_quality_score": 1.0,
+        "candidate_average_quality_score": 1.0,
+        "first_speech_preserved": true,
+        "name": "recover_disclose_inform",
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
+        "prepared_hit_gain": 0.09,
+        "promoted": true,
+        "quality_floor": 1.0,
+        "quality_floor_met": true,
+        "quality_ready_gain": 0.09,
+        "raw_prepared_hit_gain": 0.09,
+        "reason": "recovery passed target-mode, first-speech, and quality gates",
+        "target_mode_results": {
+          "disclose": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.435,
+            "prepared_hit_gain": 0.435
+          },
+          "inform": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.775,
+            "prepared_hit_gain": 0.775
+          }
+        },
+        "target_modes_improved": true
+      },
+      {
+        "baseline_average_quality_score": 1.0,
+        "candidate_average_quality_score": 1.0,
+        "first_speech_preserved": true,
+        "name": "recover_disclose",
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
+        "prepared_hit_gain": 0.046,
+        "promoted": true,
+        "quality_floor": 1.0,
+        "quality_floor_met": true,
+        "quality_ready_gain": 0.046,
+        "raw_prepared_hit_gain": 0.046,
+        "reason": "recovery passed target-mode, first-speech, and quality gates",
+        "target_mode_results": {
+          "disclose": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.435,
+            "prepared_hit_gain": 0.435
+          }
+        },
+        "target_modes_improved": true
+      },
+      {
+        "baseline_average_quality_score": 1.0,
+        "candidate_average_quality_score": 1.0,
+        "first_speech_preserved": true,
+        "name": "recover_inform",
+        "prepared_hit_floor": 0.542,
+        "prepared_hit_floor_met": true,
+        "prepared_hit_gain": 0.044,
+        "promoted": true,
+        "quality_floor": 1.0,
+        "quality_floor_met": true,
+        "quality_ready_gain": 0.044,
+        "raw_prepared_hit_gain": 0.044,
+        "reason": "recovery passed target-mode, first-speech, and quality gates",
+        "target_mode_results": {
+          "inform": {
+            "baseline_prepared_hit_rate": 0.0,
+            "candidate_prepared_hit_rate": 0.775,
+            "prepared_hit_gain": 0.775
+          }
+        },
+        "target_modes_improved": true
+      }
+    ],
     "selected_evaluation": {
       "baseline_average_quality_score": 1.0,
       "candidate_average_quality_score": 1.0,
@@ -2206,6 +2504,7 @@
       "target_modes_improved": true
     },
     "selected_policy": {
+      "buffer_modes": [],
       "first_speech_locked": true,
       "mode_variants": {
         "disclose": "learned_response_mode",
@@ -2254,7 +2553,332 @@
     },
     "target_modes_improved": true
   },
+  "background_recovery_ladder": {
+    "attempts": [
+      {
+        "evaluation": {
+          "baseline_average_quality_score": 1.0,
+          "candidate_average_quality_score": 1.0,
+          "first_speech_preserved": true,
+          "prepared_hit_floor": 0.577,
+          "prepared_hit_floor_met": true,
+          "prepared_hit_gain": 0.219,
+          "promoted": true,
+          "quality_floor": 1.0,
+          "quality_floor_met": true,
+          "quality_ready_gain": 0.219,
+          "raw_prepared_hit_gain": 0.188,
+          "reason": "recovery passed target-mode, first-speech, and quality gates",
+          "target_mode_results": {
+            "disclose": {
+              "baseline_prepared_hit_rate": 0.0,
+              "candidate_prepared_hit_rate": 0.449,
+              "prepared_hit_gain": 0.449
+            },
+            "inform": {
+              "baseline_prepared_hit_rate": 0.0,
+              "candidate_prepared_hit_rate": 0.739,
+              "prepared_hit_gain": 0.739
+            },
+            "other": {
+              "baseline_prepared_hit_rate": 0.0,
+              "candidate_prepared_hit_rate": 0.723,
+              "prepared_hit_gain": 0.723
+            }
+          },
+          "target_modes_improved": true
+        },
+        "name": "recover_disclose_inform_other",
+        "policy": {
+          "buffer_modes": [],
+          "first_speech_locked": true,
+          "mode_variants": {
+            "disclose": "learned_response_mode",
+            "inform": "balanced_response_mode_50",
+            "other": "protected_minority_specialist_coverage_low_margin"
+          },
+          "name": "recover_disclose_inform_other",
+          "preparation_role": "background_recovery",
+          "prepared_hit_floor": 0.577,
+          "quality_floor": 1.0,
+          "target_modes": [
+            "disclose",
+            "inform",
+            "other"
+          ]
+        },
+        "replay": {
+          "average_quality_score": 1.0,
+          "background_hit_rate": 0.547,
+          "background_recovery_hit_rate": 0.219,
+          "exact_prepared_hit_rate": 0.765,
+          "first_speech_hit_rate": 0.217,
+          "median_latency_ms": 90,
+          "median_latency_saved_ms": 560,
+          "prepared_hit_rate": 0.765,
+          "quality_ready_rate": 0.765,
+          "segments": {
+            "expected_response_mode": {
+              "ask_followup": {
+                "average_quality_score": 1.0,
+                "background_hit_rate": 0.224,
+                "background_recovery_hit_rate": 0.0,
+                "exact_prepared_hit_rate": 0.833,
+                "first_speech_hit_rate": 0.609,
+                "median_latency_ms": 90,
+                "median_latency_saved_ms": 560,
+                "prepared_hit_rate": 0.833,
+                "quality_ready_rate": 0.833,
+                "semantic_prepared_hit_rate": 0.0,
+                "total_turns": 335
+              },
+              "disclose": {
+                "average_quality_score": 1.0,
+                "background_hit_rate": 0.449,
+                "background_recovery_hit_rate": 0.449,
+                "exact_prepared_hit_rate": 0.449,
+                "first_speech_hit_rate": 0.0,
+                "median_latency_ms": 650,
+                "median_latency_saved_ms": 0,
+                "prepared_hit_rate": 0.449,
+                "quality_ready_rate": 0.449,
+                "semantic_prepared_hit_rate": 0.0,
+                "total_turns": 176
+              },
+              "inform": {
+                "average_quality_score": 1.0,
+                "background_hit_rate": 0.739,
+                "background_recovery_hit_rate": 0.739,
+                "exact_prepared_hit_rate": 0.739,
+                "first_speech_hit_rate": 0.0,
+                "median_latency_ms": 90,
+                "median_latency_saved_ms": 560,
+                "prepared_hit_rate": 0.739,
+                "quality_ready_rate": 0.739,
+                "semantic_prepared_hit_rate": 0.0,
+                "total_turns": 138
+              },
+              "other": {
+                "average_quality_score": 1.0,
+                "background_hit_rate": 0.723,
+                "background_recovery_hit_rate": 0.723,
+                "exact_prepared_hit_rate": 0.723,
+                "first_speech_hit_rate": 0.0,
+                "median_latency_ms": 90,
+                "median_latency_saved_ms": 560,
+                "prepared_hit_rate": 0.723,
+                "quality_ready_rate": 0.723,
+                "semantic_prepared_hit_rate": 0.0,
+                "total_turns": 278
+              },
+              "reassure": {
+                "average_quality_score": 1.0,
+                "background_hit_rate": 0.993,
+                "background_recovery_hit_rate": 0.0,
+                "exact_prepared_hit_rate": 0.993,
+                "first_speech_hit_rate": 0.0,
+                "median_latency_ms": 90,
+                "median_latency_saved_ms": 560,
+                "prepared_hit_rate": 0.993,
+                "quality_ready_rate": 0.993,
+                "semantic_prepared_hit_rate": 0.0,
+                "total_turns": 285
+              },
+              "suggest": {
+                "average_quality_score": 1.0,
+                "background_hit_rate": 0.368,
+                "background_recovery_hit_rate": 0.0,
+                "exact_prepared_hit_rate": 0.651,
+                "first_speech_hit_rate": 0.284,
+                "median_latency_ms": 90,
+                "median_latency_saved_ms": 560,
+                "prepared_hit_rate": 0.651,
+                "quality_ready_rate": 0.651,
+                "semantic_prepared_hit_rate": 0.0,
+                "total_turns": 261
+              },
+              "validate": {
+                "average_quality_score": 1.0,
+                "background_hit_rate": 0.44,
+                "background_recovery_hit_rate": 0.0,
+                "exact_prepared_hit_rate": 0.811,
+                "first_speech_hit_rate": 0.371,
+                "median_latency_ms": 90,
+                "median_latency_saved_ms": 560,
+                "prepared_hit_rate": 0.811,
+                "quality_ready_rate": 0.811,
+                "semantic_prepared_hit_rate": 0.0,
+                "total_turns": 275
+              }
+            }
+          },
+          "semantic_prepared_hit_rate": 0.0,
+          "total_turns": 1748
+        }
+      }
+    ],
+    "promoted": true,
+    "selected_evaluation": {
+      "baseline_average_quality_score": 1.0,
+      "candidate_average_quality_score": 1.0,
+      "first_speech_preserved": true,
+      "prepared_hit_floor": 0.577,
+      "prepared_hit_floor_met": true,
+      "prepared_hit_gain": 0.219,
+      "promoted": true,
+      "quality_floor": 1.0,
+      "quality_floor_met": true,
+      "quality_ready_gain": 0.219,
+      "raw_prepared_hit_gain": 0.188,
+      "reason": "recovery passed target-mode, first-speech, and quality gates",
+      "target_mode_results": {
+        "disclose": {
+          "baseline_prepared_hit_rate": 0.0,
+          "candidate_prepared_hit_rate": 0.449,
+          "prepared_hit_gain": 0.449
+        },
+        "inform": {
+          "baseline_prepared_hit_rate": 0.0,
+          "candidate_prepared_hit_rate": 0.739,
+          "prepared_hit_gain": 0.739
+        },
+        "other": {
+          "baseline_prepared_hit_rate": 0.0,
+          "candidate_prepared_hit_rate": 0.723,
+          "prepared_hit_gain": 0.723
+        }
+      },
+      "target_modes_improved": true
+    },
+    "selected_policy": {
+      "buffer_modes": [],
+      "first_speech_locked": true,
+      "mode_variants": {
+        "disclose": "learned_response_mode",
+        "inform": "balanced_response_mode_50",
+        "other": "protected_minority_specialist_coverage_low_margin"
+      },
+      "name": "recover_disclose_inform_other",
+      "preparation_role": "background_recovery",
+      "prepared_hit_floor": 0.577,
+      "quality_floor": 1.0,
+      "target_modes": [
+        "disclose",
+        "inform",
+        "other"
+      ]
+    },
+    "selected_replay": {
+      "average_quality_score": 1.0,
+      "background_hit_rate": 0.547,
+      "background_recovery_hit_rate": 0.219,
+      "exact_prepared_hit_rate": 0.765,
+      "first_speech_hit_rate": 0.217,
+      "median_latency_ms": 90,
+      "median_latency_saved_ms": 560,
+      "prepared_hit_rate": 0.765,
+      "quality_ready_rate": 0.765,
+      "segments": {
+        "expected_response_mode": {
+          "ask_followup": {
+            "average_quality_score": 1.0,
+            "background_hit_rate": 0.224,
+            "background_recovery_hit_rate": 0.0,
+            "exact_prepared_hit_rate": 0.833,
+            "first_speech_hit_rate": 0.609,
+            "median_latency_ms": 90,
+            "median_latency_saved_ms": 560,
+            "prepared_hit_rate": 0.833,
+            "quality_ready_rate": 0.833,
+            "semantic_prepared_hit_rate": 0.0,
+            "total_turns": 335
+          },
+          "disclose": {
+            "average_quality_score": 1.0,
+            "background_hit_rate": 0.449,
+            "background_recovery_hit_rate": 0.449,
+            "exact_prepared_hit_rate": 0.449,
+            "first_speech_hit_rate": 0.0,
+            "median_latency_ms": 650,
+            "median_latency_saved_ms": 0,
+            "prepared_hit_rate": 0.449,
+            "quality_ready_rate": 0.449,
+            "semantic_prepared_hit_rate": 0.0,
+            "total_turns": 176
+          },
+          "inform": {
+            "average_quality_score": 1.0,
+            "background_hit_rate": 0.739,
+            "background_recovery_hit_rate": 0.739,
+            "exact_prepared_hit_rate": 0.739,
+            "first_speech_hit_rate": 0.0,
+            "median_latency_ms": 90,
+            "median_latency_saved_ms": 560,
+            "prepared_hit_rate": 0.739,
+            "quality_ready_rate": 0.739,
+            "semantic_prepared_hit_rate": 0.0,
+            "total_turns": 138
+          },
+          "other": {
+            "average_quality_score": 1.0,
+            "background_hit_rate": 0.723,
+            "background_recovery_hit_rate": 0.723,
+            "exact_prepared_hit_rate": 0.723,
+            "first_speech_hit_rate": 0.0,
+            "median_latency_ms": 90,
+            "median_latency_saved_ms": 560,
+            "prepared_hit_rate": 0.723,
+            "quality_ready_rate": 0.723,
+            "semantic_prepared_hit_rate": 0.0,
+            "total_turns": 278
+          },
+          "reassure": {
+            "average_quality_score": 1.0,
+            "background_hit_rate": 0.993,
+            "background_recovery_hit_rate": 0.0,
+            "exact_prepared_hit_rate": 0.993,
+            "first_speech_hit_rate": 0.0,
+            "median_latency_ms": 90,
+            "median_latency_saved_ms": 560,
+            "prepared_hit_rate": 0.993,
+            "quality_ready_rate": 0.993,
+            "semantic_prepared_hit_rate": 0.0,
+            "total_turns": 285
+          },
+          "suggest": {
+            "average_quality_score": 1.0,
+            "background_hit_rate": 0.368,
+            "background_recovery_hit_rate": 0.0,
+            "exact_prepared_hit_rate": 0.651,
+            "first_speech_hit_rate": 0.284,
+            "median_latency_ms": 90,
+            "median_latency_saved_ms": 560,
+            "prepared_hit_rate": 0.651,
+            "quality_ready_rate": 0.651,
+            "semantic_prepared_hit_rate": 0.0,
+            "total_turns": 261
+          },
+          "validate": {
+            "average_quality_score": 1.0,
+            "background_hit_rate": 0.44,
+            "background_recovery_hit_rate": 0.0,
+            "exact_prepared_hit_rate": 0.811,
+            "first_speech_hit_rate": 0.371,
+            "median_latency_ms": 90,
+            "median_latency_saved_ms": 560,
+            "prepared_hit_rate": 0.811,
+            "quality_ready_rate": 0.811,
+            "semantic_prepared_hit_rate": 0.0,
+            "total_turns": 275
+          }
+        }
+      },
+      "semantic_prepared_hit_rate": 0.0,
+      "total_turns": 1748
+    }
+  },
   "background_recovery_policy": {
+    "buffer_modes": [],
     "first_speech_locked": true,
     "mode_variants": {
       "disclose": "learned_response_mode",

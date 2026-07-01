@@ -859,3 +859,27 @@ Verification:
 - Browser verification: Playwright loaded `http://127.0.0.1:8766/runs/premonition_swarm_outcome.html`, confirmed title `Premonition Swarm Outcome`, captured desktop and mobile screenshots in `output/playwright/`, and reported only the local `favicon.ico` 404.
 - Final suite: `python3 -m pytest -v`: 136 passed.
 - `git diff --check`: passed.
+
+## Recover Inform Fallback Ladder
+
+- [x] Add ranked recovery promotion ladders to calibration reports.
+- [x] Add held-out ladder selection so a safer fallback rung can be tried when the first recovery policy misses the raw prepared floor.
+- [x] Add single-target buffer rungs that can prewarm one extra dev-evidenced mode without changing the target-mode improvement gate.
+- [x] Regenerate ESConv bakeoff, dashboard, stress, and outcome artifacts.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_select_response_mode_background_recovery_candidate_prefers_quality_safe_subset tests/test_conversation_probability.py::test_select_response_mode_background_recovery_candidate_reports_ranked_ladder -v` failed because recovery calibration did not expose a ranked `promotion_ladder`.
+- Held-out ladder red check: `python3 -m pytest tests/test_conversation_probability.py::test_select_response_mode_heldout_recovery_ladder_uses_safe_fallback -v` failed because `select_response_mode_heldout_recovery_ladder` did not exist.
+- Bakeoff integration red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v` failed because the bakeoff report did not expose `background_recovery_ladder`.
+- Buffer-rung red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_adds_single_target_buffer_mode tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_candidates_include_buffer_rung tests/test_conversation_probability.py::test_select_response_mode_heldout_recovery_ladder_uses_buffer_rung -v` failed because policies had no `buffer_modes` and candidate generation did not emit buffer rungs.
+- Focused green check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments tests/test_conversation_probability.py::test_select_response_mode_background_recovery_candidate_prefers_quality_safe_subset tests/test_conversation_probability.py::test_select_response_mode_background_recovery_candidate_reports_ranked_ladder tests/test_conversation_probability.py::test_select_response_mode_heldout_recovery_ladder_uses_safe_fallback tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_uses_best_top_3_variants tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_candidates_include_mode_subsets tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_adds_single_target_buffer_mode tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_candidates_include_buffer_rung tests/test_conversation_probability.py::test_select_response_mode_heldout_recovery_ladder_uses_buffer_rung -v`: 9 passed.
+- Stress run: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json --response-mode-stress-seeds 3 --folds 5`: completed.
+- Stress result: promotion rate `0.867` across `15` shuffled folds; mean prepared-hit gain `+0.035`, mean quality-ready gain `+0.071`, minimum gain `0.000`, max quality-ready gain `+0.213`, and selected policies `recover_disclose_inform=8`, `recover_inform=6`, `recover_other_buffer_inform=1`.
+- Targeted fold read: the two held-back folds now generate and dev-promote `recover_inform_buffer_other`, but the buffer rung produces the same held-out prepared rate as plain `recover_inform`; both stay baseline under the raw floor.
+- Interpretation: the fallback ladder is now transparent and operational, and buffer rungs lift the stress mean/max, but universal stabilization needs stronger `recover_inform` generation rather than looser gates.
+- Artifact static check: `rg -n "0\\.546 -> 0\\.765|13 / 15|0\\.071|recover_other_buffer_inform|Premonition Swarm Outcome|Premonition Response-Mode Recovery" runs/esconv_response_mode_dashboard.html runs/premonition_swarm_outcome.html`: passed.
+- Stress artifact check: verified promotion rate `0.867`, mean quality-ready gain `+0.071`, max quality-ready gain `+0.213`, and `recover_other_buffer_inform=1`.
+- Final suite: `python3 -m pytest -v`: 141 passed.
+- `git diff --check`: passed.

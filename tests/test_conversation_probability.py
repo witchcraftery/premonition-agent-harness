@@ -39,6 +39,7 @@ from foresight_harness.conversation_probability import (
     score_conversation_variant_fold,
     select_conversation_bakeoff_variant,
     select_response_mode_background_recovery_candidate,
+    select_response_mode_heldout_recovery_ladder,
     train_conversation_act_ranker,
     train_conversation_history_ranker,
     train_conversation_question_evidence_ranker,
@@ -430,6 +431,7 @@ def test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments():
     assert "probability_pack_replay_baseline_quality_aware" in report
     assert "background_recovery_policy" in report
     assert "background_recovery_calibration" in report
+    assert "background_recovery_ladder" in report
     assert "candidate_evaluations" in report["background_recovery_calibration"]
     assert "selected_policy" in report["background_recovery_calibration"]
     assert report["background_recovery_calibration"]["min_quality_score"] == 0.75
@@ -1258,6 +1260,54 @@ def test_response_mode_background_recovery_policy_uses_best_top_3_variants():
     }
 
 
+def test_response_mode_background_recovery_policy_adds_single_target_buffer_mode():
+    replay_summary = {
+        "average_quality_score": 1.0,
+        "quality_ready_rate": 0.557,
+        "first_speech_hit_rate": 0.225,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.0},
+                "other": {"prepared_hit_rate": 0.842},
+                "suggest": {"prepared_hit_rate": 0.354},
+                "validate": {"prepared_hit_rate": 1.0},
+            }
+        },
+    }
+    coverage_projection = {
+        "expected_response_mode": {
+            "inform": {
+                "best_top_3_variant": "balanced_response_mode_75",
+                "best_top_3_gain": 0.731,
+            },
+            "other": {
+                "best_top_3_variant": "calibrated_minority_specialist_coverage",
+                "best_top_3_gain": 0.842,
+            },
+            "suggest": {
+                "best_top_3_variant": "learned_response_mode",
+                "best_top_3_gain": 0.125,
+            },
+            "validate": {
+                "best_top_3_variant": "response_mode_hybrid_25",
+                "best_top_3_gain": 0.0,
+            },
+        }
+    }
+
+    policy = response_mode_background_recovery_policy(
+        replay_summary,
+        coverage_projection=coverage_projection,
+    )
+
+    assert policy["target_modes"] == ["inform"]
+    assert policy["buffer_modes"] == ["other"]
+    assert policy["mode_variants"] == {
+        "inform": "balanced_response_mode_75",
+        "other": "calibrated_minority_specialist_coverage",
+    }
+
+
 def test_response_mode_background_recovery_evaluation_blocks_quality_drop():
     baseline = {
         "prepared_hit_rate": 0.577,
@@ -1368,6 +1418,33 @@ def test_response_mode_background_recovery_policy_candidates_include_mode_subset
     assert inform_policy["quality_floor"] == 0.974
 
 
+def test_response_mode_background_recovery_policy_candidates_include_buffer_rung():
+    policy = {
+        "target_modes": ["inform"],
+        "buffer_modes": ["other"],
+        "mode_variants": {
+            "inform": "balanced_response_mode_75",
+            "other": "calibrated_minority_specialist_coverage",
+        },
+        "preparation_role": "background_recovery",
+        "first_speech_locked": True,
+        "quality_floor": 1.0,
+    }
+
+    candidates = response_mode_background_recovery_policy_candidates(policy)
+
+    assert [candidate["name"] for candidate in candidates] == [
+        "recover_inform",
+        "recover_inform_buffer_other",
+    ]
+    assert candidates[1]["target_modes"] == ["inform"]
+    assert candidates[1]["buffer_modes"] == ["other"]
+    assert candidates[1]["mode_variants"] == {
+        "inform": "balanced_response_mode_75",
+        "other": "calibrated_minority_specialist_coverage",
+    }
+
+
 def test_select_response_mode_background_recovery_candidate_prefers_quality_safe_subset():
     baseline = {
         "prepared_hit_rate": 0.577,
@@ -1426,6 +1503,9 @@ def test_select_response_mode_background_recovery_candidate_prefers_quality_safe
 
     assert selection["promoted"] is True
     assert selection["selected_policy"]["name"] == "recover_inform"
+    assert [policy["name"] for policy in selection["promotion_ladder"]] == [
+        "recover_inform"
+    ]
     assert selection["selected_evaluation"]["quality_floor_met"] is True
     assert (
         selection["candidate_evaluations"]["recover_disclose_inform"][
@@ -1433,6 +1513,225 @@ def test_select_response_mode_background_recovery_candidate_prefers_quality_safe
         ]
         is False
     )
+
+
+def test_select_response_mode_background_recovery_candidate_reports_ranked_ladder():
+    baseline = {
+        "prepared_hit_rate": 0.54,
+        "quality_ready_rate": 0.54,
+        "first_speech_hit_rate": 0.21,
+        "average_quality_score": 1.0,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.0},
+                "other": {"prepared_hit_rate": 0.0},
+            }
+        },
+    }
+    inform_policy = {
+        "name": "recover_inform",
+        "target_modes": ["inform"],
+        "quality_floor": 1.0,
+    }
+    other_policy = {
+        "name": "recover_other",
+        "target_modes": ["other"],
+        "quality_floor": 1.0,
+    }
+    candidate_replays = {
+        "recover_inform": {
+            "prepared_hit_rate": 0.61,
+            "quality_ready_rate": 0.61,
+            "first_speech_hit_rate": 0.21,
+            "average_quality_score": 1.0,
+            "segments": {
+                "expected_response_mode": {
+                    "inform": {"prepared_hit_rate": 0.7},
+                    "other": {"prepared_hit_rate": 0.0},
+                }
+            },
+        },
+        "recover_other": {
+            "prepared_hit_rate": 0.58,
+            "quality_ready_rate": 0.58,
+            "first_speech_hit_rate": 0.21,
+            "average_quality_score": 1.0,
+            "segments": {
+                "expected_response_mode": {
+                    "inform": {"prepared_hit_rate": 0.0},
+                    "other": {"prepared_hit_rate": 0.6},
+                }
+            },
+        },
+    }
+
+    selection = select_response_mode_background_recovery_candidate(
+        baseline,
+        candidate_replays=candidate_replays,
+        candidate_policies=(other_policy, inform_policy),
+    )
+
+    assert selection["selected_policy"]["name"] == "recover_inform"
+    assert [policy["name"] for policy in selection["promotion_ladder"]] == [
+        "recover_inform",
+        "recover_other",
+    ]
+    assert [item["name"] for item in selection["promotion_ladder_evaluations"]] == [
+        "recover_inform",
+        "recover_other",
+    ]
+
+
+def test_select_response_mode_heldout_recovery_ladder_uses_safe_fallback():
+    raw_baseline = {
+        "prepared_hit_rate": 0.582,
+        "quality_ready_rate": 0.536,
+        "first_speech_hit_rate": 0.225,
+        "average_quality_score": 0.962,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.008},
+                "other": {"prepared_hit_rate": 0.0},
+            }
+        },
+    }
+    quality_aware_baseline = {
+        "prepared_hit_rate": 0.536,
+        "quality_ready_rate": 0.536,
+        "first_speech_hit_rate": 0.225,
+        "average_quality_score": 1.0,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.0},
+                "other": {"prepared_hit_rate": 0.0},
+            }
+        },
+    }
+    inform_policy = {
+        "name": "recover_inform",
+        "target_modes": ["inform"],
+        "quality_floor": 1.0,
+    }
+    fallback_policy = {
+        "name": "recover_other",
+        "target_modes": ["other"],
+        "quality_floor": 1.0,
+    }
+    candidate_replays = {
+        "recover_inform": {
+            "prepared_hit_rate": 0.576,
+            "quality_ready_rate": 0.576,
+            "first_speech_hit_rate": 0.225,
+            "average_quality_score": 1.0,
+            "segments": {
+                "expected_response_mode": {
+                    "inform": {"prepared_hit_rate": 0.609},
+                    "other": {"prepared_hit_rate": 0.0},
+                }
+            },
+        },
+        "recover_other": {
+            "prepared_hit_rate": 0.6,
+            "quality_ready_rate": 0.6,
+            "first_speech_hit_rate": 0.225,
+            "average_quality_score": 1.0,
+            "segments": {
+                "expected_response_mode": {
+                    "inform": {"prepared_hit_rate": 0.0},
+                    "other": {"prepared_hit_rate": 0.7},
+                }
+            },
+        },
+    }
+
+    selection = select_response_mode_heldout_recovery_ladder(
+        raw_baseline_replay=raw_baseline,
+        quality_aware_baseline_replay=quality_aware_baseline,
+        candidate_replays=candidate_replays,
+        candidate_policies=(inform_policy, fallback_policy),
+    )
+
+    assert selection["promoted"] is True
+    assert selection["selected_policy"]["name"] == "recover_other"
+    assert selection["selected_evaluation"]["prepared_hit_floor_met"] is True
+    assert selection["attempts"][0]["name"] == "recover_inform"
+    assert selection["attempts"][0]["evaluation"]["prepared_hit_floor_met"] is False
+
+
+def test_select_response_mode_heldout_recovery_ladder_uses_buffer_rung():
+    raw_baseline = {
+        "prepared_hit_rate": 0.602,
+        "quality_ready_rate": 0.557,
+        "first_speech_hit_rate": 0.225,
+        "average_quality_score": 0.962,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.0},
+                "other": {"prepared_hit_rate": 0.842},
+            }
+        },
+    }
+    quality_aware_baseline = {
+        "prepared_hit_rate": 0.557,
+        "quality_ready_rate": 0.557,
+        "first_speech_hit_rate": 0.225,
+        "average_quality_score": 1.0,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.0},
+                "other": {"prepared_hit_rate": 0.842},
+            }
+        },
+    }
+    inform_policy = {
+        "name": "recover_inform",
+        "target_modes": ["inform"],
+        "quality_floor": 1.0,
+    }
+    buffer_policy = {
+        "name": "recover_inform_buffer_other",
+        "target_modes": ["inform"],
+        "buffer_modes": ["other"],
+        "quality_floor": 1.0,
+    }
+    candidate_replays = {
+        "recover_inform": {
+            "prepared_hit_rate": 0.597,
+            "quality_ready_rate": 0.597,
+            "first_speech_hit_rate": 0.225,
+            "average_quality_score": 1.0,
+            "segments": {
+                "expected_response_mode": {
+                    "inform": {"prepared_hit_rate": 0.731},
+                    "other": {"prepared_hit_rate": 0.842},
+                }
+            },
+        },
+        "recover_inform_buffer_other": {
+            "prepared_hit_rate": 0.625,
+            "quality_ready_rate": 0.625,
+            "first_speech_hit_rate": 0.225,
+            "average_quality_score": 1.0,
+            "segments": {
+                "expected_response_mode": {
+                    "inform": {"prepared_hit_rate": 0.731},
+                    "other": {"prepared_hit_rate": 0.887},
+                }
+            },
+        },
+    }
+
+    selection = select_response_mode_heldout_recovery_ladder(
+        raw_baseline_replay=raw_baseline,
+        quality_aware_baseline_replay=quality_aware_baseline,
+        candidate_replays=candidate_replays,
+        candidate_policies=(inform_policy, buffer_policy),
+    )
+
+    assert selection["promoted"] is True
+    assert selection["selected_policy"]["name"] == "recover_inform_buffer_other"
+    assert selection["selected_evaluation"]["target_modes_improved"] is True
+    assert selection["selected_evaluation"]["prepared_hit_floor_met"] is True
 
 
 def test_response_mode_recovery_policy_for_replay_uses_local_baseline_quality_floor():
