@@ -847,15 +847,15 @@ Assessment:
 - Base state: first-speech readiness is `0.217`, meaning the system can immediately serve only the confirmed first branch.
 - Probability Pack baseline: quality-ready preparedness reaches `0.546` while raw prepared coverage is `0.577`.
 - Current guarded swarm: quality-ready preparedness reaches `0.765`, a `+0.219` lift over the pack baseline and `+0.548` over first-speech base readiness.
-- Stress proof: larger 3-seed x 5-fold stress promotes `13/15` folds with no raw prepared-hit regression below baseline; mean quality-ready gain is `+0.068`.
-- Interpretation: the concept has moved from plausible scaffold to a measured guarded prewarming layer. It is not yet universal, but it is now useful enough to guide the next backend-swarm experiment.
+- Stress proof: larger 3-seed x 5-fold stress now promotes `15/15` folds with no raw prepared-hit regression below baseline; mean quality-ready gain is `+0.101`.
+- Interpretation: the concept has moved from plausible scaffold to a measured guarded prewarming layer. It is not yet universal across datasets, but it is now stable across the current shuffled ESConv stress gate.
 
 Verification:
 
 - Initial red check: `python3 -m pytest tests/test_visualization.py::test_render_premonition_outcome_dashboard_compares_base_and_swarm -v` failed because `render_premonition_outcome_dashboard` did not exist.
 - Focused green check: `python3 -m pytest tests/test_visualization.py::test_render_premonition_outcome_dashboard_compares_base_and_swarm -v`: 1 passed.
 - Generated artifact: `python3 - <<'PY' ... write_premonition_outcome_dashboard(...) ... PY`: wrote `runs/premonition_swarm_outcome.html`.
-- Static content check: `rg -n "Premonition Swarm Outcome|Base State|Current Guarded Swarm|0\\.217 -> 0\\.765|13 / 15|recover_inform|Not prophecy" runs/premonition_swarm_outcome.html`: passed.
+- Static content check: `rg -n "Premonition Swarm Outcome|Base State|Current Guarded Swarm|0\\.217 -> 0\\.765|15 / 15|recover_inform|Not prophecy" runs/premonition_swarm_outcome.html`: passed.
 - Browser verification: Playwright loaded `http://127.0.0.1:8766/runs/premonition_swarm_outcome.html`, confirmed title `Premonition Swarm Outcome`, captured desktop and mobile screenshots in `output/playwright/`, and reported only the local `favicon.ico` 404.
 - Final suite: `python3 -m pytest -v`: 136 passed.
 - `git diff --check`: passed.
@@ -882,4 +882,28 @@ Verification:
 - Artifact static check: `rg -n "0\\.546 -> 0\\.765|13 / 15|0\\.071|recover_other_buffer_inform|Premonition Swarm Outcome|Premonition Response-Mode Recovery" runs/esconv_response_mode_dashboard.html runs/premonition_swarm_outcome.html`: passed.
 - Stress artifact check: verified promotion rate `0.867`, mean quality-ready gain `+0.071`, max quality-ready gain `+0.213`, and `recover_other_buffer_inform=1`.
 - Final suite: `python3 -m pytest -v`: 141 passed.
+- `git diff --check`: passed.
+
+## Recover Inform Candidate Strength
+
+- [x] Diagnose why the two held-back `recover_inform` folds miss the raw prepared floor.
+- [x] Add failing tests for a stronger inform recovery candidate.
+- [x] Implement the smallest recover-inform improvement that preserves the quality and raw-floor gates.
+- [x] Rerun focused tests and the 3-seed x 5-fold stress benchmark.
+- [x] Regenerate artifacts/docs.
+- [x] Run full suite, commit, and push.
+
+Verification:
+
+- Diagnostic read: both held-back `recover_inform` folds had good inform recovery but missed the raw floor because the raw baseline still counted lower-quality semantic hits in `reassure` and `validate`.
+- Candidate probe: `recover_inform_gap_reassure_validate` promoted on the two weak folds, with held-out quality-ready gains around `+0.106` to `+0.107` and positive raw-floor margins.
+- Initial red check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_prefers_quality_gap_buffers -v` failed because `response_mode_background_recovery_policy` did not accept `raw_replay_summary`.
+- Focused green check: `python3 -m pytest tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_adds_single_target_buffer_mode tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_prefers_quality_gap_buffers tests/test_conversation_probability.py::test_response_mode_background_recovery_policy_candidates_include_buffer_rung tests/test_conversation_probability.py::test_select_response_mode_heldout_recovery_ladder_uses_safe_fallback tests/test_conversation_probability.py::test_select_response_mode_heldout_recovery_ladder_uses_buffer_rung tests/test_conversation_probability.py::test_response_mode_bakeoff_selects_on_dev_and_reports_test_segments -v`: 6 passed.
+- Stress run: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json --response-mode-stress-seeds 3 --folds 5`: completed.
+- Stress result: promotion rate `1.000` across `15` shuffled folds; mean prepared-hit gain `+0.059`, mean quality-ready gain `+0.101`, minimum quality-ready gain `+0.078`, minimum raw prepared-hit gain `+0.034`, and selected policies `recover_disclose_inform=8`, `recover_inform_buffer_reassure_validate=6`, `recover_other_buffer_reassure_disclose=1`.
+- Artifact regeneration: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-bakeoff-report runs/esconv_response_mode_bakeoff.json --dashboard-report runs/esconv_response_mode_dashboard.html`: completed.
+- Outcome regeneration: `python3 - <<'PY' ... write_premonition_outcome_dashboard(...) ... PY`: wrote `runs/premonition_swarm_outcome.html`.
+- Artifact static check: `rg -n "0\\.546 -> 0\\.765|15 / 15|0\\.101|recover_inform_buffer_reassure_validate|Premonition Swarm Outcome|Premonition Response-Mode Recovery" runs/esconv_response_mode_dashboard.html runs/premonition_swarm_outcome.html`: passed.
+- Stress artifact check: verified promotion rate `1.000`, mean quality-ready gain `+0.101`, minimum quality-ready gain `+0.078`, minimum raw prepared-hit gain `+0.034`, and `recover_inform_buffer_reassure_validate=6`.
+- Final suite: `python3 -m pytest -v`: 142 passed.
 - `git diff --check`: passed.

@@ -1308,6 +1308,69 @@ def test_response_mode_background_recovery_policy_adds_single_target_buffer_mode
     }
 
 
+def test_response_mode_background_recovery_policy_prefers_quality_gap_buffers():
+    quality_aware_replay = {
+        "average_quality_score": 1.0,
+        "quality_ready_rate": 0.536,
+        "first_speech_hit_rate": 0.225,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.0},
+                "other": {"prepared_hit_rate": 0.842},
+                "reassure": {"prepared_hit_rate": 0.577},
+                "validate": {"prepared_hit_rate": 0.793},
+            }
+        },
+    }
+    raw_replay = {
+        "average_quality_score": 0.962,
+        "quality_ready_rate": 0.536,
+        "first_speech_hit_rate": 0.225,
+        "segments": {
+            "expected_response_mode": {
+                "inform": {"prepared_hit_rate": 0.008},
+                "other": {"prepared_hit_rate": 0.842},
+                "reassure": {"prepared_hit_rate": 0.833},
+                "validate": {"prepared_hit_rate": 0.839},
+            }
+        },
+    }
+    coverage_projection = {
+        "expected_response_mode": {
+            "inform": {
+                "best_top_3_variant": "balanced_response_mode_50",
+                "best_top_3_gain": 0.737,
+            },
+            "other": {
+                "best_top_3_variant": "calibrated_minority_specialist_coverage",
+                "best_top_3_gain": 0.795,
+            },
+            "reassure": {
+                "best_top_3_variant": "response_mode_hybrid_75",
+                "best_top_3_gain": 0.043,
+            },
+            "validate": {
+                "best_top_3_variant": "response_mode_hybrid_25",
+                "best_top_3_gain": 0.0,
+            },
+        }
+    }
+
+    policy = response_mode_background_recovery_policy(
+        quality_aware_replay,
+        coverage_projection=coverage_projection,
+        raw_replay_summary=raw_replay,
+    )
+
+    assert policy["target_modes"] == ["inform"]
+    assert policy["buffer_modes"] == ["reassure", "validate"]
+    assert policy["mode_variants"] == {
+        "inform": "balanced_response_mode_50",
+        "reassure": "response_mode_hybrid_75",
+        "validate": "response_mode_hybrid_25",
+    }
+
+
 def test_response_mode_background_recovery_evaluation_blocks_quality_drop():
     baseline = {
         "prepared_hit_rate": 0.577,

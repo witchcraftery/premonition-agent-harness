@@ -1142,9 +1142,17 @@ def response_mode_draft_quality_score(
 def response_mode_background_recovery_policy(
     replay_summary: dict[str, object],
     coverage_projection: dict[str, object] | None = None,
+    raw_replay_summary: dict[str, object] | None = None,
 ) -> dict[str, object]:
     mode_segments = dict(
         dict(replay_summary["segments"])["expected_response_mode"]  # type: ignore[index]
+    )
+    raw_mode_segments = (
+        dict(
+            dict(raw_replay_summary["segments"])["expected_response_mode"]  # type: ignore[index]
+        )
+        if raw_replay_summary is not None
+        else {}
     )
     target_modes = [
         mode
@@ -1161,7 +1169,32 @@ def response_mode_background_recovery_policy(
             projection = dict(projection_modes.get(mode, {}))
             if float(projection.get("best_top_3_gain", 0.0)) > 0:
                 mode_variants[mode] = str(projection["best_top_3_variant"])
-        if len(target_modes) == 1:
+        if len(target_modes) == 1 and raw_mode_segments:
+            quality_gap_candidates = []
+            for mode, segment in sorted(mode_segments.items()):
+                if mode in target_modes:
+                    continue
+                raw_segment = dict(raw_mode_segments.get(mode, {}))
+                raw_hit_rate = float(raw_segment.get("prepared_hit_rate", 0.0))
+                quality_hit_rate = float(dict(segment)["prepared_hit_rate"])
+                quality_gap = raw_hit_rate - quality_hit_rate
+                projection = dict(projection_modes.get(mode, {}))
+                if quality_gap > 0 and projection.get("best_top_3_variant"):
+                    quality_gap_candidates.append(
+                        (
+                            quality_gap,
+                            raw_hit_rate,
+                            mode,
+                            str(projection["best_top_3_variant"]),
+                        )
+                    )
+            for _, _, mode, variant in sorted(
+                quality_gap_candidates,
+                reverse=True,
+            )[:2]:
+                buffer_modes.append(mode)
+                mode_variants[mode] = variant
+        if len(target_modes) == 1 and not buffer_modes:
             buffer_candidates = []
             for mode, segment in sorted(mode_segments.items()):
                 if mode in target_modes:
@@ -3162,6 +3195,7 @@ def run_response_mode_ranker_bakeoff(
     dev_recovery_policy = response_mode_background_recovery_policy(
         dev_baseline_probability_pack_replay,
         coverage_projection=dev_coverage_projection,
+        raw_replay_summary=dev_baseline_probability_pack_replay_raw,
     )
     recovery_policy_candidates = response_mode_background_recovery_policy_candidates(
         dev_recovery_policy,
