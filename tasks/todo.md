@@ -534,7 +534,7 @@ Verification:
 - [x] Gate balanced variants through validation selection and held-out segment promotion.
 - [x] Rerun ESConv response-mode benchmark and compare coverage, top-1, and weak-mode movement.
 - [x] Update README/catalog/tracker with whether balanced coverage produces a promotable result.
-- [x] Verify full suite, commit, and push.
+- [x] Verify full suite and prepare the commit/push checkpoint.
 
 Verification:
 
@@ -847,7 +847,7 @@ Assessment:
 - Base state: first-speech readiness is `0.217`, meaning the system can immediately serve only the confirmed first branch.
 - Probability Pack baseline: quality-ready preparedness reaches `0.546` while raw prepared coverage is `0.577`.
 - Current guarded swarm: quality-ready preparedness reaches `0.765`, a `+0.219` lift over the pack baseline and `+0.548` over first-speech base readiness.
-- Stress proof: larger 3-seed x 5-fold stress now promotes `15/15` folds with no raw prepared-hit regression below baseline; mean quality-ready gain is `+0.101`.
+- Stress proof: larger 5-seed x 5-fold stress now promotes `25/25` folds with no raw prepared-hit regression below baseline; mean quality-ready gain is `+0.102`.
 - Interpretation: the concept has moved from plausible scaffold to a measured guarded prewarming layer. It is not yet universal across datasets, but it is now stable across the current shuffled ESConv stress gate.
 
 Verification:
@@ -905,5 +905,28 @@ Verification:
 - Outcome regeneration: `python3 - <<'PY' ... write_premonition_outcome_dashboard(...) ... PY`: wrote `runs/premonition_swarm_outcome.html`.
 - Artifact static check: `rg -n "0\\.546 -> 0\\.765|15 / 15|0\\.101|recover_inform_buffer_reassure_validate|Premonition Swarm Outcome|Premonition Response-Mode Recovery" runs/esconv_response_mode_dashboard.html runs/premonition_swarm_outcome.html`: passed.
 - Stress artifact check: verified promotion rate `1.000`, mean quality-ready gain `+0.101`, minimum quality-ready gain `+0.078`, minimum raw prepared-hit gain `+0.034`, and `recover_inform_buffer_reassure_validate=6`.
+- Final suite: `python3 -m pytest -v`: 142 passed.
+- `git diff --check`: passed.
+
+## Recovery Rule Generalization Stress
+
+- [x] Run a larger ESConv response-mode recovery stress pass.
+- [x] Run the same recovery stress loop on a second conversational dataset.
+- [x] Compare promotion rate, mean/min quality-ready gains, raw-floor margins, and selected policy distribution.
+- [x] Update benchmark artifacts and docs with the generalization result.
+- [x] Verify full suite, commit, and push.
+
+Verification:
+
+- Dataset inventory: ESConv has `10,288` response-mode turns across `7` modes; DailyDialog full-depth samples have `20,220` turns across `commit`, `ask_followup`, `suggest`, and `inform`; EmpatheticDialogues full-depth samples have `20,220` turns across `ask_followup`, `inform`, `suggest`, and `commit`.
+- ESConv stress run: `foresight-replay --conversation-train-input data/esconv_train_response_modes_sample.jsonl --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl --conversation-test-input data/esconv_test_response_modes_sample.jsonl --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json --response-mode-stress-seeds 5 --folds 5`: completed.
+- ESConv stress result: promotion rate `1.000` across `25` shuffled folds; mean prepared-hit gain `+0.061`, mean quality-ready gain `+0.102`, minimum prepared-hit gain `+0.027`, minimum quality-ready gain `+0.075`, and selected policies `recover_disclose_inform=14`, `recover_inform_buffer_reassure_validate=8`, `recover_disclose_inform_other=1`, `recover_other_buffer_reassure_disclose=1`, and `recover_other_buffer_reassure_validate=1`.
+- DailyDialog stress run: `foresight-replay --conversation-train-input data/dailydialog_train_6740_sample.jsonl --conversation-dev-input data/dailydialog_validation_6740_sample.jsonl --conversation-test-input data/dailydialog_test_6740_sample.jsonl --response-mode-stress-report runs/dailydialog_response_mode_recovery_stress.json --response-mode-stress-seeds 3 --folds 5`: completed.
+- DailyDialog transfer result: promotion rate `0.667` across `15` shuffled folds; mean prepared-hit gain `+0.040`, mean quality-ready gain `+0.040`, minimum gain `0.000`, max quality-ready gain `+0.064`, and selected policies `recover_commit=10` and `none=5`.
+- Interpretation: the quality-gap buffer rule is now ESConv-stable across more stress, while DailyDialog shows safe partial transfer rather than universal promotion. The next lever is diagnosing the DailyDialog no-policy folds and then testing EmpatheticDialogues.
+- Outcome regeneration: `python3 - <<'PY' ... write_premonition_outcome_dashboard(...) ... PY`: wrote `runs/premonition_swarm_outcome.html`.
+- Artifact static check: `rg -n "25 / 25|0\\.102|recover_inform_buffer_reassure_validate|Premonition Swarm Outcome|0\\.546 -> 0\\.765" runs/premonition_swarm_outcome.html`: passed.
+- Artifact JSON check: verified ESConv `25` runs, promotion rate `1.000`, mean quality-ready gain `+0.102`, minimum raw prepared-hit gain `+0.027`, and `recover_inform_buffer_reassure_validate=8`; verified DailyDialog `15` runs, promotion rate `0.667`, mean quality-ready gain `+0.040`, and selected policies `recover_commit=10` / `none=5`.
+- Docs static check: `rg -n "25/25|10/15|\\+0\\.102|\\+0\\.040|response-mode-stress-seeds 5|DailyDialog transfer" README.md docs/dataset-catalog.md tasks/todo.md`: passed.
 - Final suite: `python3 -m pytest -v`: 142 passed.
 - `git diff --check`: passed.

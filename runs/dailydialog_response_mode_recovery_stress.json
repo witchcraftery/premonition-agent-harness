@@ -1,0 +1,649 @@
+{
+  "aggregates": {
+    "background_recovery_hit_rate": {
+      "max": 0.064,
+      "mean": 0.04,
+      "min": 0.0
+    },
+    "prepared_hit_gain": {
+      "max": 0.064,
+      "mean": 0.04,
+      "min": 0.0
+    },
+    "promotion_rate": 0.667,
+    "quality_ready_gain": {
+      "max": 0.064,
+      "mean": 0.04,
+      "min": 0.0
+    },
+    "selected_policy_counts": {
+      "none": 5,
+      "recover_commit": 10
+    }
+  },
+  "runs": [
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.06,
+        "prepared_hit_rate": 0.958,
+        "quality_ready_rate": 0.958,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.06,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.898,
+        "quality_ready_rate": 0.898,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.898,
+        "quality_ready_rate": 0.898,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 1,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.06,
+      "promoted": true,
+      "quality_ready_gain": 0.06,
+      "seed": 0,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.589,
+          "active_quality_ready_rate": 0.589,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.894,
+        "quality_ready_rate": 0.894,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.894,
+        "quality_ready_rate": 0.894,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.894,
+        "quality_ready_rate": 0.894,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": false,
+      "dev_turns": 4044,
+      "fold": 2,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 0,
+      "selected_policy": "",
+      "target_modes": {},
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.058,
+        "prepared_hit_rate": 0.952,
+        "quality_ready_rate": 0.952,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.058,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.894,
+        "quality_ready_rate": 0.894,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.894,
+        "quality_ready_rate": 0.894,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 3,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.058,
+      "promoted": true,
+      "quality_ready_gain": 0.058,
+      "seed": 0,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.544,
+          "active_quality_ready_rate": 0.544,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.061,
+        "prepared_hit_rate": 0.956,
+        "quality_ready_rate": 0.956,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.061,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.895,
+        "quality_ready_rate": 0.895,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.895,
+        "quality_ready_rate": 0.895,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 4,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.061,
+      "promoted": true,
+      "quality_ready_gain": 0.061,
+      "seed": 0,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.582,
+          "active_quality_ready_rate": 0.582,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.899,
+        "quality_ready_rate": 0.899,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.899,
+        "quality_ready_rate": 0.899,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.899,
+        "quality_ready_rate": 0.899,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": false,
+      "dev_turns": 4044,
+      "fold": 5,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 0,
+      "selected_policy": "",
+      "target_modes": {},
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.06,
+        "prepared_hit_rate": 0.951,
+        "quality_ready_rate": 0.951,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.06,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.89,
+        "quality_ready_rate": 0.89,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.89,
+        "quality_ready_rate": 0.89,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 1,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.061,
+      "promoted": true,
+      "quality_ready_gain": 0.061,
+      "seed": 1,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.551,
+          "active_quality_ready_rate": 0.551,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.064,
+        "prepared_hit_rate": 0.961,
+        "quality_ready_rate": 0.961,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.064,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.897,
+        "quality_ready_rate": 0.897,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.897,
+        "quality_ready_rate": 0.897,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 2,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.064,
+      "promoted": true,
+      "quality_ready_gain": 0.064,
+      "seed": 1,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.62,
+          "active_quality_ready_rate": 0.62,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.061,
+        "prepared_hit_rate": 0.958,
+        "quality_ready_rate": 0.958,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.061,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.897,
+        "quality_ready_rate": 0.897,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.897,
+        "quality_ready_rate": 0.897,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 3,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.061,
+      "promoted": true,
+      "quality_ready_gain": 0.061,
+      "seed": 1,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.591,
+          "active_quality_ready_rate": 0.591,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.051,
+        "prepared_hit_rate": 0.949,
+        "quality_ready_rate": 0.949,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.051,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.898,
+        "quality_ready_rate": 0.898,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.898,
+        "quality_ready_rate": 0.898,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 4,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.051,
+      "promoted": true,
+      "quality_ready_gain": 0.051,
+      "seed": 1,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.496,
+          "active_quality_ready_rate": 0.496,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.901,
+        "quality_ready_rate": 0.901,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.901,
+        "quality_ready_rate": 0.901,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.901,
+        "quality_ready_rate": 0.901,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": false,
+      "dev_turns": 4044,
+      "fold": 5,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 1,
+      "selected_policy": "",
+      "target_modes": {},
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.064,
+        "prepared_hit_rate": 0.958,
+        "quality_ready_rate": 0.958,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.064,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.894,
+        "quality_ready_rate": 0.894,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.894,
+        "quality_ready_rate": 0.894,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 1,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.064,
+      "promoted": true,
+      "quality_ready_gain": 0.064,
+      "seed": 2,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.602,
+          "active_quality_ready_rate": 0.602,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.898,
+        "quality_ready_rate": 0.898,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.898,
+        "quality_ready_rate": 0.898,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.898,
+        "quality_ready_rate": 0.898,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": false,
+      "dev_turns": 4044,
+      "fold": 2,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 2,
+      "selected_policy": "",
+      "target_modes": {},
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.893,
+        "quality_ready_rate": 0.893,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "",
+      "background_recovery_hit_rate": 0.0,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.893,
+        "quality_ready_rate": 0.893,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.893,
+        "quality_ready_rate": 0.893,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": false,
+      "dev_turns": 4044,
+      "fold": 3,
+      "heldout_promoted": false,
+      "prepared_hit_gain": 0.0,
+      "promoted": false,
+      "quality_ready_gain": 0.0,
+      "seed": 2,
+      "selected_policy": "",
+      "target_modes": {},
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.061,
+        "prepared_hit_rate": 0.952,
+        "quality_ready_rate": 0.952,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.061,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.891,
+        "quality_ready_rate": 0.891,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.891,
+        "quality_ready_rate": 0.891,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 4,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.061,
+      "promoted": true,
+      "quality_ready_gain": 0.061,
+      "seed": 2,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.559,
+          "active_quality_ready_rate": 0.559,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.056,
+        "prepared_hit_rate": 0.964,
+        "quality_ready_rate": 0.964,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_commit",
+      "background_recovery_hit_rate": 0.056,
+      "baseline": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.907,
+        "quality_ready_rate": 0.907,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.907,
+        "quality_ready_rate": 0.907,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 4044,
+      "fold": 5,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.057,
+      "promoted": true,
+      "quality_ready_gain": 0.057,
+      "seed": 2,
+      "selected_policy": "recover_commit",
+      "target_modes": {
+        "commit": {
+          "active_prepared_hit_rate": 0.608,
+          "active_quality_ready_rate": 0.608,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 4044,
+      "train_turns": 12132
+    }
+  ],
+  "summary": {
+    "fold_count": 5,
+    "min_quality_score": 0.75,
+    "run_count": 15,
+    "seed_count": 3,
+    "top_k": 3,
+    "total_turns": 20220
+  }
+}

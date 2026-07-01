@@ -668,12 +668,14 @@ foresight-replay \
   --conversation-dev-input data/esconv_validation_response_modes_sample.jsonl \
   --conversation-test-input data/esconv_test_response_modes_sample.jsonl \
   --response-mode-stress-report runs/esconv_response_mode_recovery_stress.json \
-  --response-mode-stress-seeds 3 \
+  --response-mode-stress-seeds 5 \
   --folds 5
 ```
 
 Each split report also includes segment analytics and focus areas. These make it possible to track whether improvements are broad or concentrated in a few topics, and to identify the next areas that deserve new data or better guidance.
 
-The recovery promotion gate compares recovery candidates against a quality-aware held-out baseline and a raw prepared-hit floor, while still reporting the raw baseline separately. The current fallback-ladder pass emits ranked recovery rungs and adds quality-gap buffers when a single target needs more prewarmed coverage to clear the raw floor. In the current ESConv stress artifact, this promotes on `15/15` shuffled folds, keeps minimum raw prepared-hit gain positive at `+0.034`, and raises mean quality-ready gain to `+0.101`. The former weak `recover_inform` folds now promote as `recover_inform_buffer_reassure_validate`, which keeps `inform` as the measured target while prewarming the quality-gap modes that had been carrying the raw baseline.
+The recovery promotion gate compares recovery candidates against a quality-aware held-out baseline and a raw prepared-hit floor, while still reporting the raw baseline separately. The current fallback-ladder pass emits ranked recovery rungs and adds quality-gap buffers when a single target needs more prewarmed coverage to clear the raw floor. In the current ESConv stress artifact, this promotes on `25/25` shuffled folds, keeps minimum raw prepared-hit gain positive at `+0.027`, and raises mean quality-ready gain to `+0.102`. The former weak `recover_inform` folds now promote as `recover_inform_buffer_reassure_validate`, which keeps `inform` as the measured target while prewarming the quality-gap modes that had been carrying the raw baseline.
+
+A second-corpus DailyDialog recovery stress pass is intentionally more mixed: the same gate promotes `recover_commit` on `10/15` shuffled folds, leaves `5/15` folds at baseline, and produces mean quality-ready gain `+0.040` with no forced promotion when the dev signal is weak. That makes the rule a safe partial transfer candidate, not a universal baseline yet.
 
 Candidate benchmark families are tracked in `docs/dataset-catalog.md`.

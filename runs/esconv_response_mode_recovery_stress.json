@@ -2,24 +2,26 @@
   "aggregates": {
     "background_recovery_hit_rate": {
       "max": 0.201,
-      "mean": 0.101,
-      "min": 0.078
+      "mean": 0.102,
+      "min": 0.075
     },
     "prepared_hit_gain": {
-      "max": 0.169,
-      "mean": 0.059,
-      "min": 0.034
+      "max": 0.171,
+      "mean": 0.061,
+      "min": 0.027
     },
     "promotion_rate": 1.0,
     "quality_ready_gain": {
       "max": 0.201,
-      "mean": 0.101,
-      "min": 0.078
+      "mean": 0.102,
+      "min": 0.075
     },
     "selected_policy_counts": {
-      "recover_disclose_inform": 8,
-      "recover_inform_buffer_reassure_validate": 6,
-      "recover_other_buffer_reassure_disclose": 1
+      "recover_disclose_inform": 14,
+      "recover_disclose_inform_other": 1,
+      "recover_inform_buffer_reassure_validate": 8,
+      "recover_other_buffer_reassure_disclose": 1,
+      "recover_other_buffer_reassure_validate": 1
     }
   },
   "runs": [
@@ -707,13 +709,483 @@
       },
       "test_turns": 2057,
       "train_turns": 6173
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.079,
+        "prepared_hit_rate": 0.641,
+        "quality_ready_rate": 0.641,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.079,
+      "baseline": {
+        "average_quality_score": 0.967,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.602,
+        "quality_ready_rate": 0.562,
+        "semantic_prepared_hit_rate": 0.04
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.562,
+        "quality_ready_rate": 0.562,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2058,
+      "fold": 1,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.039,
+      "promoted": true,
+      "quality_ready_gain": 0.079,
+      "seed": 3,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.395,
+          "active_quality_ready_rate": 0.395,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.688,
+          "active_quality_ready_rate": 0.688,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2058,
+      "train_turns": 6172
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.103,
+        "prepared_hit_rate": 0.652,
+        "quality_ready_rate": 0.652,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_inform_buffer_reassure_validate",
+      "background_recovery_hit_rate": 0.103,
+      "baseline": {
+        "average_quality_score": 0.966,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.59,
+        "quality_ready_rate": 0.549,
+        "semantic_prepared_hit_rate": 0.041
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.549,
+        "quality_ready_rate": 0.549,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2058,
+      "fold": 2,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.062,
+      "promoted": true,
+      "quality_ready_gain": 0.103,
+      "seed": 3,
+      "selected_policy": "recover_inform_buffer_reassure_validate",
+      "target_modes": {
+        "inform": {
+          "active_prepared_hit_rate": 0.738,
+          "active_quality_ready_rate": 0.738,
+          "baseline_prepared_hit_rate": 0.008
+        }
+      },
+      "test_turns": 2058,
+      "train_turns": 6172
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.086,
+        "prepared_hit_rate": 0.641,
+        "quality_ready_rate": 0.641,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.086,
+      "baseline": {
+        "average_quality_score": 0.964,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.599,
+        "quality_ready_rate": 0.555,
+        "semantic_prepared_hit_rate": 0.044
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.555,
+        "quality_ready_rate": 0.555,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2057,
+      "fold": 3,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.042,
+      "promoted": true,
+      "quality_ready_gain": 0.086,
+      "seed": 3,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.348,
+          "active_quality_ready_rate": 0.348,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.721,
+          "active_quality_ready_rate": 0.721,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2058,
+      "train_turns": 6173
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.197,
+        "prepared_hit_rate": 0.736,
+        "quality_ready_rate": 0.736,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform_other",
+      "background_recovery_hit_rate": 0.197,
+      "baseline": {
+        "average_quality_score": 0.977,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.565,
+        "quality_ready_rate": 0.539,
+        "semantic_prepared_hit_rate": 0.027
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.539,
+        "quality_ready_rate": 0.539,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2057,
+      "fold": 4,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.171,
+      "promoted": true,
+      "quality_ready_gain": 0.197,
+      "seed": 3,
+      "selected_policy": "recover_disclose_inform_other",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.385,
+          "active_quality_ready_rate": 0.385,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.711,
+          "active_quality_ready_rate": 0.711,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "other": {
+          "active_prepared_hit_rate": 0.645,
+          "active_quality_ready_rate": 0.645,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2057,
+      "train_turns": 6174
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.076,
+        "prepared_hit_rate": 0.617,
+        "quality_ready_rate": 0.617,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.076,
+      "baseline": {
+        "average_quality_score": 0.959,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.59,
+        "quality_ready_rate": 0.541,
+        "semantic_prepared_hit_rate": 0.049
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.541,
+        "quality_ready_rate": 0.541,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2058,
+      "fold": 5,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.027,
+      "promoted": true,
+      "quality_ready_gain": 0.076,
+      "seed": 3,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.358,
+          "active_quality_ready_rate": 0.358,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.721,
+          "active_quality_ready_rate": 0.721,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2057,
+      "train_turns": 6173
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.083,
+        "prepared_hit_rate": 0.631,
+        "quality_ready_rate": 0.631,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.083,
+      "baseline": {
+        "average_quality_score": 0.964,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.591,
+        "quality_ready_rate": 0.548,
+        "semantic_prepared_hit_rate": 0.043
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.548,
+        "quality_ready_rate": 0.548,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2058,
+      "fold": 1,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.04,
+      "promoted": true,
+      "quality_ready_gain": 0.083,
+      "seed": 4,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.363,
+          "active_quality_ready_rate": 0.363,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.706,
+          "active_quality_ready_rate": 0.706,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2058,
+      "train_turns": 6172
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.078,
+        "prepared_hit_rate": 0.642,
+        "quality_ready_rate": 0.642,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.078,
+      "baseline": {
+        "average_quality_score": 0.973,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.598,
+        "quality_ready_rate": 0.565,
+        "semantic_prepared_hit_rate": 0.033
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.565,
+        "quality_ready_rate": 0.565,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2058,
+      "fold": 2,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.044,
+      "promoted": true,
+      "quality_ready_gain": 0.077,
+      "seed": 4,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.32,
+          "active_quality_ready_rate": 0.32,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.66,
+          "active_quality_ready_rate": 0.66,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2058,
+      "train_turns": 6172
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.104,
+        "prepared_hit_rate": 0.646,
+        "quality_ready_rate": 0.646,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_inform_buffer_reassure_validate",
+      "background_recovery_hit_rate": 0.104,
+      "baseline": {
+        "average_quality_score": 0.963,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.586,
+        "quality_ready_rate": 0.542,
+        "semantic_prepared_hit_rate": 0.044
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.542,
+        "quality_ready_rate": 0.542,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2057,
+      "fold": 3,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.06,
+      "promoted": true,
+      "quality_ready_gain": 0.104,
+      "seed": 4,
+      "selected_policy": "recover_inform_buffer_reassure_validate",
+      "target_modes": {
+        "inform": {
+          "active_prepared_hit_rate": 0.662,
+          "active_quality_ready_rate": 0.662,
+          "baseline_prepared_hit_rate": 0.008
+        }
+      },
+      "test_turns": 2058,
+      "train_turns": 6173
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.149,
+        "prepared_hit_rate": 0.702,
+        "quality_ready_rate": 0.702,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_other_buffer_reassure_validate",
+      "background_recovery_hit_rate": 0.149,
+      "baseline": {
+        "average_quality_score": 0.969,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.591,
+        "quality_ready_rate": 0.554,
+        "semantic_prepared_hit_rate": 0.037
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.554,
+        "quality_ready_rate": 0.554,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2057,
+      "fold": 4,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.111,
+      "promoted": true,
+      "quality_ready_gain": 0.148,
+      "seed": 4,
+      "selected_policy": "recover_other_buffer_reassure_validate",
+      "target_modes": {
+        "other": {
+          "active_prepared_hit_rate": 0.811,
+          "active_quality_ready_rate": 0.811,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2057,
+      "train_turns": 6174
+    },
+    {
+      "active": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.075,
+        "prepared_hit_rate": 0.624,
+        "quality_ready_rate": 0.624,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "active_policy": "recover_disclose_inform",
+      "background_recovery_hit_rate": 0.075,
+      "baseline": {
+        "average_quality_score": 0.969,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.586,
+        "quality_ready_rate": 0.549,
+        "semantic_prepared_hit_rate": 0.037
+      },
+      "baseline_quality_aware": {
+        "average_quality_score": 1.0,
+        "background_recovery_hit_rate": 0.0,
+        "prepared_hit_rate": 0.549,
+        "quality_ready_rate": 0.549,
+        "semantic_prepared_hit_rate": 0.0
+      },
+      "calibration_promoted": true,
+      "dev_turns": 2058,
+      "fold": 5,
+      "heldout_promoted": true,
+      "prepared_hit_gain": 0.038,
+      "promoted": true,
+      "quality_ready_gain": 0.075,
+      "seed": 4,
+      "selected_policy": "recover_disclose_inform",
+      "target_modes": {
+        "disclose": {
+          "active_prepared_hit_rate": 0.333,
+          "active_quality_ready_rate": 0.333,
+          "baseline_prepared_hit_rate": 0.0
+        },
+        "inform": {
+          "active_prepared_hit_rate": 0.667,
+          "active_quality_ready_rate": 0.667,
+          "baseline_prepared_hit_rate": 0.0
+        }
+      },
+      "test_turns": 2057,
+      "train_turns": 6173
     }
   ],
   "summary": {
     "fold_count": 5,
     "min_quality_score": 0.75,
-    "run_count": 15,
-    "seed_count": 3,
+    "run_count": 25,
+    "seed_count": 5,
     "top_k": 3,
     "total_turns": 10288
   }
