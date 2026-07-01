@@ -179,6 +179,19 @@ The current Probability Pack includes:
 - `confirmation_mode`: `wait_for_observed_next_move`.
 - `expires_after_ms`: a short freshness window for live voice use.
 
+Run the local live-shadow experiment surface:
+
+```bash
+foresight-replay --live-shadow-app --port 8787
+```
+
+Then open `http://127.0.0.1:8787`. The page has a live conversation lane,
+a Premonition draft lane, and a reality-grading lane. Each observed transcript
+turn prepares a Probability Pack in shadow mode; each graded reality turn records
+the actual response mode, match grade, quality-ready status, and estimated
+latency saved. Export the JSONL rows from the page to turn live testing back
+into replay/benchmark data.
+
 Run the first real DailyDialog sample:
 
 ```bash

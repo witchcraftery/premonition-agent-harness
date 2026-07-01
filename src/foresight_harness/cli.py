@@ -22,6 +22,7 @@ from foresight_harness.evaluator import load_replay_turns, run_replay, run_repla
 from foresight_harness.experiments import load_trial_config
 from foresight_harness.guidance import run_guidance_loop
 from foresight_harness.learning import analyze_harness_misses
+from foresight_harness.live_shadow_app import run_live_shadow_app
 from foresight_harness.split_benchmark import run_split_benchmark
 from foresight_harness.visualization import write_benchmark_dashboard
 
@@ -59,6 +60,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--config",
         type=Path,
         help="Path to a JSON trial config. Overrides --input and --top-k.",
+    )
+    parser.add_argument(
+        "--live-shadow-app",
+        action="store_true",
+        help="Run the local Premonition Live Shadow Lab web app.",
+    )
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="Host for --live-shadow-app.",
+    )
+    parser.add_argument(
+        "--port",
+        type=positive_int,
+        default=8787,
+        help="Port for --live-shadow-app.",
     )
     parser.add_argument(
         "--train-config",
@@ -199,6 +216,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+
+    if args.live_shadow_app:
+        run_live_shadow_app(host=args.host, port=args.port)
+        return
 
     if args.dailydialog_dir:
         if not args.conversation_output:

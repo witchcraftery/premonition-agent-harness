@@ -430,3 +430,12 @@ def test_console_entrypoint_is_declared():
 
     assert "[project.scripts]" in pyproject
     assert 'foresight-replay = "foresight_harness.cli:main"' in pyproject
+
+
+def test_cli_parser_accepts_live_shadow_app_mode():
+    from foresight_harness.cli import build_parser
+
+    args = build_parser().parse_args(["--live-shadow-app", "--port", "8787"])
+
+    assert args.live_shadow_app is True
+    assert args.port == 8787

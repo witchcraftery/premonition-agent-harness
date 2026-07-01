@@ -908,6 +908,32 @@ Verification:
 - Final suite: `python3 -m pytest -v`: 142 passed.
 - `git diff --check`: passed.
 
+## Live Shadow Voice Experiment Surface
+
+- [x] Model a live shadow session that observes transcript turns, generates Premonition drafts, accepts reality, and grades draft readiness.
+- [x] Expose local API endpoints for session state, observation, grading, reset, and exportable logs.
+- [x] Build a web visualization page with conversation, draft, grading, metrics, and timeline lanes.
+- [x] Verify the live shadow flow with tests and browser checks.
+- [x] Document how to run the local experiment surface and prepare it for API-backed deployment.
+- [x] Commit and push the checkpoint.
+
+Verification:
+
+- Design concept: generated a compact `Premonition Live Shadow Lab` cockpit concept in `/Users/witchcraftery-studio/.codex/generated_images/019f02cd-8d94-75e0-a53c-2514e5a2eeaf/`.
+- Initial red check: `python3 -m pytest tests/test_live_shadow.py -v` failed because `foresight_harness.live_shadow` did not exist.
+- Focused green check: `python3 -m pytest tests/test_live_shadow.py -v`: 4 passed.
+- Web/CLI red check: `python3 -m pytest tests/test_live_shadow.py tests/test_cli.py::test_cli_parser_accepts_live_shadow_app_mode -v` failed because `foresight_harness.live_shadow_app` did not exist.
+- Web/CLI green check: `python3 -m pytest tests/test_live_shadow.py tests/test_cli.py::test_cli_parser_accepts_live_shadow_app_mode -v`: 6 passed.
+- Favicon red check: `python3 -m pytest tests/test_live_shadow.py::test_live_shadow_app_serves_empty_favicon_without_console_404 -v` failed with `404 == 204`.
+- Focused verification: `python3 -m pytest tests/test_live_shadow.py tests/test_cli.py::test_cli_parser_accepts_live_shadow_app_mode -v`: 7 passed.
+- Local app run: `python3 -m foresight_harness.cli --live-shadow-app --port 8787`: served `http://127.0.0.1:8787`.
+- API smoke check: `GET /api/session` returned empty live-shadow state with metrics; `POST /api/grade` updated prepared/exact/quality-ready rates after observed draft state.
+- Browser verification: Playwright loaded the page, observed a user transcript turn, generated ranked `validate`, `reassure`, and `suggest` drafts, graded actual `reassure` reality as `exact`, and displayed `560ms` latency saved.
+- Console check: Playwright `console error` returned `0` errors after adding the empty favicon route.
+- Visual artifacts: desktop and mobile screenshots saved to `output/playwright/live_shadow_lab_desktop.png` and `output/playwright/live_shadow_lab_mobile.png`.
+- Final suite: `python3 -m pytest -v`: 149 passed.
+- `git diff --check`: passed.
+
 ## Recovery Rule Generalization Stress
 
 - [x] Run a larger ESConv response-mode recovery stress pass.
