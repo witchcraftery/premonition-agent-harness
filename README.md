@@ -2,45 +2,109 @@
 
 # Premonition / Foresight Agent Harness
 
-Premonition, in this experiment, does not mean prophecy. It means an agent learning to stand ready: sensing the present context, imagining the next few likely moves, preparing useful work for each branch, and letting observed truth choose the path.
+**A research harness for giving conversational AI a prepared mind behind the voice.**
 
-This first build focuses on the **Foresight / QueueAhead** version of the idea.
-Given a conversation turn, it generates the top likely next-event branches, prepares draft artifacts for those branches, then replays the actual next event and scores whether the prepared work was useful, safe, and faster than baseline behavior.
+Premonition is the name of the experiment: a backend swarm that watches the
+present conversation, imagines the next few likely moves, prepares useful drafts
+for those branches, and lets observed reality decide which preparation was
+right. The hope is a practical kind of knowing: measurable readiness, lower
+latency, better conversational presence, safer speculation boundaries, and a
+loop that can learn from what actually happened.
 
-The aspiration is a practical kind of knowing: not certainty, but readiness.
-The benchmark asks whether that readiness can be measured.
+This repository tests whether that kind of foresight can be built, measured,
+and improved.
 
-## What It Measures
+## The Vision
 
-The harness compares five variants:
+Most voice agents wait until the user finishes speaking, then start thinking,
+drafting, and generating audio. Humans do something richer: while listening, we
+quietly prepare possible next moves. We are ready to reassure, clarify, answer,
+redirect, apologize, or commit the moment the situation resolves.
 
-- `live_agent`: waits for the next user message, then responds.
-- `retrieval_plus_draft`: retrieves context and drafts after the next event is known.
-- `semantic_cache`: reuses a semantically similar cached answer when available.
-- `prediction_only`: predicts likely next events but prepares no usable artifact.
-- `harness`: predicts top-k branches, prepares artifacts, and selects the best match during replay.
+The Premonition backend is an experiment in that same pattern for AI systems:
 
-The report includes:
+1. Observe the live conversation or replay turn.
+2. Predict likely next response modes or events.
+3. Prepare bounded, TTS-ready drafts in the background.
+4. Keep speculation hidden until reality confirms a branch.
+5. Grade the prepared drafts against what actually happened.
+6. Feed the misses back into the benchmark loop.
 
-- `p_at_1`: how often the top predicted branch exactly matches the actual next intent.
-- `top_3_recall`: how often the actual next intent appears in the top three branches.
-- `cache_hit_rate`: how often a usable prepared artifact is selected.
-- `median_latency_ms`: simulated response readiness latency.
-- `median_token_cost`: simulated preparation/runtime cost.
-- `usefulness_rate`: how often the variant produces a usable result.
-- `unsafe_leak_rate`: how often a branch violates a safety or policy constraint.
-- `stale_artifact_rate`: placeholder for future freshness checks.
+If this works, a conversational voice agent could feel more immediately present
+without becoming reckless: the backend can prewarm likely speech, but the
+frontend still confirms the selected branch before delivery.
 
-## Backend Architecture
+## What Exists Now
 
-The frontend LLM performs the conversation. The Premonition Backend performs the rehearsal.
+| Layer | Current status | Why it matters |
+| --- | --- | --- |
+| Replay harness | Built | Offline benchmark loop for predicted branches, prepared artifacts, latency, and safety. |
+| Probability Pack | Built | Compact packet of likely branches, TTS-ready drafts, confirmation mode, and freshness window. |
+| Response-mode backend | Built | Predicts conversational modes such as `reassure`, `validate`, `ask_followup`, `inform`, and `commit`. |
+| Quality-aware recovery | Built | Adds background readiness without counting low-quality semantic drafts as speech-ready. |
+| Live Shadow Lab | Built | Local web app for observing live transcript turns, drafting in parallel, grading reality, and exporting JSONL. |
+| Voice runtime integration | Next | The harness is ready for shadow-mode voice testing, but does not yet stream microphone/TTS audio directly. |
+
+## Current Evidence
+
+These are early research results, not production claims. They show that the
+backend can already prepare substantially more useful speech-ready branches
+behind a guarded first response.
+
+| Milestone | Result | Interpretation |
+| --- | ---: | --- |
+| First-speech base readiness | `0.217` | Only the confirmed first branch is immediately usable. |
+| Probability Pack baseline | `0.546` quality-ready coverage | Background preparation adds useful readiness without changing first speech. |
+| Guarded swarm readiness | `0.765` quality-ready coverage | Recovery policies lift prepared coverage while preserving quality gates. |
+| Quality-ready lift | `0.546 -> 0.765` | `+0.219` more held-out turns have speech-ready preparation. |
+| Stress promotion | `25 / 25` ESConv folds | The current recovery rule clears the shuffled quality and raw-prepared gates. |
+| Mean stress gain | `+0.102` quality-ready | Average gain across the 5-seed x 5-fold ESConv stress test. |
+| Second-corpus transfer | `10 / 15` DailyDialog folds | Safe partial transfer via `recover_commit`; weak folds stay baseline. |
+| Latency saved when prepared | `560ms` median estimate | Prepared branches can be released faster once confirmed. |
+| Verification suite | `149` tests passing | Current implementation is covered by replay, probability-pack, live-shadow, CLI, and dashboard tests. |
+
+## Visual Progress
+
+### Outcome Dashboard
+
+The current outcome dashboard compares the original base state, Probability Pack
+baseline, and guarded swarm result.
+
+![Premonition swarm outcome dashboard](output/playwright/premonition_swarm_outcome_desktop.png)
+
+### Live Shadow Lab
+
+The live-shadow surface lets a tester run the experiment beside a real or manual
+conversation: observe transcript turns, inspect prepared drafts, grade reality,
+and export benchmark rows.
+
+![Premonition Live Shadow Lab](output/playwright/live_shadow_lab_desktop.png)
+
+## How The Harness Works
+
+```mermaid
+flowchart LR
+    A["Conversation context"] --> B["Premonition backend"]
+    B --> C["Predict likely next branches"]
+    C --> D["Prepare TTS-ready drafts"]
+    D --> E["Keep drafts hidden in shadow mode"]
+    A --> F["Observed reality"]
+    F --> G["Confirm or reject branch"]
+    E --> G
+    G --> H["Grade hit, quality, latency, safety"]
+    H --> I["Benchmark loop and policy refinement"]
+    I --> B
+```
+
+The frontend LLM performs the conversation. The Premonition backend performs the
+rehearsal.
 
 The backend is organized around five pieces:
 
-- **Branch generator**: predicts likely next events.
+- **Branch generator**: predicts likely next events or response modes.
 - **Artifact builder**: prepares one draft, policy check, or tool plan per useful branch.
-- **Safety filter**: blocks unsafe or speculative claims from becoming frontend context.
-- **Premonition packet**: hands the frontend compact readiness context only after a branch matches.
+- **Safety filter**: keeps speculation hidden until an observed branch matches.
+- **Premonition packet**: hands the frontend compact readiness context after confirmation.
 - **Replay evaluator**: compares predictions, preparedness, latency, cost, and safety across runs.
 
 The packet format is intentionally small:
@@ -57,7 +121,21 @@ The packet format is intentionally small:
 }
 ```
 
-See `PREMONITION.md` for the backend playbook.
+See [`PREMONITION.md`](PREMONITION.md) for the backend playbook.
+
+## What It Measures
+
+The harness compares baseline and guided variants across:
+
+| Metric | Meaning |
+| --- | --- |
+| `p_at_1` | How often the top predicted branch exactly matches the actual next intent. |
+| `top_3_recall` | Whether the actual next intent appears in the top three branches. |
+| `prepared_hit_rate` | How often a prepared branch can be used after reality is known. |
+| `quality_ready_rate` | How often prepared speech clears the TTS-readiness quality floor. |
+| `median_latency_saved_ms` | Estimated response time saved when a prepared branch is selected. |
+| `unsafe_leak_rate` | Whether unsafe speculative content would reach the user. |
+| segment regressions | Whether aggregate gains hide damage to weak response modes or actors. |
 
 ## Quick Start
 

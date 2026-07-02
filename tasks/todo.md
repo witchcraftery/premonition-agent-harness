@@ -934,6 +934,22 @@ Verification:
 - Final suite: `python3 -m pytest -v`: 149 passed.
 - `git diff --check`: passed.
 
+## External-Facing README Refresh
+
+- [x] Rewrite the README opening so outside viewers quickly understand the vision, concept, and intended impact.
+- [x] Add progress and benchmark tables that summarize current evidence without requiring readers to inspect raw JSON.
+- [x] Add visual references to the outcome dashboard and live shadow lab.
+- [x] Verify README anchors, linked artifacts, and key metrics.
+- [x] Commit and push the checkpoint.
+
+Verification:
+
+- README source check: confirmed the opening now includes `The Vision`, `What Exists Now`, `Current Evidence`, `Visual Progress`, architecture flow, and metric definitions before the command archive.
+- Asset check: verified `assets/premonition-foresight-tree.svg`, `output/playwright/premonition_swarm_outcome_desktop.png`, `output/playwright/live_shadow_lab_desktop.png`, and `PREMONITION.md` exist.
+- Metrics check: verified the README includes `0.546 -> 0.765`, `25 / 25`, `10 / 15`, `149`, and `Live Shadow Lab`.
+- Final suite: `python3 -m pytest -v`: 149 passed.
+- `git diff --check`: passed.
+
 ## Recovery Rule Generalization Stress
 
 - [x] Run a larger ESConv response-mode recovery stress pass.
