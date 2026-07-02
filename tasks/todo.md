@@ -919,7 +919,7 @@ Verification:
 
 Verification:
 
-- Design concept: generated a compact `Premonition Live Shadow Lab` cockpit concept in `/Users/witchcraftery-studio/.codex/generated_images/019f02cd-8d94-75e0-a53c-2514e5a2eeaf/`.
+- Design concept: generated a compact `Premonition Live Shadow Lab` cockpit concept and preserved checked-in browser proof screenshots under `output/playwright/`.
 - Initial red check: `python3 -m pytest tests/test_live_shadow.py -v` failed because `foresight_harness.live_shadow` did not exist.
 - Focused green check: `python3 -m pytest tests/test_live_shadow.py -v`: 4 passed.
 - Web/CLI red check: `python3 -m pytest tests/test_live_shadow.py tests/test_cli.py::test_cli_parser_accepts_live_shadow_app_mode -v` failed because `foresight_harness.live_shadow_app` did not exist.
