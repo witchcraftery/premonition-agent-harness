@@ -1,4 +1,4 @@
-![Premonition subconscious swarm hero](assets/premonition-subconscious-swarm.svg)
+![Premonition retro cosmic subconscious swarm hero](assets/premonition-retro-cosmic-hero.png)
 
 # Premonition / Foresight Agent Harness
 
