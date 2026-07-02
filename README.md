@@ -4,22 +4,39 @@
 
 **A research harness for giving conversational AI a prepared mind behind the voice.**
 
-Premonition is the name of the experiment: a backend swarm that watches the
-present conversation, imagines the next few likely moves, prepares useful drafts
-for those branches, and lets observed reality decide which preparation was
-right. The hope is a practical kind of knowing: measurable readiness, lower
-latency, better conversational presence, safer speculation boundaries, and a
-loop that can learn from what actually happened.
+Premonition began with a question about the human mind: how much of presence
+comes from the work our conscious attention never has to narrate?
 
-This repository tests whether that kind of foresight can be built, measured,
-and improved.
+While we are speaking, listening, and reacting, a quieter layer is already
+calculating probabilities. It is rehearsing what might happen next, what someone
+might need emotionally, what interruption could matter, which answer is safe,
+which tone is kind, and which path is likely enough to keep warm. We usually do
+not experience that work directly. It arrives as instinct, timing, readiness,
+and the feeling that we can meet the next moment without stopping to assemble
+ourselves from scratch.
+
+It feels unfair to expect an LLM to have that kind of instinct if we only give
+it one conscious lane: wait, receive the latest turn, think deeply, draft, check,
+and then respond. Premonition explores a different architecture. Keep the
+front-facing conversational model fast, present, and responsive, while a backend
+swarm continuously models likely next moves, prepares bounded drafts, and waits
+for reality to confirm which branch deserves to surface.
+
+The goal keeps one foot in wonder and one foot in measurement: operational
+foresight, built as a measurable subconscious layer for AI systems. Prepared
+branches, response modes, safety checks, and benchmark feedback arrive just in
+time to help the conversational model meet the next moment.
+
+This repository tests whether that relationship between conscious dialogue and
+subconscious preparation can be built, measured, and improved.
 
 ## The Vision
 
 Most voice agents wait until the user finishes speaking, then start thinking,
-drafting, and generating audio. Humans do something richer: while listening, we
-quietly prepare possible next moves. We are ready to reassure, clarify, answer,
-redirect, apologize, or commit the moment the situation resolves.
+drafting, and generating audio. Humans do something richer: while our conscious
+mind stays in the conversation, the subconscious is already running simulations.
+We are ready to reassure, clarify, answer, redirect, apologize, or commit the
+moment the situation resolves.
 
 The Premonition backend is an experiment in that same pattern for AI systems:
 
@@ -33,6 +50,13 @@ The Premonition backend is an experiment in that same pattern for AI systems:
 If this works, a conversational voice agent could feel more immediately present
 without becoming reckless: the backend can prewarm likely speech, but the
 frontend still confirms the selected branch before delivery.
+
+In the long arc, Premonition imagines a conscious conversational model and a
+subconscious probability engine working in tandem, with access to the same live
+moment and the same historical memory. The conversational model can stay light
+and available. The backend can do the deeper rehearsal. Together, the system may
+begin to reflect the layered depth that makes human presence feel prepared
+instead of merely reactive.
 
 ## What Exists Now
 
