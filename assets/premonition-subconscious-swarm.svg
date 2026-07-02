@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-labelledby="title desc">
+  <title id="title">Premonition subconscious swarm hero</title>
+  <desc id="desc">A cinematic visualization of a conscious conversational model supported by an ethereal subconscious probability engine preparing likely next moves.</desc>
+  <defs>
+    <radialGradient id="aura" cx="43%" cy="42%" r="64%">
+      <stop offset="0" stop-color="#58f3ff" stop-opacity="0.34"/>
+      <stop offset="0.32" stop-color="#4ab6e8" stop-opacity="0.14"/>
+      <stop offset="0.74" stop-color="#0b1624" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#050b14" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff4ba"/>
+      <stop offset="0.45" stop-color="#ffcb73"/>
+      <stop offset="1" stop-color="#ff9e51" stop-opacity="0.08"/>
+    </radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050b15"/>
+      <stop offset="0.46" stop-color="#0b2530"/>
+      <stop offset="0.74" stop-color="#182033"/>
+      <stop offset="1" stop-color="#291b38"/>
+    </linearGradient>
+    <linearGradient id="horizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0b3440" stop-opacity="0.92"/>
+      <stop offset="0.47" stop-color="#14233a" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#3a1f46" stop-opacity="0.82"/>
+    </linearGradient>
+    <linearGradient id="pathHot" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff8ce"/>
+      <stop offset="0.47" stop-color="#ffcf76"/>
+      <stop offset="1" stop-color="#ff9962"/>
+    </linearGradient>
+    <linearGradient id="pathCool" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#99fbff"/>
+      <stop offset="1" stop-color="#5ca6ff"/>
+    </linearGradient>
+    <linearGradient id="pathViolet" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d5b0ff"/>
+      <stop offset="1" stop-color="#8d72ff"/>
+    </linearGradient>
+    <filter id="blur10" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="heavyGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="13" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .eyebrow { font: 700 17px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .title { font: 850 88px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .subtitle { font: 540 30px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .copy { font: 520 18px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .label { font: 760 20px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .tiny { font: 560 15px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="720" fill="url(#bg)"/>
+  <rect width="1400" height="720" fill="url(#aura)"/>
+  <circle cx="486" cy="290" r="260" fill="#4df0ff" opacity="0.08" filter="url(#blur10)"/>
+  <circle cx="950" cy="285" r="330" fill="#9b7cff" opacity="0.08" filter="url(#blur10)"/>
+  <path d="M0 520 C170 464 338 604 520 535 C712 461 877 505 1048 447 C1184 401 1308 413 1400 372 L1400 720 L0 720 Z" fill="url(#horizon)" opacity="0.88"/>
+  <path d="M0 98 C180 153 302 55 484 100 C675 147 770 185 966 86 C1121 7 1278 54 1400 96" fill="none" stroke="#7ff7ff" stroke-width="2" opacity="0.16"/>
+  <path d="M0 143 C225 208 394 111 617 165 C811 212 995 234 1156 143 C1271 79 1341 111 1400 127" fill="none" stroke="#ffd489" stroke-width="2" opacity="0.12"/>
+  <path d="M0 210 C204 251 401 178 602 221 C799 263 998 246 1210 204 C1289 188 1345 199 1400 217" fill="none" stroke="#b695ff" stroke-width="1.5" opacity="0.13"/>
+
+  <g transform="translate(78 78)">
+    <text class="eyebrow" x="0" y="0" fill="#9df6ff">PREMONITION ENGINE</text>
+    <text class="title" x="0" y="92" fill="#fff5d9">Premonition</text>
+    <text class="subtitle" x="4" y="142" fill="#d9fbff">A prepared mind behind the voice.</text>
+    <text class="copy" x="5" y="188" fill="#b9d1d8">A subconscious probability swarm for conversational AI readiness.</text>
+  </g>
+
+  <g transform="translate(76 138) scale(0.72)" opacity="0.92">
+    <path d="M300 611 C264 548 246 481 255 409 C265 330 302 282 363 249 C392 233 414 207 420 175 C468 209 492 258 489 314 C528 339 552 385 554 440 C558 545 469 636 353 650 C333 642 315 629 300 611 Z" fill="#07111f"/>
+    <path d="M400 181 C448 217 469 265 462 318 C502 346 523 388 525 438 C530 532 452 613 353 626 C314 607 289 566 276 515 C309 547 360 562 411 542 C470 520 491 460 469 406 C452 363 416 345 384 329 C354 314 343 277 359 245 C372 219 394 204 400 181 Z" fill="#0d1d2a"/>
+    <path d="M302 608 C332 641 392 646 445 612 C518 566 557 475 520 389 C505 354 481 331 450 314" fill="none" stroke="#7df7ff" stroke-width="2" opacity="0.16"/>
+    <circle cx="404" cy="310" r="118" fill="#79f5ff" opacity="0.06" filter="url(#blur10)"/>
+  </g>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M462 309 C558 276 636 249 730 267" stroke="#6ff3ff" stroke-width="2" opacity="0.28"/>
+    <path d="M462 309 C606 328 680 398 813 404" stroke="#6ff3ff" stroke-width="2" opacity="0.22"/>
+    <path d="M462 309 C617 234 739 149 895 176" stroke="#ffd98d" stroke-width="2" opacity="0.19"/>
+    <path d="M462 309 C565 397 643 510 779 552" stroke="#c5a2ff" stroke-width="2" opacity="0.22"/>
+  </g>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M505 342 C641 332 729 256 840 220 C946 186 1014 174 1118 122" stroke="url(#pathHot)" stroke-width="8" filter="url(#heavyGlow)"/>
+    <path d="M505 342 C629 358 740 401 868 408 C998 416 1075 390 1194 412" stroke="url(#pathCool)" stroke-width="4" opacity="0.9" filter="url(#glow)"/>
+    <path d="M505 342 C650 424 730 512 876 553 C982 582 1090 559 1210 598" stroke="url(#pathViolet)" stroke-width="4" opacity="0.78" filter="url(#glow)"/>
+    <path d="M722 268 C804 294 860 338 931 365" stroke="url(#pathCool)" stroke-width="3" opacity="0.62"/>
+    <path d="M722 268 C782 210 855 153 946 151" stroke="url(#pathHot)" stroke-width="4" opacity="0.74"/>
+    <path d="M722 268 C771 351 817 427 909 468" stroke="url(#pathViolet)" stroke-width="3" opacity="0.64"/>
+  </g>
+
+  <g filter="url(#glow)">
+    <circle cx="505" cy="342" r="15" fill="#fff5c3"/>
+    <circle cx="722" cy="268" r="19" fill="#ffd178"/>
+    <circle cx="840" cy="220" r="13" fill="#ffc46d"/>
+    <circle cx="946" cy="151" r="14" fill="#ffe69a"/>
+    <circle cx="1118" cy="122" r="22" fill="url(#goldGlow)"/>
+    <circle cx="868" cy="408" r="13" fill="#80efff"/>
+    <circle cx="1194" cy="412" r="15" fill="#73dcff"/>
+    <circle cx="876" cy="553" r="12" fill="#c8a7ff"/>
+    <circle cx="1210" cy="598" r="11" fill="#a486ff"/>
+  </g>
+
+  <g opacity="0.9">
+    <rect x="1010" y="108" width="292" height="100" rx="14" fill="#111820" stroke="#ffdb8c" stroke-width="2"/>
+    <text class="label" x="1034" y="146" fill="#fff6dc">confirmed branch</text>
+    <text class="copy" x="1034" y="177" fill="#ffd581">p=0.71 | draft ready</text>
+
+    <rect x="1008" y="384" width="270" height="86" rx="14" fill="#0b1c27" stroke="#76ecff" stroke-width="2" opacity="0.96"/>
+    <text class="label" x="1030" y="419" fill="#defbff">next likely mode</text>
+    <text class="tiny" x="1030" y="445" fill="#9cebf2">validate | ask follow-up</text>
+
+    <rect x="972" y="548" width="276" height="86" rx="14" fill="#17152b" stroke="#c5a2ff" stroke-width="2" opacity="0.94"/>
+    <text class="label" x="994" y="583" fill="#efe6ff">standby path</text>
+    <text class="tiny" x="994" y="609" fill="#cdb8ff">recover | redirect safely</text>
+  </g>
+
+  <g opacity="0.68" fill="none" stroke="#dceaff" stroke-width="1.4">
+    <path d="M1190 258 L1236 246 L1284 268"/>
+    <circle cx="1190" cy="258" r="2" fill="#dceaff"/>
+    <circle cx="1236" cy="246" r="2" fill="#dceaff"/>
+    <circle cx="1284" cy="268" r="2" fill="#dceaff"/>
+    <path d="M780 100 L820 72 L864 101"/>
+    <circle cx="780" cy="100" r="2" fill="#dceaff"/>
+    <circle cx="820" cy="72" r="2" fill="#dceaff"/>
+    <circle cx="864" cy="101" r="2" fill="#dceaff"/>
+  </g>
+</svg>

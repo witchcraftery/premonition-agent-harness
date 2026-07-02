@@ -1,4 +1,4 @@
-![Premonition Foresight Probability Tree](assets/premonition-foresight-tree.svg)
+![Premonition subconscious swarm hero](assets/premonition-subconscious-swarm.svg)
 
 # Premonition / Foresight Agent Harness
 
