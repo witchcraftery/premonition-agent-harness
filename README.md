@@ -107,14 +107,26 @@ and export benchmark rows.
 ## How The Harness Works
 
 ```mermaid
-flowchart LR
-    A["Conversation context"] --> B["Premonition backend"]
-    B --> C["Predict likely next branches"]
-    C --> D["Prepare TTS-ready drafts"]
-    D --> E["Keep drafts hidden in shadow mode"]
+flowchart TB
+    A["Conversation context"]
+    B["Premonition backend"]
+
+    A --> B
+
+    subgraph P["Shadow preparation"]
+        direction LR
+        C["Predict likely next branches"]
+        D["Prepare TTS-ready drafts"]
+        E["Keep drafts hidden"]
+        C --> D --> E
+    end
+
+    B --> C
+
     A --> F["Observed reality"]
     F --> G["Confirm or reject branch"]
     E --> G
+
     G --> H["Grade hit, quality, latency, safety"]
     H --> I["Benchmark loop and policy refinement"]
     I --> B
