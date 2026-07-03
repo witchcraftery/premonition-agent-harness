@@ -106,31 +106,7 @@ and export benchmark rows.
 
 ## How The Harness Works
 
-```mermaid
-flowchart TB
-    A["Conversation context"]
-    B["Premonition backend"]
-
-    A --> B
-
-    subgraph P["Shadow preparation"]
-        direction LR
-        C["Predict likely next branches"]
-        D["Prepare TTS-ready drafts"]
-        E["Keep drafts hidden"]
-        C --> D --> E
-    end
-
-    B --> C
-
-    A --> F["Observed reality"]
-    F --> G["Confirm or reject branch"]
-    E --> G
-
-    G --> H["Grade hit, quality, latency, safety"]
-    H --> I["Benchmark loop and policy refinement"]
-    I --> B
-```
+![Premonition harness flow explainer](assets/premonition-harness-flow-explainer.png)
 
 The frontend LLM performs the conversation. The Premonition backend performs the
 rehearsal.
