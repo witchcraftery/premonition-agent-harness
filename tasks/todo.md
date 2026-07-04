@@ -981,6 +981,7 @@ Verification:
 - [x] Add no-build Vercel configuration for the static `web/` output directory.
 - [x] Verify the page locally on desktop and mobile, including asset loading and responsive readability.
 - [x] Add the Witchcraftery footer credit and brand mark for the public deployment.
+- [x] Initialize the Vercel project, connect GitHub, and deploy production.
 - [x] Commit and push the website checkpoint.
 
 Verification:
@@ -996,5 +997,8 @@ Verification:
 - Vercel config check: `vercel.json` parses as JSON with `outputDirectory` set to `web`, `framework` set to `null`, no build command, empty install command, and clean URLs enabled.
 - Brand footer check: Chrome rendered the footer on desktop and mobile with the `An exploration of curiosity by` credit, a masked Witchcraftery SVG mark, no console errors, no horizontal overflow, and all images loaded.
 - Public-file privacy check: scanned `web/index.html`, `web/assets/witchcraftery-logo-full.svg`, and `vercel.json` for local user paths, Google Drive paths, API key patterns, and bearer-token strings; no matches.
+- Vercel project: CLI created `witchcrafterys-projects/witchcraftery_precog-agent-harness`, connected `https://github.com/witchcraftery/premonition-agent-harness`, and deployed production at `https://witchcrafteryprecog-agent-harness.vercel.app`.
+- Live deployment check: Vercel project `prj_A7pEiYTCckecdIhz6Pj6b1OU1jsa` latest deployment `dpl_DQQjx6KXbBHAYST9fTcCwS99fSYx` is `READY`; curl returned `HTTP/2 200` for the page, hero image, and Witchcraftery SVG asset.
+- Live browser check: Chrome loaded the Vercel URL on desktop and mobile with `0` console errors, loaded visible images, no horizontal overflow, and the masked Witchcraftery footer mark present.
 - Final suite: `python3 -m pytest -q`: 149 passed.
 - `git diff --check`: passed.
