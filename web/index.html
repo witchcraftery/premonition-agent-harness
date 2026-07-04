@@ -202,12 +202,12 @@
     .probability-field {
       position: absolute;
       z-index: 1;
-      top: 18%;
-      right: max(-7vw, -88px);
-      width: min(44vw, 640px);
-      height: min(56vh, 600px);
+      top: clamp(78px, 8vh, 112px);
+      right: max(-18vw, -260px);
+      width: min(66vw, 940px);
+      height: min(78vh, 860px);
       pointer-events: none;
-      opacity: .74;
+      opacity: .78;
       mix-blend-mode: screen;
       filter: drop-shadow(0 0 42px rgba(115, 240, 238, .16));
     }
@@ -654,11 +654,11 @@
         padding-top: 96px;
       }
       .probability-field {
-        top: 11%;
-        right: -18vw;
-        width: 78vw;
-        height: 42vh;
-        opacity: .32;
+        top: 6%;
+        right: -34vw;
+        width: 112vw;
+        height: 66vh;
+        opacity: .38;
       }
       .hero-metrics, .grid.cols-3, .grid.cols-4, .proof-board, .parallel, .section-head {
         grid-template-columns: 1fr;
@@ -674,11 +674,11 @@
       .button { width: 100%; }
       h1 { font-size: clamp(3.45rem, 16vw, 4.55rem); letter-spacing: 0; }
       .probability-field {
-        top: 8%;
-        right: -46vw;
-        width: 118vw;
-        height: 32vh;
-        opacity: .2;
+        top: 6%;
+        right: -82vw;
+        width: 168vw;
+        height: 48vh;
+        opacity: .24;
       }
       .metric-tile { min-height: auto; }
       .image-caption { flex-direction: column; }
@@ -1004,6 +1004,7 @@
       camera.position.set(0, 0, 8.2);
 
       const group = new THREE.Group();
+      group.scale.setScalar(1.08);
       scene.add(group);
 
       const coreGeometry = new THREE.IcosahedronGeometry(2.35, 2);
