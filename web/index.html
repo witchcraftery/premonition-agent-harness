@@ -11,6 +11,9 @@
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#05070b" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%2305070b'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23ff765f' stroke-width='4'/%3E%3Cpath d='M18 35c8-17 20-17 28 0' fill='none' stroke='%2373f0ee' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <style>
     :root {
       color-scheme: dark;
@@ -36,7 +39,8 @@
       --max: 1180px;
       --mono: "SFMono-Regular", "Cascadia Mono", "Liberation Mono", Menlo, monospace;
       --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --serif: Georgia, "Times New Roman", serif;
+      --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+      --subhead: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     * { box-sizing: border-box; }
@@ -83,19 +87,23 @@
       color: var(--ink);
       font-family: var(--serif);
       font-size: clamp(4.25rem, 12vw, 10.4rem);
-      letter-spacing: -.055em;
+      font-weight: 400;
+      letter-spacing: 0;
       text-shadow: 0 0 44px rgba(255, 118, 95, .18);
     }
     h2 {
       font-family: var(--serif);
       color: var(--ink);
       font-size: clamp(2.3rem, 5.8vw, 5.8rem);
-      letter-spacing: -.04em;
+      font-weight: 400;
+      letter-spacing: 0;
     }
     h3 {
       color: var(--text);
+      font-family: var(--subhead);
       font-size: clamp(1.1rem, 1.4vw, 1.45rem);
-      letter-spacing: -.015em;
+      font-weight: 800;
+      letter-spacing: 0;
     }
 
     .site-header {
@@ -187,10 +195,11 @@
       margin-top: 18px;
       max-width: 780px;
       color: #dcfbfa;
+      font-family: var(--subhead);
       font-size: clamp(1.3rem, 2.3vw, 2.2rem);
-      font-weight: 780;
+      font-weight: 700;
       line-height: 1.16;
-      letter-spacing: -.03em;
+      letter-spacing: 0;
     }
     .hero-copy {
       margin-top: 22px;
@@ -230,6 +239,7 @@
     .metric-label {
       margin-top: 10px;
       color: var(--text);
+      font-family: var(--subhead);
       font-weight: 800;
       font-size: .95rem;
     }
@@ -341,9 +351,10 @@
       margin-top: 24px;
       max-width: 620px;
       color: #dcebe8;
+      font-family: var(--subhead);
       font-size: clamp(1.1rem, 1.75vw, 1.55rem);
       line-height: 1.35;
-      font-weight: 730;
+      font-weight: 700;
     }
     .bar-set { display: grid; gap: 18px; margin-top: 34px; }
     .bar-row {
@@ -404,8 +415,9 @@
       justify-content: space-between;
       gap: 18px;
       color: var(--ink);
-      font-weight: 900;
-      letter-spacing: -.02em;
+      font-family: var(--subhead);
+      font-weight: 800;
+      letter-spacing: 0;
     }
     .lane-num {
       display: inline-grid;
@@ -627,7 +639,7 @@
     @media (max-width: 620px) {
       .hero-metrics { grid-template-columns: 1fr; }
       .button { width: 100%; }
-      h1 { font-size: clamp(3.45rem, 16vw, 4.55rem); letter-spacing: -.045em; }
+      h1 { font-size: clamp(3.45rem, 16vw, 4.55rem); letter-spacing: 0; }
       .metric-tile { min-height: auto; }
       .image-caption { flex-direction: column; }
       .footer-credit { align-items: flex-start; flex-direction: column; }
