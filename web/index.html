@@ -178,19 +178,42 @@
       margin: 0 auto;
     }
     .hero {
-      min-height: 100svh;
+      min-height: max(100svh, 820px);
       display: grid;
       align-items: end;
-      padding: 118px 0 52px;
+      padding: clamp(128px, 16vh, 180px) 0 clamp(72px, 10vh, 112px);
       isolation: isolate;
       background-image:
-        linear-gradient(90deg, rgba(5,7,11,.92) 0%, rgba(5,7,11,.76) 35%, rgba(5,7,11,.36) 68%, rgba(5,7,11,.86) 100%),
+        linear-gradient(90deg, rgba(5,7,11,.94) 0%, rgba(5,7,11,.78) 36%, rgba(5,7,11,.28) 70%, rgba(5,7,11,.82) 100%),
         linear-gradient(0deg, rgba(5,7,11,1) 0%, rgba(5,7,11,.08) 42%),
         url("assets/premonition-retro-cosmic-hero.png");
       background-size: cover;
       background-position: center;
     }
-    .hero-content { max-width: 980px; }
+    .hero .section-inner {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 980px;
+    }
+    .probability-field {
+      position: absolute;
+      z-index: 1;
+      top: 18%;
+      right: max(-7vw, -88px);
+      width: min(44vw, 640px);
+      height: min(56vh, 600px);
+      pointer-events: none;
+      opacity: .74;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 42px rgba(115, 240, 238, .16));
+    }
+    .probability-field.is-empty {
+      display: none;
+    }
     .hero-subtitle {
       margin-top: 18px;
       max-width: 780px;
@@ -208,7 +231,7 @@
       font-size: clamp(1.02rem, 1.3vw, 1.22rem);
     }
     .hero-actions {
-      margin-top: 30px;
+      margin-top: clamp(32px, 4vh, 48px);
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
@@ -217,7 +240,7 @@
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin-top: 44px;
+      margin-top: clamp(50px, 7vh, 78px);
       max-width: 1040px;
     }
     .metric-tile {
@@ -609,7 +632,7 @@
       color: var(--muted);
     }
     .witchcraftery-logo {
-      width: min(260px, 58vw);
+      width: min(182px, 48vw);
       aspect-ratio: 903 / 163;
       display: inline-block;
       flex: 0 1 auto;
@@ -626,7 +649,17 @@
     @media (max-width: 980px) {
       .nav { height: 62px; }
       .nav-links a:not(.button) { display: none; }
-      .hero { padding-top: 96px; }
+      .hero {
+        min-height: 100svh;
+        padding-top: 96px;
+      }
+      .probability-field {
+        top: 11%;
+        right: -18vw;
+        width: 78vw;
+        height: 42vh;
+        opacity: .32;
+      }
       .hero-metrics, .grid.cols-3, .grid.cols-4, .proof-board, .parallel, .section-head {
         grid-template-columns: 1fr;
       }
@@ -640,6 +673,13 @@
       .hero-metrics { grid-template-columns: 1fr; }
       .button { width: 100%; }
       h1 { font-size: clamp(3.45rem, 16vw, 4.55rem); letter-spacing: 0; }
+      .probability-field {
+        top: 8%;
+        right: -46vw;
+        width: 118vw;
+        height: 32vh;
+        opacity: .2;
+      }
       .metric-tile { min-height: auto; }
       .image-caption { flex-direction: column; }
       .footer-credit { align-items: flex-start; flex-direction: column; }
@@ -668,6 +708,7 @@
 
   <main id="top">
     <section class="hero" aria-label="Premonition Agent Harness hero">
+      <canvas id="probability-field" class="probability-field" aria-hidden="true"></canvas>
       <div class="section-inner">
         <div class="hero-content">
           <h1>Premonition</h1>
@@ -946,6 +987,123 @@
       </div>
     </div>
   </footer>
+
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.168.0/build/three.module.js";
+
+    const canvas = document.getElementById("probability-field");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (canvas) {
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+      camera.position.set(0, 0, 8.2);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      const coreGeometry = new THREE.IcosahedronGeometry(2.35, 2);
+      const wireMaterial = new THREE.LineBasicMaterial({
+        color: 0x73f0ee,
+        transparent: true,
+        opacity: 0.48
+      });
+      const wire = new THREE.LineSegments(new THREE.WireframeGeometry(coreGeometry), wireMaterial);
+      group.add(wire);
+
+      const ghostMaterial = new THREE.LineBasicMaterial({
+        color: 0xff765f,
+        transparent: true,
+        opacity: 0.18
+      });
+      const ghost = new THREE.LineSegments(new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(2.72, 1)), ghostMaterial);
+      ghost.rotation.set(0.34, -0.26, 0.2);
+      group.add(ghost);
+
+      const nodeMaterial = new THREE.PointsMaterial({
+        color: 0xffd077,
+        size: 0.055,
+        transparent: true,
+        opacity: 0.9,
+        sizeAttenuation: true
+      });
+      const nodes = new THREE.Points(coreGeometry, nodeMaterial);
+      group.add(nodes);
+
+      const pathCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-2.78, -0.82, 0.55),
+        new THREE.Vector3(-1.72, -0.2, 0.9),
+        new THREE.Vector3(-0.55, 0.28, 0.5),
+        new THREE.Vector3(0.42, 0.1, 0.94),
+        new THREE.Vector3(1.35, 0.56, 0.46),
+        new THREE.Vector3(2.72, 0.98, 0.22)
+      ]);
+      const pathMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff765f,
+        transparent: true,
+        opacity: 0.78
+      });
+      const path = new THREE.Mesh(new THREE.TubeGeometry(pathCurve, 120, 0.018, 8, false), pathMaterial);
+      group.add(path);
+
+      const branchMaterial = new THREE.LineBasicMaterial({
+        color: 0xa5d477,
+        transparent: true,
+        opacity: 0.32
+      });
+      const branchGeometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0.12, 0.08, 0.62),
+        new THREE.Vector3(1.1, -0.48, 0.44),
+        new THREE.Vector3(2.55, -1.02, 0.2)
+      ]);
+      const branch = new THREE.Line(branchGeometry, branchMaterial);
+      group.add(branch);
+
+      const resize = () => {
+        const { width, height } = canvas.getBoundingClientRect();
+        if (width < 10 || height < 10) {
+          canvas.classList.add("is-empty");
+          return;
+        }
+        canvas.classList.remove("is-empty");
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      };
+
+      let frame = 0;
+      const clock = new THREE.Clock();
+      const render = () => {
+        const t = clock.getElapsedTime();
+        const hue = (0.52 + Math.sin(t * 0.28) * 0.045) % 1;
+        wireMaterial.color.setHSL(hue, 0.86, 0.68);
+        ghostMaterial.color.setHSL((0.02 + Math.sin(t * 0.2) * 0.035 + 1) % 1, 0.88, 0.66);
+        pathMaterial.color.setHSL((0.035 + Math.sin(t * 0.18) * 0.025 + 1) % 1, 0.96, 0.72);
+        branchMaterial.color.setHSL((0.27 + Math.sin(t * 0.23) * 0.03 + 1) % 1, 0.58, 0.64);
+        nodeMaterial.color.setHSL((0.12 + Math.sin(t * 0.34) * 0.035 + 1) % 1, 0.94, 0.72);
+
+        if (!reducedMotion) {
+          group.rotation.y = t * 0.11;
+          group.rotation.x = Math.sin(t * 0.18) * 0.16 - 0.05;
+          ghost.rotation.z = t * -0.065;
+          nodes.rotation.y = t * 0.075;
+        }
+
+        renderer.render(scene, camera);
+        frame = requestAnimationFrame(render);
+      };
+
+      window.addEventListener("resize", resize, { passive: true });
+      resize();
+      render();
+
+      window.addEventListener("pagehide", () => cancelAnimationFrame(frame), { once: true });
+    }
+  </script>
 
   <script>
     const branchTitle = document.getElementById("branch-title");

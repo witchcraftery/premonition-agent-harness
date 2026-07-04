@@ -983,6 +983,7 @@ Verification:
 - [x] Add the Witchcraftery footer credit and brand mark for the public deployment.
 - [x] Initialize the Vercel project, connect GitHub, and deploy production.
 - [x] Refresh public-site typography with Instrument Serif headlines and Bricolage Grotesque bold subheadings.
+- [x] Expand the intro hero, add a right-side 3D probability wireframe, and reduce the Witchcraftery footer mark.
 - [x] Commit and push the website checkpoint.
 
 Verification:
@@ -1002,5 +1003,6 @@ Verification:
 - Live deployment check: Vercel project `prj_A7pEiYTCckecdIhz6Pj6b1OU1jsa` latest deployment `dpl_DQQjx6KXbBHAYST9fTcCwS99fSYx` is `READY`; curl returned `HTTP/2 200` for the page, hero image, and Witchcraftery SVG asset.
 - Live browser check: Chrome loaded the Vercel URL on desktop and mobile with `0` console errors, loaded visible images, no horizontal overflow, and the masked Witchcraftery footer mark present.
 - Typography check: Chrome confirmed `Instrument Serif` on `h1`/`h2` at natural `400` weight and `Bricolage Grotesque` on the hero subtitle, card headings, metric labels, and lane titles with no console errors or mobile overflow.
+- Hero 3D check: Chrome rendered the Three.js probability wireframe on desktop and mobile with `0` console errors, no failed requests, no horizontal overflow, nonblank WebGL pixel readback, and the footer logo reduced from `260px` to `182px`.
 - Final suite: `python3 -m pytest -q`: 149 passed.
 - `git diff --check`: passed.
