@@ -582,8 +582,30 @@
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
-      gap: 18px;
+      align-items: center;
+      gap: 24px;
       flex-wrap: wrap;
+    }
+    .footer-credit {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: color-mix(in srgb, var(--coral) 68%, var(--ink));
+      min-width: min(100%, 420px);
+    }
+    .footer-credit-label {
+      color: var(--muted);
+    }
+    .witchcraftery-logo {
+      width: min(260px, 58vw);
+      aspect-ratio: 903 / 163;
+      display: inline-block;
+      flex: 0 1 auto;
+      color: color-mix(in srgb, var(--coral) 70%, var(--text));
+      background: currentColor;
+      -webkit-mask: url("assets/witchcraftery-logo-full.svg") center / contain no-repeat;
+      mask: url("assets/witchcraftery-logo-full.svg") center / contain no-repeat;
+      filter: drop-shadow(0 0 22px rgba(255, 118, 95, .16));
     }
 
     @keyframes flow {
@@ -608,6 +630,7 @@
       h1 { font-size: clamp(3.45rem, 16vw, 4.55rem); letter-spacing: -.045em; }
       .metric-tile { min-height: auto; }
       .image-caption { flex-direction: column; }
+      .footer-credit { align-items: flex-start; flex-direction: column; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -905,7 +928,10 @@
   <footer>
     <div class="footer-row">
       <span>Premonition Agent Harness</span>
-      <span>A prepared mind behind the voice.</span>
+      <div class="footer-credit" aria-label="An exploration of curiosity by Witchcraftery">
+        <span class="footer-credit-label">An exploration of curiosity by</span>
+        <span class="witchcraftery-logo" role="img" aria-label="Witchcraftery"></span>
+      </div>
     </div>
   </footer>
 

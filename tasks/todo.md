@@ -980,6 +980,7 @@ Verification:
 - [x] Copy only deployable public assets into `web/assets/`.
 - [x] Add no-build Vercel configuration for the static `web/` output directory.
 - [x] Verify the page locally on desktop and mobile, including asset loading and responsive readability.
+- [x] Add the Witchcraftery footer credit and brand mark for the public deployment.
 - [x] Commit and push the website checkpoint.
 
 Verification:
@@ -993,5 +994,7 @@ Verification:
 - Accessibility polish: prepared-branch buttons expose `aria-pressed`, and the confirmed branch copy announces updates through an `aria-live` region.
 - Deployment scope check: the old v4 source page was moved to `docs/archive/` so the no-build Vercel output only publishes the rebuilt public page and assets.
 - Vercel config check: `vercel.json` parses as JSON with `outputDirectory` set to `web`, `framework` set to `null`, no build command, empty install command, and clean URLs enabled.
+- Brand footer check: Chrome rendered the footer on desktop and mobile with the `An exploration of curiosity by` credit, a masked Witchcraftery SVG mark, no console errors, no horizontal overflow, and all images loaded.
+- Public-file privacy check: scanned `web/index.html`, `web/assets/witchcraftery-logo-full.svg`, and `vercel.json` for local user paths, Google Drive paths, API key patterns, and bearer-token strings; no matches.
 - Final suite: `python3 -m pytest -q`: 149 passed.
 - `git diff --check`: passed.
