@@ -86,7 +86,7 @@
       max-width: 10ch;
       color: var(--ink);
       font-family: var(--serif);
-      font-size: clamp(4.25rem, 12vw, 10.4rem);
+      font-size: clamp(4.25rem, 9vw, 7.4rem);
       font-weight: 400;
       letter-spacing: 0;
       text-shadow: 0 0 44px rgba(255, 118, 95, .18);
@@ -94,7 +94,7 @@
     h2 {
       font-family: var(--serif);
       color: var(--ink);
-      font-size: clamp(2.3rem, 5.8vw, 5.8rem);
+      font-size: clamp(2.3rem, 4.5vw, 3.8rem);
       font-weight: 400;
       letter-spacing: 0;
     }
@@ -217,7 +217,7 @@
     .hero-subtitle {
       margin-top: 18px;
       max-width: 780px;
-      color: #dcfbfa;
+      color: var(--coral);
       font-family: var(--subhead);
       font-size: clamp(1.3rem, 2.3vw, 2.2rem);
       font-weight: 700;
@@ -298,7 +298,7 @@
       display: block;
       margin-bottom: 12px;
       font-family: var(--mono);
-      color: var(--cyan);
+      color: var(--coral);
       font-size: .75rem;
       font-weight: 800;
       letter-spacing: .18em;
@@ -616,7 +616,7 @@
       width: min(var(--max), calc(100% - 32px));
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       gap: 24px;
       flex-wrap: wrap;
@@ -624,15 +624,17 @@
     .footer-credit {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 14px;
+      flex-wrap: wrap;
       color: color-mix(in srgb, var(--coral) 68%, var(--ink));
-      min-width: min(100%, 420px);
+      text-align: center;
     }
     .footer-credit-label {
       color: var(--muted);
     }
     .witchcraftery-logo {
-      width: min(182px, 48vw);
+      width: min(142px, 48vw);
       aspect-ratio: 903 / 163;
       display: inline-block;
       flex: 0 1 auto;
@@ -682,7 +684,7 @@
       }
       .metric-tile { min-height: auto; }
       .image-caption { flex-direction: column; }
-      .footer-credit { align-items: flex-start; flex-direction: column; }
+      .footer-credit { align-items: center; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -980,7 +982,6 @@
 
   <footer>
     <div class="footer-row">
-      <span>Premonition Agent Harness</span>
       <div class="footer-credit" aria-label="An exploration of curiosity by Witchcraftery">
         <span class="footer-credit-label">An exploration of curiosity by</span>
         <span class="witchcraftery-logo" role="img" aria-label="Witchcraftery"></span>
