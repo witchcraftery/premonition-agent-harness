@@ -972,3 +972,26 @@ Verification:
 - Docs static check: `rg -n "25/25|10/15|\\+0\\.102|\\+0\\.040|response-mode-stress-seeds 5|DailyDialog transfer" README.md docs/dataset-catalog.md tasks/todo.md`: passed.
 - Final suite: `python3 -m pytest -v`: 142 passed.
 - `git diff --check`: passed.
+
+## Vercel-Ready Experiential Website
+
+- [x] Duplicate the latest `web/precognitive-agent-harness-v4.html` concept into a public `web/index.html` and archive the source draft outside the deployable `web/` output.
+- [x] Rebuild the page around the current Premonition positioning, benchmark evidence, live-shadow workflow, and retro-cosmic identity.
+- [x] Copy only deployable public assets into `web/assets/`.
+- [x] Add no-build Vercel configuration for the static `web/` output directory.
+- [x] Verify the page locally on desktop and mobile, including asset loading and responsive readability.
+- [x] Commit and push the website checkpoint.
+
+Verification:
+
+- Subagent context: one explorer audited the v4 page, one extracted public benchmark/story evidence, and one confirmed a static `web/index.html` plus root `vercel.json` is enough for no-build Vercel deployment.
+- Static asset check: `web/index.html` references only deployable `web/assets/` files for local images and the checked references all exist.
+- Local server check: `python3 -m http.server 8877 --bind 127.0.0.1 --directory web` served `GET /` with `HTTP/1.0 200 OK`.
+- Browser desktop check: Chrome loaded `http://127.0.0.1:8877/` at `1440x1200` with `0` console errors, no horizontal overflow, and all page images loaded.
+- Browser mobile check: Chrome loaded the page at `390x1200` with `0` console errors, no horizontal overflow, the mobile hero title fitting inside the viewport, and all page images loaded.
+- Interaction check: clicking the `Redirect` prepared branch updated the reality panel to `Redirect`, proving the parallel-lane demo is not inert.
+- Accessibility polish: prepared-branch buttons expose `aria-pressed`, and the confirmed branch copy announces updates through an `aria-live` region.
+- Deployment scope check: the old v4 source page was moved to `docs/archive/` so the no-build Vercel output only publishes the rebuilt public page and assets.
+- Vercel config check: `vercel.json` parses as JSON with `outputDirectory` set to `web`, `framework` set to `null`, no build command, empty install command, and clean URLs enabled.
+- Final suite: `python3 -m pytest -q`: 149 passed.
+- `git diff --check`: passed.

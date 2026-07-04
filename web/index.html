@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Premonition Agent Harness</title>
+  <meta name="description" content="Premonition Agent Harness is an experimental backend for conversational AI preparedness: predict likely next moves, prepare safe drafts, confirm reality, and benchmark what actually improves." />
+  <meta property="og:title" content="Premonition Agent Harness" />
+  <meta property="og:description" content="A prepared mind behind the voice: a benchmarked subconscious probability layer for conversational AI." />
+  <meta property="og:image" content="/assets/premonition-retro-cosmic-hero.png" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#05070b" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%2305070b'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23ff765f' stroke-width='4'/%3E%3Cpath d='M18 35c8-17 20-17 28 0' fill='none' stroke='%2373f0ee' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #05070b;
+      --bg-soft: #0c1219;
+      --ink: #f8ead1;
+      --text: #eef5f4;
+      --muted: #9db2b2;
+      --faint: #6d7f82;
+      --coral: #ff765f;
+      --coral-soft: rgba(255, 118, 95, .14);
+      --cyan: #73f0ee;
+      --cyan-soft: rgba(115, 240, 238, .13);
+      --moss: #a5d477;
+      --moss-soft: rgba(165, 212, 119, .12);
+      --violet: #c293dc;
+      --violet-soft: rgba(194, 147, 220, .13);
+      --amber: #ffd077;
+      --line: rgba(217, 229, 222, .16);
+      --line-strong: rgba(217, 229, 222, .32);
+      --shadow: 0 32px 100px rgba(0, 0, 0, .42);
+      --radius: 24px;
+      --max: 1180px;
+      --mono: "SFMono-Regular", "Cascadia Mono", "Liberation Mono", Menlo, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(255, 118, 95, .18), transparent 26rem),
+        radial-gradient(circle at 92% 18%, rgba(115, 240, 238, .11), transparent 25rem),
+        linear-gradient(180deg, #030508 0%, #071018 42%, #0b1118 100%);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .16;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, #000, transparent 78%);
+      z-index: -2;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .08;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+      z-index: -1;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; height: auto; }
+    p { margin: 0; color: var(--muted); line-height: 1.65; text-wrap: pretty; }
+    h1, h2, h3 { margin: 0; line-height: .98; text-wrap: balance; }
+    h1 {
+      max-width: 10ch;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: clamp(4.25rem, 12vw, 10.4rem);
+      letter-spacing: -.055em;
+      text-shadow: 0 0 44px rgba(255, 118, 95, .18);
+    }
+    h2 {
+      font-family: var(--serif);
+      color: var(--ink);
+      font-size: clamp(2.3rem, 5.8vw, 5.8rem);
+      letter-spacing: -.04em;
+    }
+    h3 {
+      color: var(--text);
+      font-size: clamp(1.1rem, 1.4vw, 1.45rem);
+      letter-spacing: -.015em;
+    }
+
+    .site-header {
+      position: fixed;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      right: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(5, 7, 11, .72);
+      backdrop-filter: blur(18px);
+    }
+    .nav {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -.02em;
+    }
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 118, 95, .65);
+      background: radial-gradient(circle at 35% 30%, var(--coral), transparent 38%), radial-gradient(circle at 70% 70%, var(--cyan), transparent 42%), #0e151c;
+      box-shadow: 0 0 28px rgba(255, 118, 95, .24);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 700;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 118, 95, .42);
+      background: linear-gradient(135deg, rgba(255, 118, 95, .22), rgba(255, 208, 119, .10));
+      color: var(--ink);
+      font-weight: 800;
+      box-shadow: 0 18px 50px rgba(255, 118, 95, .13);
+    }
+    .button.secondary {
+      border-color: rgba(115, 240, 238, .30);
+      background: rgba(115, 240, 238, .08);
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    main { overflow: hidden; }
+    section { position: relative; }
+    .section-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      align-items: end;
+      padding: 118px 0 52px;
+      isolation: isolate;
+      background-image:
+        linear-gradient(90deg, rgba(5,7,11,.92) 0%, rgba(5,7,11,.76) 35%, rgba(5,7,11,.36) 68%, rgba(5,7,11,.86) 100%),
+        linear-gradient(0deg, rgba(5,7,11,1) 0%, rgba(5,7,11,.08) 42%),
+        url("assets/premonition-retro-cosmic-hero.png");
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-content { max-width: 980px; }
+    .hero-subtitle {
+      margin-top: 18px;
+      max-width: 780px;
+      color: #dcfbfa;
+      font-size: clamp(1.3rem, 2.3vw, 2.2rem);
+      font-weight: 780;
+      line-height: 1.16;
+      letter-spacing: -.03em;
+    }
+    .hero-copy {
+      margin-top: 22px;
+      max-width: 720px;
+      color: #c3d8d6;
+      font-size: clamp(1.02rem, 1.3vw, 1.22rem);
+    }
+    .hero-actions {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 44px;
+      max-width: 1040px;
+    }
+    .metric-tile {
+      min-height: 134px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      background: rgba(5, 7, 11, .64);
+      backdrop-filter: blur(14px);
+      padding: 18px;
+      border-radius: 18px;
+    }
+    .metric-value {
+      font-family: var(--mono);
+      color: var(--coral);
+      font-size: clamp(1.4rem, 2.7vw, 2.45rem);
+      font-weight: 900;
+      letter-spacing: -.05em;
+      line-height: 1;
+    }
+    .metric-label {
+      margin-top: 10px;
+      color: var(--text);
+      font-weight: 800;
+      font-size: .95rem;
+    }
+    .metric-note {
+      margin-top: 6px;
+      color: var(--faint);
+      font-size: .82rem;
+      line-height: 1.45;
+    }
+    .scroll-cue {
+      margin-top: 34px;
+      color: rgba(238,245,244,.66);
+      font-family: var(--mono);
+      font-size: .73rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .band {
+      padding: clamp(74px, 10vw, 138px) 0;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .band.alt { background: linear-gradient(180deg, rgba(255,255,255,.018), rgba(255,255,255,.04)); }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(280px, .58fr);
+      gap: clamp(28px, 6vw, 86px);
+      align-items: end;
+      margin-bottom: clamp(34px, 5vw, 58px);
+    }
+    .section-head p { font-size: 1.05rem; }
+    .section-kicker {
+      display: block;
+      margin-bottom: 12px;
+      font-family: var(--mono);
+      color: var(--cyan);
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.018));
+      box-shadow: var(--shadow);
+    }
+    .feature {
+      padding: 24px;
+      min-height: 230px;
+    }
+    .feature-index {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      margin-bottom: 42px;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-weight: 900;
+    }
+    .feature p { margin-top: 10px; }
+    .feature strong { color: var(--ink); }
+
+    .proof-board {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(320px, .8fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+    .readiness-card {
+      padding: clamp(24px, 4vw, 42px);
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+    .readiness-card::before {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      right: -170px;
+      top: -170px;
+      background: radial-gradient(circle, rgba(255,118,95,.22), transparent 62%);
+      pointer-events: none;
+    }
+    .readiness-big {
+      font-family: var(--mono);
+      color: var(--ink);
+      font-size: clamp(3.8rem, 9vw, 8.6rem);
+      font-weight: 900;
+      letter-spacing: -.1em;
+      line-height: .86;
+    }
+    .readiness-big span { color: var(--coral); }
+    .readiness-copy {
+      margin-top: 24px;
+      max-width: 620px;
+      color: #dcebe8;
+      font-size: clamp(1.1rem, 1.75vw, 1.55rem);
+      line-height: 1.35;
+      font-weight: 730;
+    }
+    .bar-set { display: grid; gap: 18px; margin-top: 34px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 72px;
+      gap: 14px;
+      align-items: center;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: .82rem;
+    }
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--moss));
+      box-shadow: 0 0 30px rgba(115,240,238,.22);
+    }
+    .bar-fill.coral { background: linear-gradient(90deg, var(--coral), var(--amber)); }
+    .proof-stack { display: grid; gap: 16px; }
+    .proof-item {
+      padding: 22px;
+      border-color: rgba(255,255,255,.13);
+    }
+    .proof-value {
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: -.05em;
+    }
+    .proof-item:nth-child(2) .proof-value { color: var(--moss); }
+    .proof-item:nth-child(3) .proof-value { color: var(--violet); }
+    .proof-item:nth-child(4) .proof-value { color: var(--amber); }
+    .proof-item p { margin-top: 8px; font-size: .94rem; }
+
+    .parallel {
+      display: grid;
+      grid-template-columns: .72fr 1.2fr .78fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .lane {
+      padding: 22px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .lane-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--ink);
+      font-weight: 900;
+      letter-spacing: -.02em;
+    }
+    .lane-num {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid currentColor;
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--cyan);
+    }
+    .lane-step {
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255,255,255,.025);
+    }
+    .lane-step small {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--faint);
+      font-family: var(--mono);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .66rem;
+    }
+    .backend-stage {
+      position: relative;
+      flex: 1;
+      min-height: 390px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,118,95,.28);
+      background: radial-gradient(circle at 50% 45%, rgba(255,118,95,.12), transparent 46%), rgba(255,118,95,.035);
+      overflow: hidden;
+    }
+    .branch-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .branch-path {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 8 11;
+      animation: flow 7s linear infinite;
+      opacity: .84;
+    }
+    .branch-hot { stroke: var(--coral); }
+    .branch-cool { stroke: var(--cyan); }
+    .branch-moss { stroke: var(--moss); }
+    .branch-violet { stroke: var(--violet); }
+    .branch-node { filter: drop-shadow(0 0 14px currentColor); }
+    .draft-grid {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .draft {
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(5,7,11,.72);
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color .18s ease, transform .18s ease, background .18s ease;
+    }
+    .draft:hover, .draft.active {
+      transform: translateY(-2px);
+      border-color: var(--coral);
+      background: rgba(255,118,95,.10);
+    }
+    .draft strong {
+      display: block;
+      color: var(--text);
+      font-size: .86rem;
+      margin-bottom: 6px;
+    }
+    .draft span { font-family: var(--mono); font-size: .7rem; color: var(--faint); }
+    .reality-card {
+      border-color: rgba(165,212,119,.22);
+      background: linear-gradient(180deg, rgba(165,212,119,.075), rgba(255,255,255,.018));
+    }
+    .status-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--moss);
+      box-shadow: 0 0 22px rgba(165,212,119,.7);
+    }
+
+    .visual-frame {
+      overflow: hidden;
+      border-radius: 26px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+    }
+    .visual-frame img {
+      width: 100%;
+      transform: scale(1.005);
+    }
+    .image-caption {
+      padding: 18px 20px 20px;
+      border-top: 1px solid rgba(255,255,255,.09);
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      font-size: .93rem;
+    }
+    .image-caption strong { color: var(--text); }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+    .time-row {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      padding: 18px 0;
+      border-top: 1px solid rgba(255,255,255,.10);
+    }
+    .time-row:first-child { border-top: 0; }
+    .time-row time {
+      color: var(--coral);
+      font-family: var(--mono);
+      font-weight: 900;
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .time-row p { margin-top: 6px; }
+
+    .cta {
+      padding: clamp(64px, 10vw, 120px) 0;
+      background:
+        linear-gradient(180deg, rgba(5,7,11,.82), rgba(5,7,11,.96)),
+        url("assets/premonition-harness-flow-explainer.png");
+      background-size: cover;
+      background-position: center;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .cta-box {
+      max-width: 850px;
+      padding: clamp(28px, 5vw, 58px);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 30px;
+      background: rgba(5, 7, 11, .78);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+    .cta-box p {
+      margin-top: 16px;
+      font-size: 1.08rem;
+    }
+    footer {
+      padding: 34px 0;
+      color: var(--faint);
+      border-top: 1px solid rgba(255,255,255,.08);
+      font-size: .9rem;
+    }
+    .footer-row {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @keyframes flow {
+      to { stroke-dashoffset: -140; }
+    }
+    @media (max-width: 980px) {
+      .nav { height: 62px; }
+      .nav-links a:not(.button) { display: none; }
+      .hero { padding-top: 96px; }
+      .hero-metrics, .grid.cols-3, .grid.cols-4, .proof-board, .parallel, .section-head {
+        grid-template-columns: 1fr;
+      }
+      .parallel .lane { min-height: auto; }
+      .backend-stage { min-height: 470px; }
+      .draft-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .bar-row { grid-template-columns: 1fr; gap: 7px; }
+      .time-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .hero-metrics { grid-template-columns: 1fr; }
+      .button { width: 100%; }
+      h1 { font-size: clamp(3.45rem, 16vw, 4.55rem); letter-spacing: -.045em; }
+      .metric-tile { min-height: auto; }
+      .image-caption { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Premonition Agent Harness home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Premonition</span>
+      </a>
+      <div class="nav-links">
+        <a href="#evidence">Evidence</a>
+        <a href="#parallel">How it works</a>
+        <a href="#lab">Live lab</a>
+        <a class="button secondary" href="https://github.com/witchcraftery/premonition-agent-harness">GitHub</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-label="Premonition Agent Harness hero">
+      <div class="section-inner">
+        <div class="hero-content">
+          <h1>Premonition</h1>
+          <p class="hero-subtitle">A prepared mind behind the voice.</p>
+          <p class="hero-copy">An experimental backend for conversational AI that predicts likely next moves, prepares safe draft responses in shadow mode, waits for reality to confirm a branch, and then measures what actually improved.</p>
+          <div class="hero-actions">
+            <a class="button" href="#parallel">See the harness</a>
+            <a class="button secondary" href="#evidence">Read the evidence</a>
+          </div>
+          <div class="hero-metrics" aria-label="Current benchmark highlights">
+            <div class="metric-tile">
+              <div class="metric-value">21.7%</div>
+              <div class="metric-label">Base readiness</div>
+              <div class="metric-note">First branch immediately usable at baseline.</div>
+            </div>
+            <div class="metric-tile">
+              <div class="metric-value">76.5%</div>
+              <div class="metric-label">Guarded readiness</div>
+              <div class="metric-note">Usable prepared draft after branch confirmation.</div>
+            </div>
+            <div class="metric-tile">
+              <div class="metric-value">25/25</div>
+              <div class="metric-label">Stress folds</div>
+              <div class="metric-note">Recovery rule cleared ESConv shuffled gates.</div>
+            </div>
+            <div class="metric-tile">
+              <div class="metric-value">560ms</div>
+              <div class="metric-label">Latency saved</div>
+              <div class="metric-note">Median estimate when preparation is selected.</div>
+            </div>
+          </div>
+          <div class="scroll-cue">Anticipate - prepare - protect - learn</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band alt">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Measured preparedness</span>
+            <h2>Not prophecy. A better rehearsal loop.</h2>
+          </div>
+          <p>Premonition is built around a simple distinction: the speaking model should stay present, while a hidden backend rehearses likely next turns and keeps every speculative draft behind a confirmation gate.</p>
+        </div>
+        <div class="grid cols-3">
+          <article class="feature panel">
+            <span class="feature-index">01</span>
+            <h3>Observe the live moment</h3>
+            <p>The system starts with the current conversation or replay turn. Reality remains the root, not the model's imagination.</p>
+          </article>
+          <article class="feature panel">
+            <span class="feature-index">02</span>
+            <h3>Prepare possible next moves</h3>
+            <p>The backend predicts likely response modes, builds bounded drafts, and keeps them hidden until the observed branch matches.</p>
+          </article>
+          <article class="feature panel">
+            <span class="feature-index">03</span>
+            <h3>Grade what happened</h3>
+            <p>Every hit, miss, quality gate, latency estimate, and segment regression feeds back into the benchmark loop.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="evidence">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Current evidence</span>
+            <h2>The backend is getting measurably more ready.</h2>
+          </div>
+          <p>In held-out tests, the important question is not whether the system can blindly speak early. It is whether, once the next conversational direction becomes clear, a useful speech-ready draft is already waiting.</p>
+        </div>
+        <div class="proof-board">
+          <article class="readiness-card panel">
+            <div>
+              <div class="readiness-big">21.7<span>%</span><br>to 76.5<span>%</span></div>
+              <p class="readiness-copy">Usable prepared response availability after branch confirmation, up from the original first-speech baseline.</p>
+            </div>
+            <div class="bar-set" aria-label="Readiness lift bars">
+              <div class="bar-row"><span>Base state</span><div class="bar-track"><div class="bar-fill coral" style="width:21.7%"></div></div><strong>0.217</strong></div>
+              <div class="bar-row"><span>Probability Pack</span><div class="bar-track"><div class="bar-fill" style="width:54.6%"></div></div><strong>0.546</strong></div>
+              <div class="bar-row"><span>Guarded swarm</span><div class="bar-track"><div class="bar-fill" style="width:76.5%"></div></div><strong>0.765</strong></div>
+            </div>
+          </article>
+          <div class="proof-stack">
+            <article class="proof-item panel">
+              <div class="proof-value">+0.219</div>
+              <h3>Quality-ready lift</h3>
+              <p>Recovery policies increased prepared coverage while preserving the TTS-readiness quality floor.</p>
+            </article>
+            <article class="proof-item panel">
+              <div class="proof-value">+0.102</div>
+              <h3>Mean stress gain</h3>
+              <p>Average quality-ready improvement across the 5-seed x 5-fold ESConv stress test.</p>
+            </article>
+            <article class="proof-item panel">
+              <div class="proof-value">10/15</div>
+              <h3>Second-corpus transfer</h3>
+              <p>DailyDialog promoted safely on ten folds while weak folds stayed baseline instead of forcing regressions.</p>
+            </article>
+            <article class="proof-item panel">
+              <div class="proof-value">149</div>
+              <h3>Verification checks</h3>
+              <p>Replay, Probability Pack, live-shadow, CLI, and dashboard tests covered the current implementation checkpoint.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band alt" id="parallel">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Parallel cognition</span>
+            <h2>One lane speaks. One lane rehearses. Reality teaches both.</h2>
+          </div>
+          <p>This is the core experiment: keep the front-facing agent fast and present, while the hidden backend prepares branches in parallel and waits for confirmation before anything reaches the user.</p>
+        </div>
+        <div class="parallel">
+          <article class="lane panel">
+            <div class="lane-title"><span>Conscious conversation</span><span class="lane-num">1</span></div>
+            <div class="lane-step"><small>User speaks</small><h3>"I am not sure what to do next."</h3></div>
+            <div class="lane-step"><small>Frontend LLM</small><p>Stays present, understands the current turn, and avoids carrying the whole future in working memory.</p></div>
+            <div class="lane-step"><small>Agent replies</small><p>Uses confirmed context only. Speculation stays hidden.</p></div>
+          </article>
+
+          <article class="lane panel">
+            <div class="lane-title"><span>Hidden Premonition backend</span><span class="lane-num" style="color:var(--coral)">2</span></div>
+            <div class="backend-stage" aria-label="Interactive prepared branch diagram">
+              <svg class="branch-svg" viewBox="0 0 640 390" role="img" aria-label="Branching paths from conversation context to prepared drafts">
+                <path class="branch-path branch-hot" d="M74 90 C160 90, 210 58, 292 78 S430 84, 556 42" />
+                <path class="branch-path branch-cool" d="M74 142 C170 142, 216 156, 292 174 S430 196, 556 188" />
+                <path class="branch-path branch-moss" d="M74 194 C170 194, 230 230, 304 250 S430 270, 556 252" />
+                <path class="branch-path branch-violet" d="M74 248 C158 248, 230 310, 322 318 S458 324, 556 336" />
+                <circle class="branch-node" cx="74" cy="142" r="18" fill="#05070b" stroke="#73f0ee" stroke-width="3" />
+                <circle class="branch-node" cx="292" cy="78" r="14" fill="#05070b" stroke="#ff765f" stroke-width="3" />
+                <circle class="branch-node" cx="292" cy="174" r="14" fill="#05070b" stroke="#73f0ee" stroke-width="3" />
+                <circle class="branch-node" cx="304" cy="250" r="14" fill="#05070b" stroke="#a5d477" stroke-width="3" />
+                <circle class="branch-node" cx="322" cy="318" r="14" fill="#05070b" stroke="#c293dc" stroke-width="3" />
+              </svg>
+              <div class="draft-grid" aria-label="Prepared draft branches">
+                <button class="draft active" type="button" aria-pressed="true" data-branch="Validate" data-grade="exact" data-copy="The observed next move matched a prepared validation branch. The draft can be used quickly after confirmation."><strong>Validate</strong><span>p=0.34 ready</span></button>
+                <button class="draft" type="button" aria-pressed="false" data-branch="Ask follow-up" data-grade="near" data-copy="A clarifying branch stayed warm, but reality did not select it this turn. It remains useful context."><strong>Ask</strong><span>p=0.26 standby</span></button>
+                <button class="draft" type="button" aria-pressed="false" data-branch="Reassure" data-grade="near" data-copy="The emotional support branch was prepared, but confirmation selected a different response mode."><strong>Reassure</strong><span>p=0.22 standby</span></button>
+                <button class="draft" type="button" aria-pressed="false" data-branch="Redirect" data-grade="held" data-copy="A safer redirect branch was held behind the gate and never surfaced without evidence."><strong>Redirect</strong><span>p=0.08 gated</span></button>
+              </div>
+            </div>
+          </article>
+
+          <article class="lane panel reality-card">
+            <div class="lane-title"><span>Reality and learning loop</span><span class="lane-num" style="color:var(--moss)">3</span></div>
+            <div class="lane-step"><small>Real next turn</small><h3 id="branch-title">Validate</h3></div>
+            <div class="lane-step" aria-live="polite" aria-atomic="true"><small>Confirmed branch</small><p id="branch-copy">The observed next move matched a prepared validation branch. The draft can be used quickly after confirmation.</p></div>
+            <div class="lane-step"><small>Grade</small><p><span class="status-light" style="display:inline-block;margin-right:10px"></span><strong id="branch-grade">exact</strong> match feeds the benchmark report.</p></div>
+            <div class="lane-step"><small>Refinement</small><p>Hits, misses, weak response modes, and protected-slice regressions update the next run.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="lab">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Live Shadow Lab</span>
+            <h2>The experiment can run beside a real conversation.</h2>
+          </div>
+          <p>The lab observes transcript turns, generates hidden Premonition drafts, accepts the actual next move, grades draft readiness, estimates saved latency, and exports replay rows for future benchmarks.</p>
+        </div>
+        <div class="visual-frame">
+          <img src="assets/live-shadow-lab-desktop.png" alt="Premonition Live Shadow Lab interface with conversation, prepared drafts, grading metrics, and timeline lanes" />
+          <div class="image-caption">
+            <strong>Transcript in. Drafts prepared. Reality graded.</strong>
+            <span>Shadow-mode testing before voice runtime integration.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band alt">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Architecture layers</span>
+            <h2>The conscious model does not carry the whole future.</h2>
+          </div>
+          <p>Premonition separates the visible conversation from the background rehearsal layer, then scores whether rehearsal actually helped.</p>
+        </div>
+        <div class="grid cols-4">
+          <article class="feature panel">
+            <span class="feature-index">A</span>
+            <h3>Branch generator</h3>
+            <p>Predicts likely next events or response modes from the current context.</p>
+          </article>
+          <article class="feature panel">
+            <span class="feature-index">B</span>
+            <h3>Artifact builder</h3>
+            <p>Prepares bounded drafts, policy checks, and tool plans for useful branches.</p>
+          </article>
+          <article class="feature panel">
+            <span class="feature-index">C</span>
+            <h3>Safety filter</h3>
+            <p>Keeps speculation hidden until reality confirms a matching branch.</p>
+          </article>
+          <article class="feature panel">
+            <span class="feature-index">D</span>
+            <h3>Replay evaluator</h3>
+            <p>Compares prediction, preparedness, latency, cost, and safety across runs.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Progression</span>
+            <h2>From offline replay to a voice-ready shadow layer.</h2>
+          </div>
+          <p>The current project is still a research harness, not a production voice agent. The honest milestone is that the backend can now be measured, visualized, and tested in shadow mode.</p>
+        </div>
+        <div class="proof-board">
+          <div class="timeline panel" style="padding:24px">
+            <div class="time-row">
+              <time>Baseline</time>
+              <div><h3>Offline replay harness</h3><p>Measure branch prediction, prepared artifacts, latency estimates, and unsafe leak rate across repeatable turns.</p></div>
+            </div>
+            <div class="time-row">
+              <time>Loop</time>
+              <div><h3>Probability Pack and recovery policies</h3><p>Train guarded preparation behavior and accept only improvements that survive held-out checks.</p></div>
+            </div>
+            <div class="time-row">
+              <time>Now</time>
+              <div><h3>Live Shadow Lab</h3><p>Run beside manual or live transcript turns, inspect prepared drafts, and export new benchmark rows.</p></div>
+            </div>
+            <div class="time-row">
+              <time>Next</time>
+              <div><h3>Voice runtime integration</h3><p>Connect the shadow layer to a TTS/voice stack so confirmed drafts can reduce perceived response delay.</p></div>
+            </div>
+          </div>
+          <div class="visual-frame">
+            <img src="assets/premonition-swarm-outcome-desktop.png" alt="Premonition swarm outcome dashboard showing readiness reach, quality-ready lift, stress promotion, and policy ladder" />
+            <div class="image-caption">
+              <strong>Outcome dashboard</strong>
+              <span>Base state vs Probability Pack vs guarded swarm.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="section-inner">
+        <div class="cta-box">
+          <h2>Can AI become more present by preparing before it speaks?</h2>
+          <p>Premonition is a build-in-public attempt to answer that question with benchmarks, shadow-mode testing, and clear safety boundaries. The magic is not prediction. The magic is measured readiness.</p>
+          <div class="hero-actions">
+            <a class="button" href="https://github.com/witchcraftery/premonition-agent-harness">Explore the repo</a>
+            <a class="button secondary" href="#evidence">Review the evidence</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-row">
+      <span>Premonition Agent Harness</span>
+      <span>A prepared mind behind the voice.</span>
+    </div>
+  </footer>
+
+  <script>
+    const branchTitle = document.getElementById("branch-title");
+    const branchCopy = document.getElementById("branch-copy");
+    const branchGrade = document.getElementById("branch-grade");
+    document.querySelectorAll(".draft").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".draft").forEach((draft) => {
+          draft.classList.remove("active");
+          draft.setAttribute("aria-pressed", "false");
+        });
+        button.classList.add("active");
+        button.setAttribute("aria-pressed", "true");
+        branchTitle.textContent = button.dataset.branch;
+        branchCopy.textContent = button.dataset.copy;
+        branchGrade.textContent = button.dataset.grade;
+      });
+    });
+  </script>
+</body>
+</html>
