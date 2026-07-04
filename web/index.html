@@ -644,6 +644,11 @@
       mask: url("assets/witchcraftery-logo-full.svg") center / contain no-repeat;
       filter: drop-shadow(0 0 22px rgba(255, 118, 95, .16));
     }
+    .witchcraftery-logo:focus-visible {
+      outline: 2px solid var(--coral);
+      outline-offset: 8px;
+      border-radius: 2px;
+    }
 
     @keyframes flow {
       to { stroke-dashoffset: -140; }
@@ -672,7 +677,11 @@
       .time-row { grid-template-columns: 1fr; }
     }
     @media (max-width: 620px) {
-      .hero-metrics { grid-template-columns: 1fr; }
+      .hero-metrics {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 34px;
+      }
       .button { width: 100%; }
       h1 { font-size: clamp(3.45rem, 16vw, 4.55rem); letter-spacing: 0; }
       .probability-field {
@@ -682,7 +691,31 @@
         height: 48vh;
         opacity: .24;
       }
-      .metric-tile { min-height: auto; }
+      .metric-tile {
+        min-height: auto;
+        display: grid;
+        grid-template-columns: max-content minmax(0, 1fr);
+        column-gap: 16px;
+        row-gap: 4px;
+        align-items: center;
+        padding: 15px 16px;
+        border-radius: 15px;
+      }
+      .metric-value {
+        grid-row: 1 / span 2;
+        align-self: center;
+        font-size: clamp(1.55rem, 7vw, 2rem);
+        min-width: 92px;
+      }
+      .metric-label {
+        margin-top: 0;
+        font-size: .92rem;
+      }
+      .metric-note {
+        margin-top: 0;
+        font-size: .78rem;
+        line-height: 1.35;
+      }
       .image-caption { flex-direction: column; }
       .footer-credit { align-items: center; }
     }
@@ -984,7 +1017,7 @@
     <div class="footer-row">
       <div class="footer-credit" aria-label="An exploration of curiosity by Witchcraftery">
         <span class="footer-credit-label">An exploration of curiosity by</span>
-        <span class="witchcraftery-logo" role="img" aria-label="Witchcraftery"></span>
+        <a class="witchcraftery-logo" href="https://witchcraftery.io" aria-label="Visit Witchcraftery"></a>
       </div>
     </div>
   </footer>
