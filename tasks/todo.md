@@ -1031,4 +1031,13 @@ Verification:
 - [x] Add JSON-LD structured data for the Witchcraftery organization, website, webpage, and open-source software/research harness.
 - [x] Add visible topical copy around voice AI latency, conversational AI preparedness, TTS-ready drafts, probability-tree agents, and shadow-mode benchmarking.
 - [x] Add `robots.txt` and `sitemap.xml` for the custom domain.
-- [ ] Verify the SEO payload locally and on production after deployment.
+- [x] Verify the SEO payload locally and on production after deployment.
+
+Verification:
+
+- Static SEO check: parsed `web/index.html`, confirmed title length `56`, description length `160`, one `h1`, canonical URL, Twitter card, absolute Open Graph image, JSON-LD graph with `Organization`, `WebSite`, `WebPage`, and `SoftwareSourceCode`, plus valid `web/sitemap.xml`.
+- Local browser check: verified title, description, canonical, robots directive, Open Graph image, Twitter card, JSON-LD types, topical research section, zero horizontal overflow, and no console warning/error logs at `390x1200` and `1440x1000`.
+- Crawl file check: verified local and production `robots.txt` and `sitemap.xml` endpoints return the expected custom-domain sitemap.
+- Production browser check: verified `https://premonition.witchcraftery.io/` exposes the new SEO payload at `390x1200` and `1440x1000`, with no framework overlay, no horizontal overflow, and no console warning/error logs.
+- Final suite: `python3 -m pytest -q`: 149 passed.
+- `git diff --check`: passed.
