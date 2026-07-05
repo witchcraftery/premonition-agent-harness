@@ -1022,3 +1022,13 @@ Verification:
 - Console/layout check: local and production checks returned no warning/error logs and no horizontal overflow.
 - Final suite: `python3 -m pytest -q`: 149 passed.
 - `git diff --check`: passed.
+
+## Public Site SEO Optimization
+
+- [x] Audit current title, description, social metadata, canonical signals, crawl files, and visible topical copy.
+- [x] Add search-focused title and description for the voice AI foresight niche.
+- [x] Add canonical URL, robots directive, Open Graph/Twitter metadata, absolute social image URLs, image dimensions, and image alt metadata.
+- [x] Add JSON-LD structured data for the Witchcraftery organization, website, webpage, and open-source software/research harness.
+- [x] Add visible topical copy around voice AI latency, conversational AI preparedness, TTS-ready drafts, probability-tree agents, and shadow-mode benchmarking.
+- [x] Add `robots.txt` and `sitemap.xml` for the custom domain.
+- [ ] Verify the SEO payload locally and on production after deployment.
