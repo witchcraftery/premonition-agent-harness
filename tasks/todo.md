@@ -1013,4 +1013,12 @@ Verification:
 
 - [x] Reduce the global grain overlay opacity so screenshots and evidence cards stay legible.
 - [x] Make external GitHub and Witchcraftery links open in a new tab with safe `rel` attributes.
-- [ ] Verify the rendered page locally and on production after deployment.
+- [x] Verify the rendered page locally and on production after deployment.
+
+Verification:
+
+- Local browser check: verified `body::after` grain overlay opacity is `0.3`, the grain asset still repeats, pointer events remain disabled, and all GitHub/Witchcraftery external links use `target="_blank"` plus `rel="noopener noreferrer"` at `390x1200` and `1440x1000`.
+- Production browser check: verified `https://premonition.witchcraftery.io/` reports the same `0.3` overlay opacity and new-tab external-link attributes at `390x1200` and `1440x1000`.
+- Console/layout check: local and production checks returned no warning/error logs and no horizontal overflow.
+- Final suite: `python3 -m pytest -q`: 149 passed.
+- `git diff --check`: passed.
