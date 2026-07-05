@@ -1008,3 +1008,9 @@ Verification:
 - Hero scale check: Chrome verified the probability wireframe is oversized and cropped beyond the right edge at `1440x1100`, `1280x900`, `1037x1294`, and `390x1200`, with `0` console errors, no horizontal overflow, and visible detail pixels in the cropped sphere region.
 - Final suite: `python3 -m pytest -q`: 149 passed.
 - `git diff --check`: passed.
+
+## Public Site Texture And External Links
+
+- [x] Reduce the global grain overlay opacity so screenshots and evidence cards stay legible.
+- [x] Make external GitHub and Witchcraftery links open in a new tab with safe `rel` attributes.
+- [ ] Verify the rendered page locally and on production after deployment.
